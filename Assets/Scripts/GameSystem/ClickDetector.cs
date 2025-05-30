@@ -21,7 +21,7 @@ public class ClickDetector : MonoBehaviour
             return;
         }
 
-        // 초기에는 클릭 통과 활성화 (바탕화면 사용 가능)
+        // 초기에는 클릭 통과 효과 활성화 (백그라운드면 사용 가능)
         CompatibilityWindowManager.Instance?.EnableClickThrough();
 
         // 업데이트 주기 설정
@@ -31,6 +31,13 @@ public class ClickDetector : MonoBehaviour
     void CheckMousePosition()
     {
         if (CompatibilityWindowManager.Instance == null) return;
+
+        // 컨텍스트 메뉴가 표시 중이면 click-through 상태 변경하지 않음
+        if (ContextMenuManager.Instance != null && ContextMenuManager.Instance.IsMenuVisible)
+        {
+            Debug.Log("컨텍스트 메뉴 표시 중이므로 click-through 상태 변경 생략");
+            return;
+        }
 
         // 윈도우 내 마우스 위치 가져오기
         Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
@@ -54,11 +61,15 @@ public class ClickDetector : MonoBehaviour
 
                 // 마우스 커서 변경 (선택사항)
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+
+                Debug.Log("상호작용 오브젝트 위에 마우스 - click-through 비활성화");
             }
             else
             {
                 // 상호작용 오브젝트 밖에 마우스가 있음 - 클릭 통과 활성화
                 CompatibilityWindowManager.Instance.EnableClickThrough();
+
+                Debug.Log("빈 공간에 마우스 - click-through 활성화");
             }
 
             lastFrameHitSomething = currentFrameHitSomething;

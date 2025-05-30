@@ -38,70 +38,65 @@ public class CatTower : MonoBehaviour
             spriteRenderer = GetComponent<SpriteRenderer>();
 
         mainCamera = Camera.main;
-        PositionAtBottomRight();
         gameObject.layer = 9; // CatTower layer
 
         if (GetComponent<Collider2D>() == null)
         {
             BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
             collider.isTrigger = true;
-            collider.size = new Vector2(1.5f, 2f);
+            collider.size = new Vector2(1.5f, 2.0f);
+            collider.offset = Vector2.zero;
         }
 
         CreateTowerSprite();
 
-        Debug.Log("캣타워 생성 완료 - 우측하단 배치");
-        DebugLogger.LogToFile("캣타워 생성 완료 - 우측하단 배치");
-    }
-
-    void PositionAtBottomRight()
-    {
-        Vector3 screenBottomRight = new Vector3(Screen.width - 70, 30, 0);
-        Vector3 worldPosition = mainCamera.ScreenToWorldPoint(screenBottomRight);
-        worldPosition.z = 0;
-
-        transform.position = worldPosition;
-
-        Debug.Log($"캣타워 위치: {worldPosition} (화면 우측하단)");
-        DebugLogger.LogToFile($"캣타워 위치: {worldPosition} (화면 우측하단)");
+        Debug.Log("캣타워 생성 완료 - 업그레이드 가능 빌드");
+        DebugLogger.LogToFile("캣타워 생성 완료 - 업그레이드 가능 빌드");
     }
 
     public void CreateTowerSprite()
     {
-        // Assets/Image/CatTower.png 이미지 로드
-        Texture2D towerTexture = LoadTowerTexture();
+        // 빌드에서 안정적으로 작동하는 타워 스프라이트 생성
+        Texture2D towerTexture = LoadTowerTextureForBuild();
 
         if (towerTexture != null)
         {
-            // 이미지 파일에서 스프라이트 생성
             Sprite towerSprite = Sprite.Create(
                 towerTexture,
                 new Rect(0, 0, towerTexture.width, towerTexture.height),
-                new Vector2(0.5f, 0f), // 바닥 기준점
-                100f // Pixels Per Unit
+                new Vector2(0.5f, 0.5f),
+                100f
             );
 
             spriteRenderer.sprite = towerSprite;
-
-            // 레벨에 따른 색상 변경 (이미지에 틴트 적용)
-            Color levelColor = GetLevelColor();
-            spriteRenderer.color = levelColor;
+            spriteRenderer.color = GetLevelColor();
 
             Debug.Log($"타워 이미지 로드 성공 - 레벨 {level} (크기: {towerTexture.width}x{towerTexture.height})");
             DebugLogger.LogToFile($"타워 이미지 로드 성공 - 레벨 {level} (크기: {towerTexture.width}x{towerTexture.height})");
         }
         else
         {
-            // 이미지 로드 실패 시 기본 프로그래밍 스프라이트 생성
-            CreateFallbackSprite();
-            Debug.LogWarning("CatTower.png를 찾을 수 없어 기본 스프라이트를 생성했습니다.");
-            DebugLogger.LogToFile("CatTower.png를 찾을 수 없어 기본 스프라이트를 생성했습니다.");
+            // 이미지 로드 실패 시 프로그래밍 방식으로 타워 스프라이트 생성
+            CreateProceduralTowerSprite();
+            Debug.Log($"프로그래밍 방식으로 타워 스프라이트 생성 - 레벨 {level}");
+            DebugLogger.LogToFile($"프로그래밍 방식으로 타워 스프라이트 생성 - 레벨 {level}");
         }
     }
 
-    Texture2D LoadTowerTexture()
+    Texture2D LoadTowerTextureForBuild()
     {
-        // 여러 경로에서 이미지 파일 찾기
+        // 빌드에서 확실하게 작동하는 방법들만 시도
+
+        // 1. Resources 폴더에서 로드 (가장 확실한 방법)
+        Texture2D resourceTexture = Resources.Load<Texture2D>("CatTower");
+        if (resourceTexture != null)
+        {
+            Debug.Log("타워 이미지 Resources에서 로드 성공");
+            return resourceTexture;
+        }
+
+#if UNITY_EDITOR
+        // 에디터에서만 추가 시도
         string[] imagePaths = {
             "Assets/Image/CatTower",
             "Assets/Images/CatTower",
@@ -109,14 +104,12 @@ public class CatTower : MonoBehaviour
             "Assets/Art/CatTower"
         };
 
-#if UNITY_EDITOR
-        // 에디터에서 직접 로드
         foreach (string path in imagePaths)
         {
             Texture2D texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(path + ".png");
             if (texture != null)
             {
-                Debug.Log($"타워 이미지 로드 성공: {path}.png");
+                Debug.Log($"타워 이미지 에디터에서 로드 성공: {path}.png");
                 return texture;
             }
         }
@@ -135,69 +128,124 @@ public class CatTower : MonoBehaviour
         }
 #endif
 
-        // Resources 폴더에서 로드 (빌드에서도 작동)
-        Texture2D resourceTexture = Resources.Load<Texture2D>("CatTower");
-        if (resourceTexture != null)
+        Debug.LogWarning("타워 이미지를 찾을 수 없습니다. 프로그래밍 방식으로 생성합니다.");
+        return null;
+    }
+
+    void CreateProceduralTowerSprite()
+    {
+        // 더 세밀하고 예쁜 타워 스프라이트를 프로그래밍 방식으로 생성
+        int width = 64;
+        int height = 96;
+        Texture2D texture = new Texture2D(width, height);
+        Color[] colors = new Color[width * height];
+
+        // 배경 투명화
+        for (int i = 0; i < colors.Length; i++)
         {
-            Debug.Log("타워 이미지 Resources에서 로드 성공");
-            return resourceTexture;
+            colors[i] = Color.clear;
         }
 
-        return null;
+        // 레벨별 기본 색상
+        Color baseColor = GetLevelBaseColor();
+        Color darkColor = new Color(baseColor.r * 0.7f, baseColor.g * 0.7f, baseColor.b * 0.7f, 1f);
+        Color lightColor = new Color(
+            Mathf.Min(baseColor.r * 1.3f, 1f),
+            Mathf.Min(baseColor.g * 1.3f, 1f),
+            Mathf.Min(baseColor.b * 1.3f, 1f),
+            1f
+        );
+
+        // 타워 베이스 (하단 넓은 부분)
+        DrawRectangle(colors, width, height, 8, 8, 48, 25, darkColor);      // 테두리
+        DrawRectangle(colors, width, height, 10, 10, 44, 21, baseColor);    // 내부
+
+        // 타워 중간 부분
+        DrawRectangle(colors, width, height, 12, 30, 40, 35, darkColor);    // 테두리
+        DrawRectangle(colors, width, height, 14, 32, 36, 31, baseColor);    // 내부
+
+        // 타워 상단 부분
+        DrawRectangle(colors, width, height, 16, 60, 32, 25, darkColor);    // 테두리
+        DrawRectangle(colors, width, height, 18, 62, 28, 21, lightColor);   // 내부 (밝게)
+
+        // 레벨별 장식 추가
+        AddLevelDecorations(colors, width, height, baseColor);
+
+        // 윈도우 (작은 사각형들)
+        DrawRectangle(colors, width, height, 20, 40, 6, 6, Color.cyan);
+        DrawRectangle(colors, width, height, 38, 40, 6, 6, Color.cyan);
+        DrawRectangle(colors, width, height, 29, 50, 6, 6, Color.cyan);
+
+        // 텍스처 적용
+        texture.SetPixels(colors);
+        texture.Apply();
+
+        // 스프라이트 생성
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
+        spriteRenderer.sprite = sprite;
+        spriteRenderer.color = Color.white; // 이미 색상이 적용되었으므로 흰색 사용
+
+        Debug.Log($"프로그래밍 방식 타워 스프라이트 생성 완료 - 레벨 {level}");
+    }
+
+    Color GetLevelBaseColor()
+    {
+        switch (level)
+        {
+            case 1:
+                return new Color(0.4f, 0.8f, 0.4f, 1f); // 연한 녹색
+            case 2:
+                return new Color(0.6f, 0.6f, 0.8f, 1f); // 연한 보라색
+            case 3:
+                return new Color(0.8f, 0.6f, 0.4f, 1f); // 연한 주황색
+            default:
+                return new Color(0.7f, 0.7f, 0.7f, 1f); // 회색
+        }
+    }
+
+    void AddLevelDecorations(Color[] colors, int width, int height, Color baseColor)
+    {
+        Color decorColor = new Color(baseColor.r * 1.5f, baseColor.g * 1.5f, baseColor.b * 0.5f, 1f);
+
+        switch (level)
+        {
+            case 2:
+                // 레벨 2: 안테나 추가
+                DrawRectangle(colors, width, height, 31, 85, 2, 8, decorColor);
+                break;
+            case 3:
+                // 레벨 3: 더 큰 안테나와 깃발
+                DrawRectangle(colors, width, height, 31, 85, 2, 10, decorColor);
+                DrawRectangle(colors, width, height, 28, 88, 8, 3, Color.red);
+                break;
+        }
+    }
+
+    void DrawRectangle(Color[] colors, int textureWidth, int textureHeight, int x, int y, int width, int height, Color color)
+    {
+        for (int dy = 0; dy < height; dy++)
+        {
+            for (int dx = 0; dx < width; dx++)
+            {
+                int pixelX = x + dx;
+                int pixelY = y + dy;
+
+                if (pixelX >= 0 && pixelX < textureWidth && pixelY >= 0 && pixelY < textureHeight)
+                {
+                    int index = pixelY * textureWidth + pixelX;
+                    if (index >= 0 && index < colors.Length)
+                    {
+                        colors[index] = color;
+                    }
+                }
+            }
+        }
     }
 
     Color GetLevelColor()
     {
-        // 레벨에 따른 색상 틴트 (이미지에 곱셈으로 적용)
-        switch (level)
-        {
-            case 1:
-                return new Color(1f, 1f, 1f, 1f); // 원본 색상 (흰색 = 변화 없음)
-            case 2:
-                return new Color(1.2f, 1.1f, 0.8f, 1f); // 약간 노란빛 (골드)
-            case 3:
-                return new Color(1.3f, 0.9f, 1.2f, 1f); // 보라빛 (최고 레벨)
-            default:
-                return Color.white;
-        }
-    }
-
-    void CreateFallbackSprite()
-    {
-        // 기존 프로그래밍 방식 스프라이트 (백업용)
-        Texture2D texture = new Texture2D(64, 96);
-        Color[] colors = new Color[64 * 96];
-
-        // 타워 모양으로 색칠
-        for (int y = 0; y < 96; y++)
-        {
-            for (int x = 0; x < 64; x++)
-            {
-                if (x >= 8 && x < 56 && y >= 8 && y < 88) // 테두리 제외한 내부
-                {
-                    // 레벨에 따라 색상 변경
-                    Color towerColor = level == 1 ? Color.green : (level == 2 ? Color.gray : Color.yellow);
-                    colors[y * 64 + x] = towerColor;
-                }
-                else if (x >= 4 && x < 60 && y >= 4 && y < 92) // 테두리
-                {
-                    colors[y * 64 + x] = Color.black;
-                }
-                else
-                {
-                    colors[y * 64 + x] = Color.clear; // 투명
-                }
-            }
-        }
-
-        texture.SetPixels(colors);
-        texture.Apply();
-
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 64, 96), new Vector2(0.5f, 0f));
-        spriteRenderer.sprite = sprite;
-        spriteRenderer.color = normalColor;
-
-        Debug.Log($"기본 타워 스프라이트 생성 - 레벨 {level}");
+        // 이제 프로그래밍 방식으로 생성할 때는 이미 색상이 적용되므로 흰색 반환
+        return Color.white;
     }
 
     void Update()

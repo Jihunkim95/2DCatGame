@@ -19,10 +19,14 @@ public class ContextMenuManager : MonoBehaviour
     public TMP_FontAsset dungGeunMoFont;
 
     [Header("메뉴 설정")]
-    public Vector2 menuSize = new Vector2(200f, 300f);
-    public float fadeSpeed = 8f;
-    public float buttonHeight = 40f;
-    public float separatorHeight = 12f; // 픽셀 게임에 맞게 줄임
+    public Vector2 menuSize = new Vector2(120f, 180f);
+    public float fadeSpeed = 6f;
+    public float buttonHeight = 24f;
+    public float separatorHeight = 6f;
+
+    [Header("오브젝트 기준 메뉴 위치 설정")]
+    public Vector2 objectMenuOffset = new Vector2(100f, 0f); // 오브젝트 우측으로 100 픽셀로 줄임
+    public bool useObjectPosition = true; // 오브젝트 위치 기준 사용 여부
 
     private Camera mainCamera;
     private GameObject currentMenu;
@@ -180,16 +184,16 @@ public class ContextMenuManager : MonoBehaviour
         layoutGroup.childControlWidth = true;
         layoutGroup.childControlHeight = false;
         layoutGroup.childForceExpandWidth = true;
-        layoutGroup.spacing = 1f; // 픽셀 정확도를 위해 간격 줄임
-        layoutGroup.padding = new RectOffset(8, 8, 8, 8); // 픽셀 단위로 조정
+        layoutGroup.spacing = 1f;
+        layoutGroup.padding = new RectOffset(8, 8, 8, 8);
 
         // 크기 자동 조정
         sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
         // 픽셀 게임 스타일 테두리
         var outline = menu.AddComponent<Outline>();
-        outline.effectColor = new Color(0.2f, 0.4f, 0.8f, 1f); // 파란색 테두리
-        outline.effectDistance = new Vector2(1, -1); // 픽셀 단위
+        outline.effectColor = new Color(0.2f, 0.4f, 0.8f, 1f);
+        outline.effectDistance = new Vector2(1, -1);
 
         menu.SetActive(false);
         return menu;
@@ -208,14 +212,14 @@ public class ContextMenuManager : MonoBehaviour
 
         // 설정 (픽셀 게임 스타일)
         rectTransform.sizeDelta = new Vector2(0, buttonHeight);
-        background.color = new Color(0.15f, 0.15f, 0.25f, 1f); // 어두운 청회색
+        background.color = new Color(0.15f, 0.15f, 0.25f, 1f);
         layoutElement.minHeight = buttonHeight;
         layoutElement.preferredHeight = buttonHeight;
 
         // 버튼 색상 설정 (픽셀 게임 스타일)
         ColorBlock colors = buttonComponent.colors;
         colors.normalColor = new Color(0.15f, 0.15f, 0.25f, 1f);
-        colors.highlightedColor = new Color(0.2f, 0.3f, 0.5f, 1f); // 파란색 하이라이트
+        colors.highlightedColor = new Color(0.2f, 0.3f, 0.5f, 1f);
         colors.pressedColor = new Color(0.1f, 0.1f, 0.2f, 1f);
         colors.selectedColor = new Color(0.18f, 0.25f, 0.4f, 1f);
         buttonComponent.colors = colors;
@@ -230,11 +234,11 @@ public class ContextMenuManager : MonoBehaviour
         // 텍스트 설정
         textRect.anchorMin = Vector2.zero;
         textRect.anchorMax = Vector2.one;
-        textRect.offsetMin = new Vector2(10, 0);
-        textRect.offsetMax = new Vector2(-10, 0);
+        textRect.offsetMin = new Vector2(8, 0); // 좌우 여백 줄임
+        textRect.offsetMax = new Vector2(-8, 0);
 
         text.text = "메뉴 아이템";
-        text.fontSize = 16f; // 픽셀 폰트에 적합한 크기
+        text.fontSize = 10f;
         text.color = Color.white;
         text.alignment = TextAlignmentOptions.MidlineLeft;
 
@@ -266,10 +270,10 @@ public class ContextMenuManager : MonoBehaviour
         Image lineImage = line.AddComponent<Image>();
 
         // 라인 설정 (픽셀 게임 스타일)
-        lineRect.anchorMin = new Vector2(0.1f, 0.5f); // 좌우 10% 여백
+        lineRect.anchorMin = new Vector2(0.1f, 0.5f);
         lineRect.anchorMax = new Vector2(0.9f, 0.5f);
-        lineRect.sizeDelta = new Vector2(0, 2f); // 2픽셀 두께
-        lineImage.color = new Color(0.4f, 0.6f, 1f, 0.8f); // 밝은 파란색
+        lineRect.sizeDelta = new Vector2(0, 2f);
+        lineImage.color = new Color(0.4f, 0.6f, 1f, 0.8f);
 
         return separator;
     }
@@ -335,10 +339,11 @@ public class ContextMenuManager : MonoBehaviour
         return isOver;
     }
 
-    public void ShowCatMenu(Vector3 worldPosition)
+    // 오브젝트 위치 기준으로 우측에 메뉴 표시하는 메서드 추가
+    public void ShowCatMenu(Vector3 objectWorldPosition)
     {
-        Debug.Log($"ShowCatMenu 호출됨! 위치: {worldPosition}");
-        DebugLogger.LogToFile($"ShowCatMenu 호출됨! 위치: {worldPosition}");
+        Debug.Log($"ShowCatMenu 호출됨! 오브젝트 위치: {objectWorldPosition}");
+        DebugLogger.LogToFile($"ShowCatMenu 호출됨! 오브젝트 위치: {objectWorldPosition}");
 
         var catMenuItems = new List<ContextMenuItem>
         {
@@ -348,15 +353,18 @@ public class ContextMenuManager : MonoBehaviour
             new ContextMenuItem { itemType = ContextMenuItem.ItemType.Button, itemText = "쓰다듬기", onClick = OnPetCatClicked }
         };
 
-        ShowMenu(worldPosition, catMenuItems);
+        // 오브젝트 기준 위치 계산
+        Vector3 menuWorldPosition = CalculateMenuPosition(objectWorldPosition);
+        ShowMenu(menuWorldPosition, catMenuItems);
+
         Debug.Log("고양이 컨텍스트 메뉴 표시 완료");
         DebugLogger.LogToFile("고양이 컨텍스트 메뉴 표시 완료");
     }
 
-    public void ShowTowerMenu(Vector3 worldPosition)
+    public void ShowTowerMenu(Vector3 objectWorldPosition)
     {
-        Debug.Log($"ShowTowerMenu 호출됨! 위치: {worldPosition}");
-        DebugLogger.LogToFile($"ShowTowerMenu 호출됨! 위치: {worldPosition}");
+        Debug.Log($"ShowTowerMenu 호출됨! 오브젝트 위치: {objectWorldPosition}");
+        DebugLogger.LogToFile($"ShowTowerMenu 호출됨! 오브젝트 위치: {objectWorldPosition}");
 
         var towerMenuItems = new List<ContextMenuItem>
         {
@@ -368,9 +376,40 @@ public class ContextMenuManager : MonoBehaviour
             new ContextMenuItem { itemType = ContextMenuItem.ItemType.Button, itemText = "생산 정보", onClick = OnTowerInfoClicked }
         };
 
-        ShowMenu(worldPosition, towerMenuItems);
+        // 오브젝트 기준 위치 계산
+        Vector3 menuWorldPosition = CalculateMenuPosition(objectWorldPosition);
+        ShowMenu(menuWorldPosition, towerMenuItems);
+
         Debug.Log("타워 컨텍스트 메뉴 표시 완료");
         DebugLogger.LogToFile("타워 컨텍스트 메뉴 표시 완료");
+    }
+
+    // 오브젝트 위치 기준으로 메뉴 위치 계산
+    Vector3 CalculateMenuPosition(Vector3 objectWorldPosition)
+    {
+        if (!useObjectPosition)
+        {
+            // 기존 방식 (마우스 위치)
+            return objectWorldPosition;
+        }
+
+        // 오브젝트를 스크린 좌표로 변환
+        Vector3 objectScreenPos = mainCamera.WorldToScreenPoint(objectWorldPosition);
+
+        // 화면 좌표에서 오프셋 적용 (오브젝트 우측으로)
+        Vector3 menuScreenPos = objectScreenPos + new Vector3(objectMenuOffset.x, objectMenuOffset.y, 0);
+
+        // 화면 경계 체크
+        menuScreenPos.x = Mathf.Clamp(menuScreenPos.x, menuSize.x * 0.5f, Screen.width - menuSize.x * 0.5f);
+        menuScreenPos.y = Mathf.Clamp(menuScreenPos.y, menuSize.y * 0.5f, Screen.height - menuSize.y * 0.5f);
+
+        // 다시 월드 좌표로 변환
+        Vector3 menuWorldPos = mainCamera.ScreenToWorldPoint(menuScreenPos);
+
+        Debug.Log($"오브젝트 위치: {objectWorldPosition} → 메뉴 위치: {menuWorldPos}");
+        Debug.Log($"스크린 좌표: 오브젝트 {objectScreenPos} → 메뉴 {menuScreenPos}");
+
+        return menuWorldPos;
     }
 
     void ShowMenu(Vector3 worldPosition, List<ContextMenuItem> menuItems)
@@ -379,6 +418,13 @@ public class ContextMenuManager : MonoBehaviour
 
         // 기존 메뉴 완전히 정리
         ForceCleanupMenu();
+
+        // 메뉴 표시 중에는 click-through 비활성화
+        if (CompatibilityWindowManager.Instance != null)
+        {
+            CompatibilityWindowManager.Instance.DisableClickThrough();
+            Debug.Log("컨텍스트 메뉴 표시로 인한 click-through 비활성화");
+        }
 
         if (canvas == null)
         {
@@ -399,7 +445,7 @@ public class ContextMenuManager : MonoBehaviour
 
         // 새 메뉴 생성
         currentMenu = Instantiate(menuPrefab, canvas.transform);
-        currentMenu.name = "ContextMenu_Active"; // 디버그용 이름
+        currentMenu.name = "ContextMenu_Active";
         Debug.Log($"새 메뉴 생성 완료: {currentMenu.name}");
 
         // 월드 좌표를 스크린 좌표로 변환
@@ -422,7 +468,7 @@ public class ContextMenuManager : MonoBehaviour
         menuRect.localPosition = uiPosition;
         Debug.Log($"메뉴 위치 설정 완료: {menuRect.localPosition}");
 
-        // 화면 경계 체크 및 조정
+        // 화면 경계 체크 및 조정 (UI 좌표계에서)
         ClampMenuToScreen(menuRect);
 
         // 메뉴 아이템들 생성
@@ -462,6 +508,9 @@ public class ContextMenuManager : MonoBehaviour
 
         currentMenu = null;
         isMenuVisible = false;
+
+        // 강제 정리 시에도 click-through 상태 복원
+        RestoreClickThroughState();
 
         Debug.Log("ForceCleanupMenu 완료");
     }
@@ -556,37 +605,37 @@ public class ContextMenuManager : MonoBehaviour
             if (item.itemType == ContextMenuItem.ItemType.Button)
             {
                 // 고양이 상태 업데이트
-                if (item.itemText.Contains("🐱") && GameDataManager.Instance != null)
+                if (item.itemText.Contains("고양이 상태") && GameDataManager.Instance != null)
                 {
-                    item.itemText = $"🐱 상태: {GameDataManager.Instance.HappinessStatus} ({GameDataManager.Instance.Happiness:F1}%)";
+                    item.itemText = $"상태: {GameDataManager.Instance.HappinessStatus} ({GameDataManager.Instance.Happiness:F1}%)";
                 }
                 // 먹이주기 업데이트
-                else if (item.itemText.Contains("🍖") && CatTower.Instance != null)
+                else if (item.itemText.Contains("먹이주기") && CatTower.Instance != null)
                 {
                     bool canFeed = CatTower.Instance.ChurCount >= 1;
                     item.itemText = canFeed ?
-                        $"🍖 먹이주기 (츄르: {CatTower.Instance.ChurCount}개)" :
-                        "🍖 먹이주기 (츄르 부족)";
+                        $"먹이주기 (츄르: {CatTower.Instance.ChurCount}개)" :
+                        "먹이주기 (츄르 부족)";
                 }
                 // 타워 정보 업데이트
-                else if (item.itemText.Contains("🏗️") && CatTower.Instance != null)
+                else if (item.itemText.Contains("타워 정보") && CatTower.Instance != null)
                 {
-                    item.itemText = $"🏗️ 레벨 {CatTower.Instance.Level} 타워 (츄르: {CatTower.Instance.ChurCount}개)";
+                    item.itemText = $"레벨 {CatTower.Instance.Level} 타워 (츄르: {CatTower.Instance.ChurCount}개)";
                 }
                 // 업그레이드 업데이트
-                else if (item.itemText.Contains("⬆️") && CatTower.Instance != null)
+                else if (item.itemText.Contains("업그레이드") && CatTower.Instance != null)
                 {
                     if (CatTower.Instance.CanUpgrade())
                     {
-                        item.itemText = $"⬆️ 업그레이드 ({CatTower.Instance.GetUpgradeCost()} 츄르)";
+                        item.itemText = $"업그레이드 ({CatTower.Instance.GetUpgradeCost()} 츄르)";
                     }
                     else if (CatTower.Instance.Level >= 3)
                     {
-                        item.itemText = "⬆️ 최대 레벨";
+                        item.itemText = "업그레이드 (최대 레벨)";
                     }
                     else
                     {
-                        item.itemText = "⬆️ 업그레이드 (츄르 부족)";
+                        item.itemText = "업그레이드 (츄르 부족)";
                     }
                 }
             }
@@ -595,31 +644,51 @@ public class ContextMenuManager : MonoBehaviour
 
     void ClampMenuToScreen(RectTransform menuRect)
     {
-        Vector3[] corners = new Vector3[4];
-        menuRect.GetWorldCorners(corners);
-
+        // Canvas의 RenderMode에 따라 다르게 처리
         Canvas canvasComponent = canvas.GetComponent<Canvas>();
-        RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-
-        // 화면 경계 계산
-        float menuWidth = corners[2].x - corners[0].x;
-        float menuHeight = corners[2].y - corners[0].y;
-
-        Vector3 pos = menuRect.localPosition;
-
-        // 오른쪽 경계 체크
-        if (corners[2].x > Screen.width)
+        if (canvasComponent.renderMode == RenderMode.ScreenSpaceOverlay)
         {
-            pos.x -= menuWidth;
-        }
+            // Screen Space - Overlay 모드
+            Vector3[] corners = new Vector3[4];
+            menuRect.GetWorldCorners(corners);
 
-        // 아래쪽 경계 체크
-        if (corners[0].y < 0)
-        {
-            pos.y += menuHeight;
-        }
+            // 화면 경계 계산
+            float menuWidth = corners[2].x - corners[0].x;
+            float menuHeight = corners[2].y - corners[0].y;
 
-        menuRect.localPosition = pos;
+            Vector3 pos = menuRect.localPosition;
+
+            // 오른쪽 경계 체크
+            if (corners[2].x > Screen.width)
+            {
+                pos.x -= menuWidth;
+                Debug.Log("메뉴가 오른쪽 경계를 벗어나서 왼쪽으로 이동");
+            }
+
+            // 왼쪽 경계 체크
+            if (corners[0].x < 0)
+            {
+                pos.x += Mathf.Abs(corners[0].x);
+                Debug.Log("메뉴가 왼쪽 경계를 벗어나서 오른쪽으로 이동");
+            }
+
+            // 아래쪽 경계 체크
+            if (corners[0].y < 0)
+            {
+                pos.y += Mathf.Abs(corners[0].y);
+                Debug.Log("메뉴가 아래쪽 경계를 벗어나서 위로 이동");
+            }
+
+            // 위쪽 경계 체크
+            if (corners[2].y > Screen.height)
+            {
+                pos.y -= (corners[2].y - Screen.height);
+                Debug.Log("메뉴가 위쪽 경계를 벗어나서 아래로 이동");
+            }
+
+            menuRect.localPosition = pos;
+            Debug.Log($"메뉴 위치 조정 완료: {pos}");
+        }
     }
 
     IEnumerator FadeMenu(bool fadeIn)
@@ -668,11 +737,51 @@ public class ContextMenuManager : MonoBehaviour
             Destroy(currentMenu);
             currentMenu = null;
 
+            // 메뉴가 사라진 후 click-through 상태 복원
+            RestoreClickThroughState();
+
             Debug.Log("메뉴 즉시 제거 완료");
         }
         else
         {
             Debug.Log("숨길 메뉴가 없거나 이미 숨겨짐");
+        }
+    }
+
+    // click-through 상태를 현재 마우스 위치에 맞게 복원
+    void RestoreClickThroughState()
+    {
+        if (CompatibilityWindowManager.Instance == null || mainCamera == null)
+        {
+            Debug.Log("CompatibilityWindowManager 또는 Camera가 없어서 click-through 상태 복원 불가");
+            return;
+        }
+
+        // 현재 마우스 위치 확인
+        Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
+        Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
+
+        // 상호작용 가능한 오브젝트 확인 (ClickDetector와 동일한 로직)
+        LayerMask interactableLayer = LayerMask.GetMask("Default"); // Layer 8
+        LayerMask towerLayer = LayerMask.GetMask("Default"); // Layer 9
+
+        // Layer 확인을 위해 Physics2D 사용
+        Collider2D catCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 8); // Layer 8
+        Collider2D towerCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 9); // Layer 9
+
+        bool isOverInteractableObject = (catCollider != null || towerCollider != null);
+
+        if (isOverInteractableObject)
+        {
+            // 상호작용 가능한 오브젝트 위에 있으면 click-through 비활성화 유지
+            CompatibilityWindowManager.Instance.DisableClickThrough();
+            Debug.Log("상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지");
+        }
+        else
+        {
+            // 빈 공간에 있으면 click-through 활성화
+            CompatibilityWindowManager.Instance.EnableClickThrough();
+            Debug.Log("빈 공간에 있어서 click-through 활성화");
         }
     }
 
