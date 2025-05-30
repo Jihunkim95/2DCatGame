@@ -4,8 +4,8 @@ public class CatTower : MonoBehaviour
 {
     [Header("캣타워 설정")]
     public SpriteRenderer spriteRenderer;
-    public Color normalColor = Color.brown;
-    public Color hoverColor = Color.orange;
+    public Color normalColor = Color.green;
+    public Color hoverColor = Color.yellow;
 
     [Header("게임 데이터")]
     public int level = 1;
@@ -38,22 +38,16 @@ public class CatTower : MonoBehaviour
             spriteRenderer = GetComponent<SpriteRenderer>();
 
         mainCamera = Camera.main;
-
-        // 우측 하단에 배치
         PositionAtBottomRight();
+        gameObject.layer = 9; // CatTower layer
 
-        // CatTower 레이어 설정 (Layer 9 = CatTower)
-        gameObject.layer = 9;
-
-        // Collider2D가 없으면 추가
         if (GetComponent<Collider2D>() == null)
         {
             BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
             collider.isTrigger = true;
-            collider.size = new Vector2(1.5f, 2f); // 캣타워 크기에 맞게 조정
+            collider.size = new Vector2(1.5f, 2f);
         }
 
-        // 기본 캣타워 스프라이트 생성
         CreateTowerSprite();
 
         Debug.Log("캣타워 생성 완료 - 우측하단 배치");
@@ -62,10 +56,9 @@ public class CatTower : MonoBehaviour
 
     void PositionAtBottomRight()
     {
-        // 화면 우측하단에 캣타워 배치
-        Vector3 screenBottomRight = new Vector3(Screen.width - 100, 100, 0); // 여백 100픽셀
+        Vector3 screenBottomRight = new Vector3(Screen.width - 70, 30, 0);
         Vector3 worldPosition = mainCamera.ScreenToWorldPoint(screenBottomRight);
-        worldPosition.z = 0; // 2D이므로 z는 0
+        worldPosition.z = 0;
 
         transform.position = worldPosition;
 
@@ -73,10 +66,106 @@ public class CatTower : MonoBehaviour
         DebugLogger.LogToFile($"캣타워 위치: {worldPosition} (화면 우측하단)");
     }
 
-    void CreateTowerSprite()
+    public void CreateTowerSprite()
     {
-        // 기본 캣타워 스프라이트 생성 (사각형 타워 모양)
-        Texture2D texture = new Texture2D(64, 96); // 세로가 더 긴 타워 모양
+        // Assets/Image/CatTower.png 이미지 로드
+        Texture2D towerTexture = LoadTowerTexture();
+
+        if (towerTexture != null)
+        {
+            // 이미지 파일에서 스프라이트 생성
+            Sprite towerSprite = Sprite.Create(
+                towerTexture,
+                new Rect(0, 0, towerTexture.width, towerTexture.height),
+                new Vector2(0.5f, 0f), // 바닥 기준점
+                100f // Pixels Per Unit
+            );
+
+            spriteRenderer.sprite = towerSprite;
+
+            // 레벨에 따른 색상 변경 (이미지에 틴트 적용)
+            Color levelColor = GetLevelColor();
+            spriteRenderer.color = levelColor;
+
+            Debug.Log($"타워 이미지 로드 성공 - 레벨 {level} (크기: {towerTexture.width}x{towerTexture.height})");
+            DebugLogger.LogToFile($"타워 이미지 로드 성공 - 레벨 {level} (크기: {towerTexture.width}x{towerTexture.height})");
+        }
+        else
+        {
+            // 이미지 로드 실패 시 기본 프로그래밍 스프라이트 생성
+            CreateFallbackSprite();
+            Debug.LogWarning("CatTower.png를 찾을 수 없어 기본 스프라이트를 생성했습니다.");
+            DebugLogger.LogToFile("CatTower.png를 찾을 수 없어 기본 스프라이트를 생성했습니다.");
+        }
+    }
+
+    Texture2D LoadTowerTexture()
+    {
+        // 여러 경로에서 이미지 파일 찾기
+        string[] imagePaths = {
+            "Assets/Image/CatTower",
+            "Assets/Images/CatTower",
+            "Assets/Sprites/CatTower",
+            "Assets/Art/CatTower"
+        };
+
+#if UNITY_EDITOR
+        // 에디터에서 직접 로드
+        foreach (string path in imagePaths)
+        {
+            Texture2D texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(path + ".png");
+            if (texture != null)
+            {
+                Debug.Log($"타워 이미지 로드 성공: {path}.png");
+                return texture;
+            }
+        }
+
+        // GUID로 검색
+        string[] guids = UnityEditor.AssetDatabase.FindAssets("CatTower t:Texture2D");
+        if (guids.Length > 0)
+        {
+            string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+            Texture2D texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+            if (texture != null)
+            {
+                Debug.Log($"타워 이미지 검색으로 로드: {assetPath}");
+                return texture;
+            }
+        }
+#endif
+
+        // Resources 폴더에서 로드 (빌드에서도 작동)
+        Texture2D resourceTexture = Resources.Load<Texture2D>("CatTower");
+        if (resourceTexture != null)
+        {
+            Debug.Log("타워 이미지 Resources에서 로드 성공");
+            return resourceTexture;
+        }
+
+        return null;
+    }
+
+    Color GetLevelColor()
+    {
+        // 레벨에 따른 색상 틴트 (이미지에 곱셈으로 적용)
+        switch (level)
+        {
+            case 1:
+                return new Color(1f, 1f, 1f, 1f); // 원본 색상 (흰색 = 변화 없음)
+            case 2:
+                return new Color(1.2f, 1.1f, 0.8f, 1f); // 약간 노란빛 (골드)
+            case 3:
+                return new Color(1.3f, 0.9f, 1.2f, 1f); // 보라빛 (최고 레벨)
+            default:
+                return Color.white;
+        }
+    }
+
+    void CreateFallbackSprite()
+    {
+        // 기존 프로그래밍 방식 스프라이트 (백업용)
+        Texture2D texture = new Texture2D(64, 96);
         Color[] colors = new Color[64 * 96];
 
         // 타워 모양으로 색칠
@@ -87,7 +176,7 @@ public class CatTower : MonoBehaviour
                 if (x >= 8 && x < 56 && y >= 8 && y < 88) // 테두리 제외한 내부
                 {
                     // 레벨에 따라 색상 변경
-                    Color towerColor = level == 1 ? Color.brown : (level == 2 ? Color.gray : Color.yellow);
+                    Color towerColor = level == 1 ? Color.green : (level == 2 ? Color.gray : Color.yellow);
                     colors[y * 64 + x] = towerColor;
                 }
                 else if (x >= 4 && x < 60 && y >= 4 && y < 92) // 테두리
@@ -104,12 +193,11 @@ public class CatTower : MonoBehaviour
         texture.SetPixels(colors);
         texture.Apply();
 
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 64, 96), new Vector2(0.5f, 0f)); // 바닥 기준점
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, 64, 96), new Vector2(0.5f, 0f));
         spriteRenderer.sprite = sprite;
         spriteRenderer.color = normalColor;
 
-        Debug.Log($"캣타워 스프라이트 생성 - 레벨 {level}");
-        DebugLogger.LogToFile($"캣타워 스프라이트 생성 - 레벨 {level}");
+        Debug.Log($"기본 타워 스프라이트 생성 - 레벨 {level}");
     }
 
     void Update()
@@ -120,7 +208,6 @@ public class CatTower : MonoBehaviour
 
     void UpdateProduction()
     {
-        // 츄르 생산 타이머
         productionTimer += Time.deltaTime;
 
         if (productionTimer >= productionInterval)
@@ -138,16 +225,14 @@ public class CatTower : MonoBehaviour
     {
         if (CompatibilityWindowManager.Instance == null) return;
 
-        // 마우스 위치 가져오기
         Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
 
-        // 캣타워와 마우스 거리 계산
         float distance = Vector2.Distance(transform.position, mouseWorldPos);
         float interactionRadius = GetComponent<Collider2D>().bounds.size.x / 2f;
 
-        // 우클릭 체크
-        if (Input.GetMouseButtonDown(1) && distance <= interactionRadius) // 우클릭
+        // 우클릭 체크 - Modern UI Context Menu 표시
+        if (Input.GetMouseButtonDown(1) && distance <= interactionRadius)
         {
             OnTowerRightClicked(mouseWorldPos);
         }
@@ -157,7 +242,6 @@ public class CatTower : MonoBehaviour
             if (!isHovered)
                 OnTowerHover();
         }
-        // 마우스가 멀어졌을 때
         else
         {
             if (isHovered)
@@ -167,18 +251,17 @@ public class CatTower : MonoBehaviour
 
     void OnTowerRightClicked(Vector3 mousePosition)
     {
-        spriteRenderer.color = Color.white; // 잠시 하얀색으로
+        spriteRenderer.color = Color.white;
 
-        // 컨텍스트 메뉴 표시
+        // ContextMenuManager 호출
         if (ContextMenuManager.Instance != null)
         {
-            ContextMenuManager.Instance.ShowTowerMenu(mousePosition);
+            ContextMenuManager.Instance.ShowTowerMenu(transform.position);
         }
 
-        Debug.Log("캣타워 우클릭!");
-        DebugLogger.LogToFile("캣타워 우클릭 - 컨텍스트 메뉴 표시");
+        Debug.Log("타워 우클릭!");
+        DebugLogger.LogToFile("타워 우클릭 - 컨텍스트 메뉴 표시");
 
-        // 0.2초 후 원래 색으로
         Invoke(nameof(ResetColor), 0.2f);
     }
 
@@ -202,13 +285,11 @@ public class CatTower : MonoBehaviour
     // 게임 로직 메서드들
     public int GetProductionAmount()
     {
-        // 레벨에 따른 생산량: 1레벨=2개, 2레벨=3개, 3레벨=4개
         return level + 1;
     }
 
     public int GetUpgradeCost()
     {
-        // 업그레이드 비용: 1→2레벨=6, 2→3레벨=8
         return level == 1 ? 6 : 8;
     }
 
@@ -225,7 +306,6 @@ public class CatTower : MonoBehaviour
             churCount -= cost;
             level++;
 
-            // 스프라이트 다시 생성 (레벨업 시 색상 변경)
             CreateTowerSprite();
 
             Debug.Log($"캣타워 업그레이드! 레벨 {level}, 비용 {cost}");

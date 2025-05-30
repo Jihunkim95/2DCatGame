@@ -4,7 +4,8 @@ using System.Collections.Generic;
 public class ClickDetector : MonoBehaviour
 {
     [Header("클릭 감지 설정")]
-    public LayerMask interactableLayer = -1; // 고양이 레이어
+    public LayerMask interactableLayer = -1; // 고양이 레이어 (Layer 8)
+    public LayerMask towerLayer = -1; // 캣타워 레이어 (Layer 9)
     public float updateRate = 60f; // 초당 감지 횟수
 
     private Camera mainCamera;
@@ -37,17 +38,18 @@ public class ClickDetector : MonoBehaviour
         // 스크린 좌표를 월드 좌표로 변환
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
 
-        // 해당 위치에 상호작용 가능한 오브젝트가 있는지 확인
-        Collider2D hitCollider = Physics2D.OverlapPoint(worldPos, interactableLayer);
+        // 상호작용 가능한 오브젝트 확인 (고양이 + 캣타워)
+        Collider2D catCollider = Physics2D.OverlapPoint(worldPos, interactableLayer);
+        Collider2D towerCollider = Physics2D.OverlapPoint(worldPos, towerLayer);
 
-        bool currentFrameHitSomething = (hitCollider != null);
+        bool currentFrameHitSomething = (catCollider != null || towerCollider != null);
 
         // 상태가 변경되었을 때만 윈도우 속성 변경
         if (currentFrameHitSomething != lastFrameHitSomething)
         {
             if (currentFrameHitSomething)
             {
-                // 고양이 위에 마우스가 있음 - 클릭 통과 비활성화
+                // 고양이나 캣타워 위에 마우스가 있음 - 클릭 통과 비활성화
                 CompatibilityWindowManager.Instance.DisableClickThrough();
 
                 // 마우스 커서 변경 (선택사항)
@@ -55,7 +57,7 @@ public class ClickDetector : MonoBehaviour
             }
             else
             {
-                // 고양이 밖에 마우스가 있음 - 클릭 통과 활성화
+                // 상호작용 오브젝트 밖에 마우스가 있음 - 클릭 통과 활성화
                 CompatibilityWindowManager.Instance.EnableClickThrough();
             }
 
