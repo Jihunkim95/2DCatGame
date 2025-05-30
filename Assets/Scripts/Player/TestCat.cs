@@ -16,6 +16,7 @@ public class TestCat : MonoBehaviour
     private float directionTimer;
     private Camera mainCamera;
     private Vector2 screenBounds;
+    private float minY, maxY; // Y축 움직임 범위
 
     // 상호작용 상태
     private enum InteractionState
@@ -74,6 +75,11 @@ public class TestCat : MonoBehaviour
         // 화면 경계 계산
         screenBounds = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height, mainCamera.transform.position.z));
 
+        // Y축 움직임 범위 설정 (화면 하단부터 윈도우 높이의 1/5까지)
+        minY = -screenBounds.y; // 화면 하단
+        maxY = -screenBounds.y + (screenBounds.y * 2) / 8f; // 하단에서 윈도우 높이의 1/8 지점
+
+
         // 초기 이동 방향 설정
         SetRandomDirection();
 
@@ -103,13 +109,15 @@ public class TestCat : MonoBehaviour
         Vector3 pos = transform.position;
         bool changedDirection = false;
 
-        if (pos.x <= -screenBounds.x || pos.x >= screenBounds.x)
+        //0.2f는 경계 체크 시 약간의 여유를 두기 위한 값
+        if (pos.x <= -screenBounds.x + 0.2f || pos.x >= screenBounds.x - 0.2f)
         {
             moveDirection.x = -moveDirection.x;
             changedDirection = true;
         }
 
-        if (pos.y <= -screenBounds.y || pos.y >= screenBounds.y)
+        // Y축 경계 체크 (제한된 범위에서)
+        if (pos.y <= minY + 0.2f || pos.y >= maxY - 0.2f)
         {
             moveDirection.y = -moveDirection.y;
             changedDirection = true;
@@ -117,7 +125,9 @@ public class TestCat : MonoBehaviour
 
         // 화면 내부로 위치 보정
         pos.x = Mathf.Clamp(pos.x, -screenBounds.x, screenBounds.x);
-        pos.y = Mathf.Clamp(pos.y, -screenBounds.y, screenBounds.y);
+        //pos.y = Mathf.Clamp(pos.y, -screenBounds.y, screenBounds.y);
+        pos.y = Mathf.Clamp(pos.y, minY, maxY); // 제한된 Y 범위로 보정
+
         transform.position = pos;
 
         // 주기적으로 방향 변경
@@ -133,6 +143,7 @@ public class TestCat : MonoBehaviour
         moveDirection = new Vector2(
             Random.Range(-1f, 1f),
             Random.Range(-1f, 1f)
+            //0f
         ).normalized;
 
         directionTimer = 0f;
