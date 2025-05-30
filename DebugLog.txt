@@ -1,12 +1,13 @@
 === Debug Logger 시작 ===
 Unity 버전: 2022.3.55f1
 플랫폼: WindowsEditor
-해상도: 627x392
-[11:38:53.153] [Log] 에디터에서는 클릭 통과 기능이 비활성화됩니다.
-[11:38:53.161] [Log] 카메라 설정 완료!
-[11:38:53.162] [Log] Clear Flags: SolidColor
-[11:38:53.162] [Log] Background Color: RGBA(0.000, 0.000, 0.000, 0.000)
+해상도: 1344x708
+[13:40:31.864] [Log] 카메라 설정 완료!
+[13:40:31.868] [Log] Clear Flags: SolidColor
+[13:40:31.869] [Log] Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
 카메라 Clear Flags: SolidColor
-카메라 Background Color: RGBA(0.000, 0.000, 0.000, 0.000)
-[11:38:53.951] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다. 빌드 후 테스트하세요.
+카메라 Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
+검은색 강제 렌더링 모드 활성화!
+[13:40:33.190] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
+에디터에서는 윈도우 설정이 비활성화됩니다.
 === Debug Logger 종료 ===
