@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class SaveSystem : MonoBehaviour
 {
-    [Header("ÀÚµ¿ ÀúÀå ¼³Á¤")]
-    public float autoSaveInterval = 30f; // 30ÃÊ¸¶´Ù ÀÚµ¿ ÀúÀå
+    [Header("ìë™ ì €ì¥ ì„¤ì •")]
+    public float autoSaveInterval = 30f; // 30ì´ˆë§ˆë‹¤ ìë™ ì €ì¥
     public bool enableAutoSave = true;
 
     private float autoSaveTimer = 0f;
 
-    // ½Ì±ÛÅæ
+    // ì‹±ê¸€í†¤
     public static SaveSystem Instance { get; private set; }
 
     void Awake()
@@ -26,16 +26,16 @@ public class SaveSystem : MonoBehaviour
 
     void Start()
     {
-        // °ÔÀÓ ½ÃÀÛ ½Ã ÀÚµ¿ ·Îµå
+        // ê²Œì„ ì‹œì‘ ì‹œ ìë™ ë¡œë“œ
         LoadGameData();
 
-        Debug.Log("¼¼ÀÌºê ½Ã½ºÅÛ ÃÊ±âÈ­ ¿Ï·á");
-        DebugLogger.LogToFile("¼¼ÀÌºê ½Ã½ºÅÛ ÃÊ±âÈ­ ¿Ï·á - Easy Save »ç¿ë");
+        Debug.Log("ì„¸ì´ë¸Œ ì‹œìŠ¤í…œ ì´ˆê¸°í™” ì™„ë£Œ");
+        DebugLogger.LogToFile("ì„¸ì´ë¸Œ ì‹œìŠ¤í…œ ì´ˆê¸°í™” ì™„ë£Œ - Easy Save ì‚¬ìš©");
     }
 
     void Update()
     {
-        // ÀÚµ¿ ÀúÀå Å¸ÀÌ¸Ó
+        // ìë™ ì €ì¥ íƒ€ì´ë¨¸
         if (enableAutoSave)
         {
             autoSaveTimer += Time.deltaTime;
@@ -52,7 +52,7 @@ public class SaveSystem : MonoBehaviour
     {
         if (pauseStatus)
         {
-            // °ÔÀÓÀÌ ÀÏ½ÃÁ¤ÁöµÉ ¶§ ÀúÀå
+            // ê²Œì„ì´ ì¼ì‹œì •ì§€ë  ë•Œ ì €ì¥
             SaveGameData();
         }
     }
@@ -61,14 +61,14 @@ public class SaveSystem : MonoBehaviour
     {
         if (!hasFocus)
         {
-            // Æ÷Ä¿½º¸¦ ÀÒÀ» ¶§ ÀúÀå
+            // í¬ì»¤ìŠ¤ë¥¼ ìƒì„ ë•Œ ì €ì¥
             SaveGameData();
         }
     }
 
     void OnApplicationQuit()
     {
-        // °ÔÀÓ Á¾·á ½Ã ÀúÀå
+        // ê²Œì„ ì¢…ë£Œ ì‹œ ì €ì¥
         SaveGameData();
     }
 
@@ -76,47 +76,47 @@ public class SaveSystem : MonoBehaviour
     {
         try
         {
-            // CatTower µ¥ÀÌÅÍ ÀúÀå
+            // CatTower ë°ì´í„° ì €ì¥
             if (CatTower.Instance != null)
             {
                 ES3.Save("catTowerLevel", CatTower.Instance.Level);
                 ES3.Save("churCount", CatTower.Instance.ChurCount);
                 ES3.Save("productionTimer", CatTower.Instance.productionTimer);
 
-                Debug.Log($"Ä¹Å¸¿ö µ¥ÀÌÅÍ ÀúÀå: ·¹º§ {CatTower.Instance.Level}, Ãò¸£ {CatTower.Instance.ChurCount}°³");
-                DebugLogger.LogToFile($"Ä¹Å¸¿ö µ¥ÀÌÅÍ ÀúÀå: ·¹º§ {CatTower.Instance.Level}, Ãò¸£ {CatTower.Instance.ChurCount}°³");
+                Debug.Log($"ìº£íƒ€ì›Œ ë°ì´í„° ì €ì¥: ë ˆë²¨ {CatTower.Instance.Level}, ì¸„ë¥´ {CatTower.Instance.ChurCount}ê°œ");
+                DebugLogger.LogToFile($"ìº£íƒ€ì›Œ ë°ì´í„° ì €ì¥: ë ˆë²¨ {CatTower.Instance.Level}, ì¸„ë¥´ {CatTower.Instance.ChurCount}ê°œ");
             }
 
-            // GameDataManager µ¥ÀÌÅÍ ÀúÀå
+            // GameDataManager ë°ì´í„° ì €ì¥
             if (GameDataManager.Instance != null)
             {
                 ES3.Save("happiness", GameDataManager.Instance.Happiness);
 
-                Debug.Log($"°ÔÀÓ µ¥ÀÌÅÍ ÀúÀå: Çàº¹µµ {GameDataManager.Instance.Happiness:F1}%");
-                DebugLogger.LogToFile($"°ÔÀÓ µ¥ÀÌÅÍ ÀúÀå: Çàº¹µµ {GameDataManager.Instance.Happiness:F1}%");
+                Debug.Log($"ê²Œì„ ë°ì´í„° ì €ì¥: í–‰ë³µë„ {GameDataManager.Instance.Happiness:F1}%");
+                DebugLogger.LogToFile($"ê²Œì„ ë°ì´í„° ì €ì¥: í–‰ë³µë„ {GameDataManager.Instance.Happiness:F1}%");
             }
 
-            // °í¾çÀÌ À§Ä¡ ÀúÀå (¼±ÅÃ»çÇ×)
+            // ê³ ì–‘ì´ ìœ„ì¹˜ ì €ì¥ (ì„ íƒì‚¬í•­)
             if (TestCat.Instance != null)
             {
                 Vector3 catPosition = TestCat.Instance.transform.position;
                 ES3.Save("catPositionX", catPosition.x);
                 ES3.Save("catPositionY", catPosition.y);
 
-                Debug.Log($"°í¾çÀÌ À§Ä¡ ÀúÀå: ({catPosition.x:F2}, {catPosition.y:F2})");
-                DebugLogger.LogToFile($"°í¾çÀÌ À§Ä¡ ÀúÀå: ({catPosition.x:F2}, {catPosition.y:F2})");
+                Debug.Log($"ê³ ì–‘ì´ ìœ„ì¹˜ ì €ì¥: ({catPosition.x:F2}, {catPosition.y:F2})");
+                DebugLogger.LogToFile($"ê³ ì–‘ì´ ìœ„ì¹˜ ì €ì¥: ({catPosition.x:F2}, {catPosition.y:F2})");
             }
 
-            // ¸¶Áö¸· ÀúÀå ½Ã°£ ±â·Ï
+            // ë§ˆì§€ë§‰ ì €ì¥ ì‹œê°„ ê¸°ë¡
             ES3.Save("lastSaveTime", System.DateTime.Now.ToBinary());
 
-            Debug.Log("°ÔÀÓ µ¥ÀÌÅÍ ÀúÀå ¿Ï·á!");
-            DebugLogger.LogToFile("°ÔÀÓ µ¥ÀÌÅÍ ÀúÀå ¿Ï·á!");
+            Debug.Log("ê²Œì„ ë°ì´í„° ì €ì¥ ì™„ë£Œ!");
+            DebugLogger.LogToFile("ê²Œì„ ë°ì´í„° ì €ì¥ ì™„ë£Œ!");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"°ÔÀÓ µ¥ÀÌÅÍ ÀúÀå ½ÇÆĞ: {e.Message}");
-            DebugLogger.LogToFile($"°ÔÀÓ µ¥ÀÌÅÍ ÀúÀå ½ÇÆĞ: {e.Message}");
+            Debug.LogError($"ê²Œì„ ë°ì´í„° ì €ì¥ ì‹¤íŒ¨: {e.Message}");
+            DebugLogger.LogToFile($"ê²Œì„ ë°ì´í„° ì €ì¥ ì‹¤íŒ¨: {e.Message}");
         }
     }
 
@@ -124,44 +124,44 @@ public class SaveSystem : MonoBehaviour
     {
         try
         {
-            // ÀúÀåµÈ µ¥ÀÌÅÍ°¡ ÀÖ´ÂÁö È®ÀÎ
+            // ì €ì¥ëœ ë°ì´í„°ê°€ ìˆëŠ”ì§€ í™•ì¸
             if (!ES3.KeyExists("catTowerLevel"))
             {
-                Debug.Log("ÀúÀåµÈ °ÔÀÓ µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù. »õ °ÔÀÓÀ¸·Î ½ÃÀÛÇÕ´Ï´Ù.");
-                DebugLogger.LogToFile("ÀúÀåµÈ °ÔÀÓ µ¥ÀÌÅÍ°¡ ¾ø½À´Ï´Ù. »õ °ÔÀÓÀ¸·Î ½ÃÀÛÇÕ´Ï´Ù.");
+                Debug.Log("ì €ì¥ëœ ê²Œì„ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤. ìƒˆ ê²Œì„ìœ¼ë¡œ ì‹œì‘í•©ë‹ˆë‹¤.");
+                DebugLogger.LogToFile("ì €ì¥ëœ ê²Œì„ ë°ì´í„°ê°€ ì—†ìŠµë‹ˆë‹¤. ìƒˆ ê²Œì„ìœ¼ë¡œ ì‹œì‘í•©ë‹ˆë‹¤.");
                 return;
             }
 
-            // ¸¶Áö¸· ÀúÀå ½Ã°£ È®ÀÎ
+            // ë§ˆì§€ë§‰ ì €ì¥ ì‹œê°„ í™•ì¸
             if (ES3.KeyExists("lastSaveTime"))
             {
                 long lastSaveTimeBinary = ES3.Load<long>("lastSaveTime");
                 System.DateTime lastSaveTime = System.DateTime.FromBinary(lastSaveTimeBinary);
                 System.TimeSpan timeDifference = System.DateTime.Now - lastSaveTime;
 
-                Debug.Log($"¸¶Áö¸· ÀúÀå: {lastSaveTime}, °æ°ú ½Ã°£: {timeDifference.TotalMinutes:F1}ºĞ");
-                DebugLogger.LogToFile($"¸¶Áö¸· ÀúÀå: {lastSaveTime}, °æ°ú ½Ã°£: {timeDifference.TotalMinutes:F1}ºĞ");
+                Debug.Log($"ë§ˆì§€ë§‰ ì €ì¥: {lastSaveTime}, ê²½ê³¼ ì‹œê°„: {timeDifference.TotalMinutes:F1}ë¶„");
+                DebugLogger.LogToFile($"ë§ˆì§€ë§‰ ì €ì¥: {lastSaveTime}, ê²½ê³¼ ì‹œê°„: {timeDifference.TotalMinutes:F1}ë¶„");
 
-                // ¿ÀÇÁ¶óÀÎ ÁøÇà °è»ê (³ªÁß¿¡ ±¸Çö)
+                // ì˜¤í”„ë¼ì¸ ì§„í–‰ ê³„ì‚° (ë‚˜ì¤‘ì— êµ¬í˜„)
                 CalculateOfflineProgress(timeDifference);
             }
 
-            // CatTower µ¥ÀÌÅÍ ·Îµå (1ÃÊ ÈÄ - ¿ÀºêÁ§Æ® ÃÊ±âÈ­ ´ë±â)
+            // CatTower ë°ì´í„° ë¡œë“œ (1ì´ˆ í›„ - ì˜¤ë¸Œì íŠ¸ ì´ˆê¸°í™” ëŒ€ê¸°)
             Invoke(nameof(LoadCatTowerData), 1f);
 
-            // GameDataManager µ¥ÀÌÅÍ ·Îµå (1ÃÊ ÈÄ)
+            // GameDataManager ë°ì´í„° ë¡œë“œ (1ì´ˆ í›„)
             Invoke(nameof(LoadGameManagerData), 1f);
 
-            // °í¾çÀÌ À§Ä¡ ·Îµå (1.5ÃÊ ÈÄ)
+            // ê³ ì–‘ì´ ìœ„ì¹˜ ë¡œë“œ (1.5ì´ˆ í›„)
             Invoke(nameof(LoadCatPosition), 1.5f);
 
-            Debug.Log("°ÔÀÓ µ¥ÀÌÅÍ ·Îµå ½ÃÀÛ!");
-            DebugLogger.LogToFile("°ÔÀÓ µ¥ÀÌÅÍ ·Îµå ½ÃÀÛ!");
+            Debug.Log("ê²Œì„ ë°ì´í„° ë¡œë“œ ì‹œì‘!");
+            DebugLogger.LogToFile("ê²Œì„ ë°ì´í„° ë¡œë“œ ì‹œì‘!");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"°ÔÀÓ µ¥ÀÌÅÍ ·Îµå ½ÇÆĞ: {e.Message}");
-            DebugLogger.LogToFile($"°ÔÀÓ µ¥ÀÌÅÍ ·Îµå ½ÇÆĞ: {e.Message}");
+            Debug.LogError($"ê²Œì„ ë°ì´í„° ë¡œë“œ ì‹¤íŒ¨: {e.Message}");
+            DebugLogger.LogToFile($"ê²Œì„ ë°ì´í„° ë¡œë“œ ì‹¤íŒ¨: {e.Message}");
         }
     }
 
@@ -169,21 +169,21 @@ public class SaveSystem : MonoBehaviour
     {
         if (CatTower.Instance != null)
         {
-            // ÀúÀåµÈ °ª ·Îµå (±âº»°ª ¼³Á¤)
+            // ì €ì¥ëœ ê°’ ë¡œë“œ (ê¸°ë³¸ê°’ ì„¤ì •)
             int savedLevel = ES3.Load("catTowerLevel", 1);
             int savedChurCount = ES3.Load("churCount", 0);
             float savedProductionTimer = ES3.Load("productionTimer", 0f);
 
-            // CatTower¿¡ Àû¿ë
+            // CatTowerì— ì ìš©
             CatTower.Instance.level = savedLevel;
             CatTower.Instance.churCount = savedChurCount;
             CatTower.Instance.productionTimer = savedProductionTimer;
 
-            // ½ºÇÁ¶óÀÌÆ® ¾÷µ¥ÀÌÆ® (·¹º§¿¡ µû¸¥ ¿ÜÇü º¯°æ)
+            // ìŠ¤í”„ë¼ì´íŠ¸ ì—…ë°ì´íŠ¸ (ë ˆë²¨ì— ë”°ë¥¸ ì™¸í˜• ë³€ê²½)
             CatTower.Instance.CreateTowerSprite();
 
-            Debug.Log($"Ä¹Å¸¿ö µ¥ÀÌÅÍ ·Îµå: ·¹º§ {savedLevel}, Ãò¸£ {savedChurCount}°³");
-            DebugLogger.LogToFile($"Ä¹Å¸¿ö µ¥ÀÌÅÍ ·Îµå: ·¹º§ {savedLevel}, Ãò¸£ {savedChurCount}°³");
+            Debug.Log($"ìº£íƒ€ì›Œ ë°ì´í„° ë¡œë“œ: ë ˆë²¨ {savedLevel}, ì¸„ë¥´ {savedChurCount}ê°œ");
+            DebugLogger.LogToFile($"ìº£íƒ€ì›Œ ë°ì´í„° ë¡œë“œ: ë ˆë²¨ {savedLevel}, ì¸„ë¥´ {savedChurCount}ê°œ");
         }
     }
 
@@ -194,8 +194,8 @@ public class SaveSystem : MonoBehaviour
             float savedHappiness = ES3.Load("happiness", 100f);
             GameDataManager.Instance.happiness = savedHappiness;
 
-            Debug.Log($"°ÔÀÓ µ¥ÀÌÅÍ ·Îµå: Çàº¹µµ {savedHappiness:F1}%");
-            DebugLogger.LogToFile($"°ÔÀÓ µ¥ÀÌÅÍ ·Îµå: Çàº¹µµ {savedHappiness:F1}%");
+            Debug.Log($"ê²Œì„ ë°ì´í„° ë¡œë“œ: í–‰ë³µë„ {savedHappiness:F1}%");
+            DebugLogger.LogToFile($"ê²Œì„ ë°ì´í„° ë¡œë“œ: í–‰ë³µë„ {savedHappiness:F1}%");
         }
     }
 
@@ -209,8 +209,8 @@ public class SaveSystem : MonoBehaviour
             Vector3 savedPosition = new Vector3(savedX, savedY, 0f);
             TestCat.Instance.transform.position = savedPosition;
 
-            Debug.Log($"°í¾çÀÌ À§Ä¡ ·Îµå: ({savedX:F2}, {savedY:F2})");
-            DebugLogger.LogToFile($"°í¾çÀÌ À§Ä¡ ·Îµå: ({savedX:F2}, {savedY:F2})");
+            Debug.Log($"ê³ ì–‘ì´ ìœ„ì¹˜ ë¡œë“œ: ({savedX:F2}, {savedY:F2})");
+            DebugLogger.LogToFile($"ê³ ì–‘ì´ ìœ„ì¹˜ ë¡œë“œ: ({savedX:F2}, {savedY:F2})");
         }
     }
 
@@ -218,54 +218,54 @@ public class SaveSystem : MonoBehaviour
     {
         if (CatTower.Instance == null) return;
 
-        // ¿ÀÇÁ¶óÀÎ Áß Ãò¸£ »ı»ê °è»ê
+        // ì˜¤í”„ë¼ì¸ ì¤‘ ì¸„ë¥´ ìƒì‚° ê³„ì‚°
         double offlineMinutes = offlineTime.TotalMinutes;
-        double productionCycles = offlineMinutes / 10.0; // 10ºĞ¸¶´Ù »ı»ê
+        double productionCycles = offlineMinutes / 10.0; // 10ë¶„ë§ˆë‹¤ ìƒì‚°
 
         if (productionCycles >= 1.0)
         {
             int productionAmount = CatTower.Instance.GetProductionAmount();
             int offlineProduction = (int)(productionCycles * productionAmount);
 
-            // ÃÖ´ë 1½Ã°£Ä¡¸¸ Àû¿ë (³Ê¹« ¸¹ÀÌ ÁÖÁö ¾Ê±â À§ÇØ)
-            int maxOfflineProduction = productionAmount * 6; // 1½Ã°£ = 6¹ø »ı»ê
+            // ìµœëŒ€ 1ì‹œê°„ì¹˜ë§Œ ì ìš© (ë„ˆë¬´ ë§ì´ ì£¼ì§€ ì•Šê¸° ìœ„í•´)
+            int maxOfflineProduction = productionAmount * 6; // 1ì‹œê°„ = 6ë²ˆ ìƒì‚°
             offlineProduction = Mathf.Min(offlineProduction, maxOfflineProduction);
 
             if (offlineProduction > 0)
             {
                 CatTower.Instance.churCount += offlineProduction;
 
-                Debug.Log($"¿ÀÇÁ¶óÀÎ ÁøÇà: {offlineTime.TotalMinutes:F1}ºĞ, Ãò¸£ +{offlineProduction}°³");
-                DebugLogger.LogToFile($"¿ÀÇÁ¶óÀÎ ÁøÇà: {offlineTime.TotalMinutes:F1}ºĞ, Ãò¸£ +{offlineProduction}°³");
+                Debug.Log($"ì˜¤í”„ë¼ì¸ ì§„í–‰: {offlineTime.TotalMinutes:F1}ë¶„, ì¸„ë¥´ +{offlineProduction}ê°œ");
+                DebugLogger.LogToFile($"ì˜¤í”„ë¼ì¸ ì§„í–‰: {offlineTime.TotalMinutes:F1}ë¶„, ì¸„ë¥´ +{offlineProduction}ê°œ");
             }
         }
 
-        // ¿ÀÇÁ¶óÀÎ Áß Çàº¹µµ °¨¼Ò °è»ê
+        // ì˜¤í”„ë¼ì¸ ì¤‘ í–‰ë³µë„ ê°ì†Œ ê³„ì‚°
         if (GameDataManager.Instance != null)
         {
             float happinessDecay = (float)(offlineMinutes / 60.0 * GameDataManager.Instance.happinessDecayRate);
             GameDataManager.Instance.happiness -= happinessDecay;
             GameDataManager.Instance.happiness = Mathf.Clamp(GameDataManager.Instance.happiness, 0f, 100f);
 
-            Debug.Log($"¿ÀÇÁ¶óÀÎ Çàº¹µµ °¨¼Ò: -{happinessDecay:F1}% (ÇöÀç: {GameDataManager.Instance.happiness:F1}%)");
-            DebugLogger.LogToFile($"¿ÀÇÁ¶óÀÎ Çàº¹µµ °¨¼Ò: -{happinessDecay:F1}% (ÇöÀç: {GameDataManager.Instance.happiness:F1}%)");
+            Debug.Log($"ì˜¤í”„ë¼ì¸ í–‰ë³µë„ ê°ì†Œ: -{happinessDecay:F1}% (í˜„ì¬: {GameDataManager.Instance.happiness:F1}%)");
+            DebugLogger.LogToFile($"ì˜¤í”„ë¼ì¸ í–‰ë³µë„ ê°ì†Œ: -{happinessDecay:F1}% (í˜„ì¬: {GameDataManager.Instance.happiness:F1}%)");
         }
     }
 
-    // ¼öµ¿ ÀúÀå/·Îµå ¸Ş¼­µåµé
+    // ìˆ˜ë™ ì €ì¥/ë¡œë“œ ë©”ì„œë“œë“¤
     public void ManualSave()
     {
         SaveGameData();
-        Debug.Log("¼öµ¿ ÀúÀå ¿Ï·á!");
+        Debug.Log("ìˆ˜ë™ ì €ì¥ ì™„ë£Œ!");
     }
 
     public void ManualLoad()
     {
         LoadGameData();
-        Debug.Log("¼öµ¿ ·Îµå ¿Ï·á!");
+        Debug.Log("ìˆ˜ë™ ë¡œë“œ ì™„ë£Œ!");
     }
 
-    // µ¥ÀÌÅÍ ÃÊ±âÈ­ (»õ °ÔÀÓ)
+    // ë°ì´í„° ì´ˆê¸°í™” (ìƒˆ ê²Œì„)
     public void ResetGameData()
     {
         ES3.DeleteKey("catTowerLevel");
@@ -276,11 +276,11 @@ public class SaveSystem : MonoBehaviour
         ES3.DeleteKey("catPositionY");
         ES3.DeleteKey("lastSaveTime");
 
-        Debug.Log("°ÔÀÓ µ¥ÀÌÅÍ ÃÊ±âÈ­ ¿Ï·á!");
-        DebugLogger.LogToFile("°ÔÀÓ µ¥ÀÌÅÍ ÃÊ±âÈ­ ¿Ï·á!");
+        Debug.Log("ê²Œì„ ë°ì´í„° ì´ˆê¸°í™” ì™„ë£Œ!");
+        DebugLogger.LogToFile("ê²Œì„ ë°ì´í„° ì´ˆê¸°í™” ì™„ë£Œ!");
     }
 
-    // ÀúÀå ÆÄÀÏ Á¸Àç ¿©ºÎ È®ÀÎ
+    // ì €ì¥ íŒŒì¼ ì¡´ì¬ ì—¬ë¶€ í™•ì¸
     public bool HasSaveData()
     {
         return ES3.KeyExists("catTowerLevel");

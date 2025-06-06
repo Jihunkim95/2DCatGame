@@ -1,22 +1,26 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CatTower : MonoBehaviour
 {
-    [Header("Ä¹Å¸¿ö ¼³Á¤")]
+    [Header("ìº£íƒ€ì›Œ ì„¤ì •")]
     public SpriteRenderer spriteRenderer;
     public Color normalColor = Color.green;
     public Color hoverColor = Color.yellow;
 
-    [Header("°ÔÀÓ µ¥ÀÌÅÍ")]
+    [Header("ìŠ¤í”„ë¼ì´íŠ¸ ì„¤ì •")]
+    public float pixelsPerUnit = 32f; // í”½ì…€ í¼ ìœ ë‹› ì„¤ì • (Inspectorì—ì„œ ì¡°ì • ê°€ëŠ¥)
+    public Vector2 spritePivot = new Vector2(0.5f, 0.5f); // ìŠ¤í”„ë¼ì´íŠ¸ í”¼ë²—
+
+    [Header("ê²Œì„ ë°ì´í„°")]
     public int level = 1;
     public int churCount = 0;
     public float productionTimer = 0f;
-    public float productionInterval = 10f; // 10ÃÊ¸¶´Ù »ı»ê
+    public float productionInterval = 10f; // 10ì´ˆë§ˆë‹¤ ìƒì‚°
 
     private Camera mainCamera;
     private bool isHovered = false;
 
-    // ½Ì±ÛÅæ
+    // ì‹±ê¸€í†¤
     public static CatTower Instance { get; private set; }
 
     void Awake()
@@ -50,58 +54,77 @@ public class CatTower : MonoBehaviour
 
         CreateTowerSprite();
 
-        Debug.Log("Ä¹Å¸¿ö »ı¼º ¿Ï·á - ¾÷±×·¹ÀÌµå °¡´É ºôµå");
-        DebugLogger.LogToFile("Ä¹Å¸¿ö »ı¼º ¿Ï·á - ¾÷±×·¹ÀÌµå °¡´É ºôµå");
+        Debug.Log("ìº£íƒ€ì›Œ ìƒì„± ì™„ë£Œ - ì—…ê·¸ë ˆì´ë“œ ê°€ëŠ¥ ë¹Œë“œ");
+        DebugLogger.LogToFile("ìº£íƒ€ì›Œ ìƒì„± ì™„ë£Œ - ì—…ê·¸ë ˆì´ë“œ ê°€ëŠ¥ ë¹Œë“œ");
     }
 
     public void CreateTowerSprite()
     {
-        // ºôµå¿¡¼­ ¾ÈÁ¤ÀûÀ¸·Î ÀÛµ¿ÇÏ´Â Å¸¿ö ½ºÇÁ¶óÀÌÆ® »ı¼º
+        // ë¹Œë“œì—ì„œ ì•ˆì •ì ìœ¼ë¡œ ì‘ë™í•˜ëŠ” íƒ€ì›Œ ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„±
         Texture2D towerTexture = LoadTowerTextureForBuild();
 
         if (towerTexture != null)
         {
+            // ê¸°ì¡´ í…ìŠ¤ì²˜ì—ì„œ ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„± ì‹œ ì˜¬ë°”ë¥¸ PixelsPerUnit ì‚¬ìš©
+            float actualPixelsPerUnit = GetOptimalPixelsPerUnit(towerTexture);
+
             Sprite towerSprite = Sprite.Create(
                 towerTexture,
                 new Rect(0, 0, towerTexture.width, towerTexture.height),
-                new Vector2(0.5f, 0.5f),
-                100f
+                spritePivot,
+                actualPixelsPerUnit // ë™ì ìœ¼ë¡œ ê³„ì‚°ëœ ê°’ ì‚¬ìš©
             );
 
             spriteRenderer.sprite = towerSprite;
             spriteRenderer.color = GetLevelColor();
 
-            Debug.Log($"Å¸¿ö ÀÌ¹ÌÁö ·Îµå ¼º°ø - ·¹º§ {level} (Å©±â: {towerTexture.width}x{towerTexture.height})");
-            DebugLogger.LogToFile($"Å¸¿ö ÀÌ¹ÌÁö ·Îµå ¼º°ø - ·¹º§ {level} (Å©±â: {towerTexture.width}x{towerTexture.height})");
+            Debug.Log($"íƒ€ì›Œ ì´ë¯¸ì§€ ë¡œë“œ ì„±ê³µ - ë ˆë²¨ {level} (í¬ê¸°: {towerTexture.width}x{towerTexture.height}, PPU: {actualPixelsPerUnit})");
+            DebugLogger.LogToFile($"íƒ€ì›Œ ì´ë¯¸ì§€ ë¡œë“œ ì„±ê³µ - ë ˆë²¨ {level} (í¬ê¸°: {towerTexture.width}x{towerTexture.height}, PPU: {actualPixelsPerUnit})");
         }
         else
         {
-            // ÀÌ¹ÌÁö ·Îµå ½ÇÆĞ ½Ã ÇÁ·Î±×·¡¹Ö ¹æ½ÄÀ¸·Î Å¸¿ö ½ºÇÁ¶óÀÌÆ® »ı¼º
+            // ì´ë¯¸ì§€ ë¡œë“œ ì‹¤íŒ¨ ì‹œ í”„ë¡œê·¸ë˜ë° ë°©ì‹ìœ¼ë¡œ íƒ€ì›Œ ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„±
             CreateProceduralTowerSprite();
-            Debug.Log($"ÇÁ·Î±×·¡¹Ö ¹æ½ÄÀ¸·Î Å¸¿ö ½ºÇÁ¶óÀÌÆ® »ı¼º - ·¹º§ {level}");
-            DebugLogger.LogToFile($"ÇÁ·Î±×·¡¹Ö ¹æ½ÄÀ¸·Î Å¸¿ö ½ºÇÁ¶óÀÌÆ® »ı¼º - ·¹º§ {level}");
+            Debug.Log($"í”„ë¡œê·¸ë˜ë° ë°©ì‹ìœ¼ë¡œ íƒ€ì›Œ ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„± - ë ˆë²¨ {level}");
+            DebugLogger.LogToFile($"í”„ë¡œê·¸ë˜ë° ë°©ì‹ìœ¼ë¡œ íƒ€ì›Œ ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„± - ë ˆë²¨ {level}");
+        }
+    }
+
+    float GetOptimalPixelsPerUnit(Texture2D texture)
+    {
+        // í…ìŠ¤ì²˜ í¬ê¸°ì— ë”°ë¼ ì ì ˆí•œ PixelsPerUnit ê³„ì‚°
+        // ë˜ëŠ” Inspectorì—ì„œ ì„¤ì •í•œ ê°’ ì‚¬ìš©
+
+        if (pixelsPerUnit > 0)
+        {
+            // Inspectorì—ì„œ ì„¤ì •í•œ ê°’ì´ ìˆìœ¼ë©´ ì‚¬ìš©
+            return pixelsPerUnit;
+        }
+        else
+        {
+            // í…ìŠ¤ì²˜ í¬ê¸°ì— ë”°ë¼ ìë™ ê³„ì‚°
+            // ì¼ë°˜ì ìœ¼ë¡œ 64x64 í…ìŠ¤ì²˜ëŠ” 32 PPU, 128x128ì€ 64 PPU ë“±
+            float averageSize = (texture.width + texture.height) / 2f;
+            return Mathf.Max(averageSize / 2f, 16f); // ìµœì†Œ 16 PPU
         }
     }
 
     Texture2D LoadTowerTextureForBuild()
     {
-        // ºôµå¿¡¼­ È®½ÇÇÏ°Ô ÀÛµ¿ÇÏ´Â ¹æ¹ıµé¸¸ ½Ãµµ
+        // ë¹Œë“œì—ì„œ í™•ì‹¤í•˜ê²Œ ì‘ë™í•˜ëŠ” ë°©ë²•ë“¤ë§Œ ì‹œë„
 
-        // 1. Resources Æú´õ¿¡¼­ ·Îµå (°¡Àå È®½ÇÇÑ ¹æ¹ı)
-        Texture2D resourceTexture = Resources.Load<Texture2D>("CatTower");
+        // 1. Resources í´ë”ì—ì„œ ë¡œë“œ (ê°€ì¥ í™•ì‹¤í•œ ë°©ë²•)
+        Texture2D resourceTexture = Resources.Load<Texture2D>("CatTower(2)");
         if (resourceTexture != null)
         {
-            Debug.Log("Å¸¿ö ÀÌ¹ÌÁö Resources¿¡¼­ ·Îµå ¼º°ø");
+            Debug.Log("íƒ€ì›Œ ì´ë¯¸ì§€ Resourcesì—ì„œ ë¡œë“œ ì„±ê³µ");
             return resourceTexture;
         }
 
 #if UNITY_EDITOR
-        // ¿¡µğÅÍ¿¡¼­¸¸ Ãß°¡ ½Ãµµ
+        // ì—ë””í„°ì—ì„œë§Œ ì¶”ê°€ ì‹œë„
         string[] imagePaths = {
-            "Assets/Image/CatTower",
-            "Assets/Images/CatTower",
-            "Assets/Sprites/CatTower",
-            "Assets/Art/CatTower"
+            "Assets/Image/Skin/CatTower(2)",
         };
 
         foreach (string path in imagePaths)
@@ -109,44 +132,44 @@ public class CatTower : MonoBehaviour
             Texture2D texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(path + ".png");
             if (texture != null)
             {
-                Debug.Log($"Å¸¿ö ÀÌ¹ÌÁö ¿¡µğÅÍ¿¡¼­ ·Îµå ¼º°ø: {path}.png");
+                Debug.Log($"íƒ€ì›Œ ì´ë¯¸ì§€ ì—ë””í„°ì—ì„œ ë¡œë“œ ì„±ê³µ: {path}.png");
                 return texture;
             }
         }
 
-        // GUID·Î °Ë»ö
-        string[] guids = UnityEditor.AssetDatabase.FindAssets("CatTower t:Texture2D");
+        // GUIDë¡œ ê²€ìƒ‰
+        string[] guids = UnityEditor.AssetDatabase.FindAssets("CatTower(2) t:Texture2D");
         if (guids.Length > 0)
         {
             string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
             Texture2D texture = UnityEditor.AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
             if (texture != null)
             {
-                Debug.Log($"Å¸¿ö ÀÌ¹ÌÁö °Ë»öÀ¸·Î ·Îµå: {assetPath}");
+                Debug.Log($"íƒ€ì›Œ ì´ë¯¸ì§€ ê²€ìƒ‰ìœ¼ë¡œ ë¡œë“œ: {assetPath}");
                 return texture;
             }
         }
 #endif
 
-        Debug.LogWarning("Å¸¿ö ÀÌ¹ÌÁö¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù. ÇÁ·Î±×·¡¹Ö ¹æ½ÄÀ¸·Î »ı¼ºÇÕ´Ï´Ù.");
+        Debug.LogWarning("íƒ€ì›Œ ì´ë¯¸ì§€ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤. í”„ë¡œê·¸ë˜ë° ë°©ì‹ìœ¼ë¡œ ìƒì„±í•©ë‹ˆë‹¤.");
         return null;
     }
 
     void CreateProceduralTowerSprite()
     {
-        // ´õ ¼¼¹ĞÇÏ°í ¿¹»Û Å¸¿ö ½ºÇÁ¶óÀÌÆ®¸¦ ÇÁ·Î±×·¡¹Ö ¹æ½ÄÀ¸·Î »ı¼º
+        // ë” ì„¸ë°€í•˜ê³  ì˜ˆìœ íƒ€ì›Œ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ í”„ë¡œê·¸ë˜ë° ë°©ì‹ìœ¼ë¡œ ìƒì„±
         int width = 64;
         int height = 96;
         Texture2D texture = new Texture2D(width, height);
         Color[] colors = new Color[width * height];
 
-        // ¹è°æ Åõ¸íÈ­
+        // ë°°ê²½ íˆ¬ëª…í™”
         for (int i = 0; i < colors.Length; i++)
         {
             colors[i] = Color.clear;
         }
 
-        // ·¹º§º° ±âº» »ö»ó
+        // ë ˆë²¨ë³„ ê¸°ë³¸ ìƒ‰ìƒ
         Color baseColor = GetLevelBaseColor();
         Color darkColor = new Color(baseColor.r * 0.7f, baseColor.g * 0.7f, baseColor.b * 0.7f, 1f);
         Color lightColor = new Color(
@@ -156,36 +179,45 @@ public class CatTower : MonoBehaviour
             1f
         );
 
-        // Å¸¿ö º£ÀÌ½º (ÇÏ´Ü ³ĞÀº ºÎºĞ)
-        DrawRectangle(colors, width, height, 8, 8, 48, 25, darkColor);      // Å×µÎ¸®
-        DrawRectangle(colors, width, height, 10, 10, 44, 21, baseColor);    // ³»ºÎ
+        // íƒ€ì›Œ ë² ì´ìŠ¤ (í•˜ë‹¨ ë„“ì€ ë¶€ë¶„)
+        DrawRectangle(colors, width, height, 8, 8, 48, 25, darkColor);      // í…Œë‘ë¦¬
+        DrawRectangle(colors, width, height, 10, 10, 44, 21, baseColor);    // ë‚´ë¶€
 
-        // Å¸¿ö Áß°£ ºÎºĞ
-        DrawRectangle(colors, width, height, 12, 30, 40, 35, darkColor);    // Å×µÎ¸®
-        DrawRectangle(colors, width, height, 14, 32, 36, 31, baseColor);    // ³»ºÎ
+        // íƒ€ì›Œ ì¤‘ê°„ ë¶€ë¶„
+        DrawRectangle(colors, width, height, 12, 30, 40, 35, darkColor);    // í…Œë‘ë¦¬
+        DrawRectangle(colors, width, height, 14, 32, 36, 31, baseColor);    // ë‚´ë¶€
 
-        // Å¸¿ö »ó´Ü ºÎºĞ
-        DrawRectangle(colors, width, height, 16, 60, 32, 25, darkColor);    // Å×µÎ¸®
-        DrawRectangle(colors, width, height, 18, 62, 28, 21, lightColor);   // ³»ºÎ (¹à°Ô)
+        // íƒ€ì›Œ ìƒë‹¨ ë¶€ë¶„
+        DrawRectangle(colors, width, height, 16, 60, 32, 25, darkColor);    // í…Œë‘ë¦¬
+        DrawRectangle(colors, width, height, 18, 62, 28, 21, lightColor);   // ë‚´ë¶€ (ë°ê²Œ)
 
-        // ·¹º§º° Àå½Ä Ãß°¡
+        // ë ˆë²¨ë³„ ì¥ì‹ ì¶”ê°€
         AddLevelDecorations(colors, width, height, baseColor);
 
-        // À©µµ¿ì (ÀÛÀº »ç°¢Çüµé)
+        // ìœˆë„ìš° (ì‘ì€ ì‚¬ê°í˜•ë“¤)
         DrawRectangle(colors, width, height, 20, 40, 6, 6, Color.cyan);
         DrawRectangle(colors, width, height, 38, 40, 6, 6, Color.cyan);
         DrawRectangle(colors, width, height, 29, 50, 6, 6, Color.cyan);
 
-        // ÅØ½ºÃ³ Àû¿ë
+        // í…ìŠ¤ì²˜ ì ìš©
         texture.SetPixels(colors);
         texture.Apply();
 
-        // ½ºÇÁ¶óÀÌÆ® »ı¼º
-        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, width, height), new Vector2(0.5f, 0.5f));
-        spriteRenderer.sprite = sprite;
-        spriteRenderer.color = Color.white; // ÀÌ¹Ì »ö»óÀÌ Àû¿ëµÇ¾úÀ¸¹Ç·Î Èò»ö »ç¿ë
+        // í”„ë¡œê·¸ë˜ë° ë°©ì‹ ìŠ¤í”„ë¼ì´íŠ¸ì—ë„ ì˜¬ë°”ë¥¸ PixelsPerUnit ì ìš©
+        float proceduralPixelsPerUnit = pixelsPerUnit > 0 ? pixelsPerUnit : 32f; // ê¸°ë³¸ê°’ 32
 
-        Debug.Log($"ÇÁ·Î±×·¡¹Ö ¹æ½Ä Å¸¿ö ½ºÇÁ¶óÀÌÆ® »ı¼º ¿Ï·á - ·¹º§ {level}");
+        // ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„±
+        Sprite sprite = Sprite.Create(
+            texture,
+            new Rect(0, 0, width, height),
+            spritePivot,
+            proceduralPixelsPerUnit // Inspectorì—ì„œ ì„¤ì •í•œ ê°’ ì‚¬ìš©
+        );
+
+        spriteRenderer.sprite = sprite;
+        spriteRenderer.color = Color.white; // ì´ë¯¸ ìƒ‰ìƒì´ ì ìš©ë˜ì—ˆìœ¼ë¯€ë¡œ í°ìƒ‰ ì‚¬ìš©
+
+        Debug.Log($"í”„ë¡œê·¸ë˜ë° ë°©ì‹ íƒ€ì›Œ ìŠ¤í”„ë¼ì´íŠ¸ ìƒì„± ì™„ë£Œ - ë ˆë²¨ {level}, PPU: {proceduralPixelsPerUnit}");
     }
 
     Color GetLevelBaseColor()
@@ -193,13 +225,13 @@ public class CatTower : MonoBehaviour
         switch (level)
         {
             case 1:
-                return new Color(0.4f, 0.8f, 0.4f, 1f); // ¿¬ÇÑ ³ì»ö
+                return new Color(0.4f, 0.8f, 0.4f, 1f); // ì—°í•œ ë…¹ìƒ‰
             case 2:
-                return new Color(0.6f, 0.6f, 0.8f, 1f); // ¿¬ÇÑ º¸¶ó»ö
+                return new Color(0.6f, 0.6f, 0.8f, 1f); // ì—°í•œ ë³´ë¼ìƒ‰
             case 3:
-                return new Color(0.8f, 0.6f, 0.4f, 1f); // ¿¬ÇÑ ÁÖÈ²»ö
+                return new Color(0.8f, 0.6f, 0.4f, 1f); // ì—°í•œ ì£¼í™©ìƒ‰
             default:
-                return new Color(0.7f, 0.7f, 0.7f, 1f); // È¸»ö
+                return new Color(0.7f, 0.7f, 0.7f, 1f); // íšŒìƒ‰
         }
     }
 
@@ -210,11 +242,11 @@ public class CatTower : MonoBehaviour
         switch (level)
         {
             case 2:
-                // ·¹º§ 2: ¾ÈÅ×³ª Ãß°¡
+                // ë ˆë²¨ 2: ì•ˆí…Œë‚˜ ì¶”ê°€
                 DrawRectangle(colors, width, height, 31, 85, 2, 8, decorColor);
                 break;
             case 3:
-                // ·¹º§ 3: ´õ Å« ¾ÈÅ×³ª¿Í ±ê¹ß
+                // ë ˆë²¨ 3: ë” í° ì•ˆí…Œë‚˜ì™€ ê¹ƒë°œ
                 DrawRectangle(colors, width, height, 31, 85, 2, 10, decorColor);
                 DrawRectangle(colors, width, height, 28, 88, 8, 3, Color.red);
                 break;
@@ -244,7 +276,7 @@ public class CatTower : MonoBehaviour
 
     Color GetLevelColor()
     {
-        // ÀÌÁ¦ ÇÁ·Î±×·¡¹Ö ¹æ½ÄÀ¸·Î »ı¼ºÇÒ ¶§´Â ÀÌ¹Ì »ö»óÀÌ Àû¿ëµÇ¹Ç·Î Èò»ö ¹İÈ¯
+        // ì´ì œ í”„ë¡œê·¸ë˜ë° ë°©ì‹ìœ¼ë¡œ ìƒì„±í•  ë•ŒëŠ” ì´ë¯¸ ìƒ‰ìƒì´ ì ìš©ë˜ë¯€ë¡œ í°ìƒ‰ ë°˜í™˜
         return Color.white;
     }
 
@@ -264,8 +296,8 @@ public class CatTower : MonoBehaviour
             churCount += production;
             productionTimer = 0f;
 
-            Debug.Log($"Ãò¸£ »ı»ê: +{production} (ÃÑ {churCount}°³)");
-            DebugLogger.LogToFile($"Ãò¸£ »ı»ê: +{production} (ÃÑ {churCount}°³)");
+            Debug.Log($"ì¸„ë¥´ ìƒì‚°: +{production} (ì´ {churCount}ê°œ)");
+            DebugLogger.LogToFile($"ì¸„ë¥´ ìƒì‚°: +{production} (ì´ {churCount}ê°œ)");
         }
     }
 
@@ -279,12 +311,12 @@ public class CatTower : MonoBehaviour
         float distance = Vector2.Distance(transform.position, mouseWorldPos);
         float interactionRadius = GetComponent<Collider2D>().bounds.size.x / 2f;
 
-        // ¿ìÅ¬¸¯ Ã¼Å© - Modern UI Context Menu Ç¥½Ã
+        // ìš°í´ë¦­ ì²´í¬ - Modern UI Context Menu í‘œì‹œ
         if (Input.GetMouseButtonDown(1) && distance <= interactionRadius)
         {
             OnTowerRightClicked(mouseWorldPos);
         }
-        // ¸¶¿ì½º È£¹ö Ã¼Å©
+        // ë§ˆìš°ìŠ¤ í˜¸ë²„ ì²´í¬
         else if (distance <= interactionRadius)
         {
             if (!isHovered)
@@ -301,14 +333,14 @@ public class CatTower : MonoBehaviour
     {
         spriteRenderer.color = Color.white;
 
-        // ContextMenuManager È£Ãâ
+        // ContextMenuManager í˜¸ì¶œ
         if (ContextMenuManager.Instance != null)
         {
             ContextMenuManager.Instance.ShowTowerMenu(transform.position);
         }
 
-        Debug.Log("Å¸¿ö ¿ìÅ¬¸¯!");
-        DebugLogger.LogToFile("Å¸¿ö ¿ìÅ¬¸¯ - ÄÁÅØ½ºÆ® ¸Ş´º Ç¥½Ã");
+        Debug.Log("íƒ€ì›Œ ìš°í´ë¦­!");
+        DebugLogger.LogToFile("íƒ€ì›Œ ìš°í´ë¦­ - ì»¨í…ìŠ¤íŠ¸ ë©”ë‰´ í‘œì‹œ");
 
         Invoke(nameof(ResetColor), 0.2f);
     }
@@ -330,7 +362,7 @@ public class CatTower : MonoBehaviour
         spriteRenderer.color = isHovered ? hoverColor : normalColor;
     }
 
-    // °ÔÀÓ ·ÎÁ÷ ¸Ş¼­µåµé
+    // ê²Œì„ ë¡œì§ ë©”ì„œë“œë“¤
     public int GetProductionAmount()
     {
         return level + 1;
@@ -356,8 +388,8 @@ public class CatTower : MonoBehaviour
 
             CreateTowerSprite();
 
-            Debug.Log($"Ä¹Å¸¿ö ¾÷±×·¹ÀÌµå! ·¹º§ {level}, ºñ¿ë {cost}");
-            DebugLogger.LogToFile($"Ä¹Å¸¿ö ¾÷±×·¹ÀÌµå! ·¹º§ {level}, ºñ¿ë {cost}");
+            Debug.Log($"ìº£íƒ€ì›Œ ì—…ê·¸ë ˆì´ë“œ! ë ˆë²¨ {level}, ë¹„ìš© {cost}");
+            DebugLogger.LogToFile($"ìº£íƒ€ì›Œ ì—…ê·¸ë ˆì´ë“œ! ë ˆë²¨ {level}, ë¹„ìš© {cost}");
         }
     }
 
@@ -376,9 +408,17 @@ public class CatTower : MonoBehaviour
         return false;
     }
 
-    // ¿ÜºÎ¿¡¼­ Á¢±ÙÇÒ ¼ö ÀÖ´Â ÇÁ·ÎÆÛÆ¼µé
+    // ì™¸ë¶€ì—ì„œ ì ‘ê·¼í•  ìˆ˜ ìˆëŠ” í”„ë¡œí¼í‹°ë“¤
     public int Level => level;
     public int ChurCount => churCount;
-    public string ProductionInfo => $"»ı»ê·®: {GetProductionAmount()}°³ (´ÙÀ½: {GetProductionTimeLeft():F1}ÃÊ)";
-    public string UpgradeInfo => level < 3 ? $"¾÷±×·¹ÀÌµå ºñ¿ë: {GetUpgradeCost()}°³" : "ÃÖ´ë ·¹º§";
+    public string ProductionInfo => $"ìƒì‚°ëŸ‰: {GetProductionAmount()}ê°œ (ë‹¤ìŒ: {GetProductionTimeLeft():F1}ì´ˆ)";
+    public string UpgradeInfo => level < 3 ? $"ì—…ê·¸ë ˆì´ë“œ ë¹„ìš©: {GetUpgradeCost()}ê°œ" : "ìµœëŒ€ ë ˆë²¨";
+
+    // ëŸ°íƒ€ì„ì—ì„œ PixelsPerUnit ë³€ê²½í•˜ëŠ” ë©”ì„œë“œ (í…ŒìŠ¤íŠ¸ìš©)
+    [ContextMenu("Refresh Sprite with Current PPU")]
+    public void RefreshSpriteWithCurrentPPU()
+    {
+        CreateTowerSprite();
+        Debug.Log($"ìŠ¤í”„ë¼ì´íŠ¸ ìƒˆë¡œê³ ì¹¨ ì™„ë£Œ - PPU: {pixelsPerUnit}");
+    }
 }

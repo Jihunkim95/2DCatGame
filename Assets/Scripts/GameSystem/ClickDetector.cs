@@ -1,12 +1,12 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 
 public class ClickDetector : MonoBehaviour
 {
-    [Header("Å¬¸¯ °¨Áö ¼³Á¤")]
-    public LayerMask interactableLayer = -1; // °í¾çÀÌ ·¹ÀÌ¾î (Layer 8)
-    public LayerMask towerLayer = -1; // Ä¹Å¸¿ö ·¹ÀÌ¾î (Layer 9)
-    public float updateRate = 60f; // ÃÊ´ç °¨Áö È½¼ö
+    [Header("í´ë¦­ ê°ì§€ ì„¤ì •")]
+    public LayerMask interactableLayer = -1; // ê³ ì–‘ì´ ë ˆì´ì–´ (Layer 8)
+    public LayerMask towerLayer = -1; // ìº£íƒ€ì›Œ ë ˆì´ì–´ (Layer 9)
+    public float updateRate = 60f; // ì´ˆë‹¹ ê°ì§€ íšŸìˆ˜
 
     private Camera mainCamera;
     private List<Collider2D> interactableObjects = new List<Collider2D>();
@@ -17,14 +17,14 @@ public class ClickDetector : MonoBehaviour
         mainCamera = Camera.main;
         if (mainCamera == null)
         {
-            Debug.LogError("¸ŞÀÎ Ä«¸Ş¶ó¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogError("ë©”ì¸ ì¹´ë©”ë¼ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             return;
         }
 
-        // ÃÊ±â¿¡´Â Å¬¸¯ Åë°ú È¿°ú È°¼ºÈ­ (¹é±×¶ó¿îµå¸é »ç¿ë °¡´É)
+        // ì´ˆê¸°ì—ëŠ” í´ë¦­ í†µê³¼ íš¨ê³¼ í™œì„±í™” (ë°±ê·¸ë¼ìš´ë“œë©´ ì‚¬ìš© ê°€ëŠ¥)
         CompatibilityWindowManager.Instance?.EnableClickThrough();
 
-        // ¾÷µ¥ÀÌÆ® ÁÖ±â ¼³Á¤
+        // ì—…ë°ì´íŠ¸ ì£¼ê¸° ì„¤ì •
         InvokeRepeating(nameof(CheckMousePosition), 0f, 1f / updateRate);
     }
 
@@ -32,44 +32,44 @@ public class ClickDetector : MonoBehaviour
     {
         if (CompatibilityWindowManager.Instance == null) return;
 
-        // ÄÁÅØ½ºÆ® ¸Ş´º°¡ Ç¥½Ã ÁßÀÌ¸é click-through »óÅÂ º¯°æÇÏÁö ¾ÊÀ½
+        // ì»¨í…ìŠ¤íŠ¸ ë©”ë‰´ê°€ í‘œì‹œ ì¤‘ì´ë©´ click-through ìƒíƒœ ë³€ê²½í•˜ì§€ ì•ŠìŒ
         if (ContextMenuManager.Instance != null && ContextMenuManager.Instance.IsMenuVisible)
         {
-            Debug.Log("ÄÁÅØ½ºÆ® ¸Ş´º Ç¥½Ã ÁßÀÌ¹Ç·Î click-through »óÅÂ º¯°æ »ı·«");
+            Debug.Log("ì»¨í…ìŠ¤íŠ¸ ë©”ë‰´ í‘œì‹œ ì¤‘ì´ë¯€ë¡œ click-through ìƒíƒœ ë³€ê²½ ìƒëµ");
             return;
         }
 
-        // À©µµ¿ì ³» ¸¶¿ì½º À§Ä¡ °¡Á®¿À±â
+        // ìœˆë„ìš° ë‚´ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
         Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
 
-        // ½ºÅ©¸° ÁÂÇ¥¸¦ ¿ùµå ÁÂÇ¥·Î º¯È¯
+        // ìŠ¤í¬ë¦° ì¢Œí‘œë¥¼ ì›”ë“œ ì¢Œí‘œë¡œ ë³€í™˜
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
 
-        // »óÈ£ÀÛ¿ë °¡´ÉÇÑ ¿ÀºêÁ§Æ® È®ÀÎ (°í¾çÀÌ + Ä¹Å¸¿ö)
+        // ìƒí˜¸ì‘ìš© ê°€ëŠ¥í•œ ì˜¤ë¸Œì íŠ¸ í™•ì¸ (ê³ ì–‘ì´ + ìº£íƒ€ì›Œ)
         Collider2D catCollider = Physics2D.OverlapPoint(worldPos, interactableLayer);
         Collider2D towerCollider = Physics2D.OverlapPoint(worldPos, towerLayer);
 
         bool currentFrameHitSomething = (catCollider != null || towerCollider != null);
 
-        // »óÅÂ°¡ º¯°æµÇ¾úÀ» ¶§¸¸ À©µµ¿ì ¼Ó¼º º¯°æ
+        // ìƒíƒœê°€ ë³€ê²½ë˜ì—ˆì„ ë•Œë§Œ ìœˆë„ìš° ì†ì„± ë³€ê²½
         if (currentFrameHitSomething != lastFrameHitSomething)
         {
             if (currentFrameHitSomething)
             {
-                // °í¾çÀÌ³ª Ä¹Å¸¿ö À§¿¡ ¸¶¿ì½º°¡ ÀÖÀ½ - Å¬¸¯ Åë°ú ºñÈ°¼ºÈ­
+                // ê³ ì–‘ì´ë‚˜ ìº£íƒ€ì›Œ ìœ„ì— ë§ˆìš°ìŠ¤ê°€ ìˆìŒ - í´ë¦­ í†µê³¼ ë¹„í™œì„±í™”
                 CompatibilityWindowManager.Instance.DisableClickThrough();
 
-                // ¸¶¿ì½º Ä¿¼­ º¯°æ (¼±ÅÃ»çÇ×)
+                // ë§ˆìš°ìŠ¤ ì»¤ì„œ ë³€ê²½ (ì„ íƒì‚¬í•­)
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 
-                Debug.Log("»óÈ£ÀÛ¿ë ¿ÀºêÁ§Æ® À§¿¡ ¸¶¿ì½º - click-through ºñÈ°¼ºÈ­");
+                Debug.Log("ìƒí˜¸ì‘ìš© ì˜¤ë¸Œì íŠ¸ ìœ„ì— ë§ˆìš°ìŠ¤ - click-through ë¹„í™œì„±í™”");
             }
             else
             {
-                // »óÈ£ÀÛ¿ë ¿ÀºêÁ§Æ® ¹Û¿¡ ¸¶¿ì½º°¡ ÀÖÀ½ - Å¬¸¯ Åë°ú È°¼ºÈ­
+                // ìƒí˜¸ì‘ìš© ì˜¤ë¸Œì íŠ¸ ë°–ì— ë§ˆìš°ìŠ¤ê°€ ìˆìŒ - í´ë¦­ í†µê³¼ í™œì„±í™”
                 CompatibilityWindowManager.Instance.EnableClickThrough();
 
-                Debug.Log("ºó °ø°£¿¡ ¸¶¿ì½º - click-through È°¼ºÈ­");
+                Debug.Log("ë¹ˆ ê³µê°„ì— ë§ˆìš°ìŠ¤ - click-through í™œì„±í™”");
             }
 
             lastFrameHitSomething = currentFrameHitSomething;
@@ -78,11 +78,11 @@ public class ClickDetector : MonoBehaviour
 
     void OnDestroy()
     {
-        // °ÔÀÓ Á¾·á ½Ã Å¬¸¯ Åë°ú ºñÈ°¼ºÈ­
+        // ê²Œì„ ì¢…ë£Œ ì‹œ í´ë¦­ í†µê³¼ ë¹„í™œì„±í™”
         CompatibilityWindowManager.Instance?.DisableClickThrough();
     }
 
-    // µğ¹ö±×¿ë - ¸¶¿ì½º À§Ä¡ ½Ã°¢È­
+    // ë””ë²„ê·¸ìš© - ë§ˆìš°ìŠ¤ ìœ„ì¹˜ ì‹œê°í™”
     void OnDrawGizmos()
     {
         if (CompatibilityWindowManager.Instance != null && mainCamera != null)

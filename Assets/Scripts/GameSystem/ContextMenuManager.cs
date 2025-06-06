@@ -75,7 +75,6 @@ public class ContextMenuManager : MonoBehaviour
         Debug.Log("Unity UI 컨텍스트 메뉴 시스템 초기화 완료");
         DebugLogger.LogToFile("Unity UI 컨텍스트 메뉴 시스템 초기화 완료");
     }
-
     void LoadDungGeunMoFont()
     {
         // Inspector에서 할당되었는지 확인
@@ -86,52 +85,170 @@ public class ContextMenuManager : MonoBehaviour
             return;
         }
 
-        // 에디터에서만 자동 찾기
+        // Resources 폴더에서 찾기 (빌드에서도 작동) - 최우선
+        Debug.Log("Resources 폴더에서 DungGeunMo 폰트 검색 중...");
+
+        // 정확한 경로로 로드 시도
+        string[] resourcePaths = {
+            "Font/DungGeunMo SDF",    // Assets/Resources/Font/DungGeunMo SDF.asset
+            "Font/DungGeunMo",        // 혹시 다른 이름으로 저장된 경우
+            "DungGeunMo SDF",         // Resources 루트에 있는 경우
+            "DungGeunMo"              // 기본 이름
+        };
+
+        foreach (string path in resourcePaths)
+        {
+            try
+            {
+                TMP_FontAsset font = Resources.Load<TMP_FontAsset>(path);
+                if (font != null)
+                {
+                    dungGeunMoFont = font;
+                    Debug.Log($"DungGeunMo 폰트 Resources에서 로드 성공: {path}");
+                    DebugLogger.LogToFile($"DungGeunMo 폰트 Resources에서 로드 성공: {path}");
+                    return;
+                }
+                else
+                {
+                    Debug.Log($"Resources.Load 실패: {path} - null 반환");
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"Resources.Load 예외 발생: {path} - {e.Message}");
+            }
+        }
+
 #if UNITY_EDITOR
-        // 자동으로 폰트 찾기
+        // 에디터에서만 자동 찾기
+        Debug.Log("에디터 모드: AssetDatabase로 폰트 검색 중...");
+
         string[] fontPaths = {
+            "Assets/Resources/Font/DungGeunMo SDF",
             "Assets/Font/DungGeunMo SDF",
-            "Assets/Fonts/DungGeunMo SDF",
-            "DungGeunMo SDF"
+            "Assets/Fonts/DungGeunMo SDF"
         };
 
         foreach (string path in fontPaths)
         {
-            TMP_FontAsset font = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path + ".asset");
-            if (font != null)
+            try
             {
-                dungGeunMoFont = font;
-                Debug.Log($"DungGeunMo 폰트 자동 로드 성공: {path}");
-                DebugLogger.LogToFile($"DungGeunMo 폰트 자동 로드 성공: {path}");
-                return;
+                TMP_FontAsset font = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(path + ".asset");
+                if (font != null)
+                {
+                    dungGeunMoFont = font;
+                    Debug.Log($"DungGeunMo 폰트 AssetDatabase에서 로드 성공: {path}");
+                    DebugLogger.LogToFile($"DungGeunMo 폰트 AssetDatabase에서 로드 성공: {path}");
+                    return;
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"AssetDatabase.LoadAssetAtPath 예외: {path} - {e.Message}");
             }
         }
 
-        // 모든 TMP 폰트에서 찾기
-        string[] guids = UnityEditor.AssetDatabase.FindAssets("DungGeunMo t:TMP_FontAsset");
-        if (guids.Length > 0)
+        // GUID로 검색
+        try
         {
-            string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
-            dungGeunMoFont = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(assetPath);
-            if (dungGeunMoFont != null)
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("DungGeunMo t:TMP_FontAsset");
+            Debug.Log($"GUID 검색 결과: {guids.Length}개 발견");
+
+            if (guids.Length > 0)
             {
-                Debug.Log($"DungGeunMo 폰트 검색으로 로드 성공: {assetPath}");
-                DebugLogger.LogToFile($"DungGeunMo 폰트 검색으로 로드 성공: {assetPath}");
-                return;
+                string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[0]);
+                TMP_FontAsset font = UnityEditor.AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(assetPath);
+                if (font != null)
+                {
+                    dungGeunMoFont = font;
+                    Debug.Log($"DungGeunMo 폰트 GUID 검색으로 로드 성공: {assetPath}");
+                    DebugLogger.LogToFile($"DungGeunMo 폰트 GUID 검색으로 로드 성공: {assetPath}");
+                    return;
+                }
             }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning($"GUID 검색 예외: {e.Message}");
         }
 #endif
 
-        // Resources 폴더에서 찾기 (빌드에서도 작동)
-        TMP_FontAsset resourceFont = Resources.Load<TMP_FontAsset>("DungGeunMo SDF");
-        if (resourceFont != null)
+        // 모든 시도가 실패한 경우 - 경고만 출력하고 기본 폰트 사용
+        Debug.LogWarning("DungGeunMo 폰트를 찾을 수 없습니다. 기본 TextMeshPro 폰트를 사용합니다.");
+        DebugLogger.LogToFile("DungGeunMo 폰트를 찾을 수 없습니다. 기본 TextMeshPro 폰트를 사용합니다.");
+
+        // 기본 TextMeshPro 폰트 사용 시도
+        try
         {
-            dungGeunMoFont = resourceFont;
-            Debug.Log("DungGeunMo 폰트 Resources에서 로드 성공");
+            // TextMeshPro 기본 폰트들 시도
+            string[] defaultFonts = {
+                "Fonts & Materials/LiberationSans SDF",
+                "LiberationSans SDF",
+                "Arial SDF"
+            };
+
+            foreach (string defaultFont in defaultFonts)
+            {
+                TMP_FontAsset font = Resources.Load<TMP_FontAsset>(defaultFont);
+                if (font != null)
+                {
+                    dungGeunMoFont = font;
+                    Debug.Log($"기본 폰트 사용: {defaultFont}");
+                    DebugLogger.LogToFile($"기본 폰트 사용: {defaultFont}");
+                    return;
+                }
+            }
+
+            // 마지막 수단: TMP의 기본 폰트
+            dungGeunMoFont = TMP_Settings.defaultFontAsset;
+            if (dungGeunMoFont != null)
+            {
+                Debug.Log("TMP 기본 폰트 사용");
+                DebugLogger.LogToFile("TMP 기본 폰트 사용");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"기본 폰트 로드 실패: {e.Message}");
+            // dungGeunMoFont는 null로 남겨두고, ApplyFont에서 처리
+        }
+    }
+
+    // 폰트 적용 메서드 (안전성 개선)
+    void ApplyFont(TextMeshProUGUI textComponent)
+    {
+        if (textComponent == null)
+        {
+            Debug.LogWarning("TextMeshProUGUI 컴포넌트가 null입니다.");
             return;
         }
 
-        Debug.LogError("DungGeunMo 폰트를 찾을 수 없습니다! TMP 폰트 에셋이 생성되었는지 확인하세요.");
+        if (dungGeunMoFont != null)
+        {
+            try
+            {
+                textComponent.font = dungGeunMoFont;
+                Debug.Log($"폰트 적용 완료: {dungGeunMoFont.name}");
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"폰트 적용 실패: {e.Message}");
+                // 기본 폰트 사용
+                if (textComponent.font == null)
+                {
+                    textComponent.font = TMP_Settings.defaultFontAsset;
+                }
+            }
+        }
+        else
+        {
+            Debug.LogWarning("DungGeunMo 폰트가 없어서 기본 폰트 사용");
+            // 기본 폰트가 설정되어 있지 않은 경우에만 설정
+            if (textComponent.font == null)
+            {
+                textComponent.font = TMP_Settings.defaultFontAsset;
+            }
+        }
     }
 
     void CreatePrefabsIfNeeded()
@@ -278,19 +395,6 @@ public class ContextMenuManager : MonoBehaviour
         return separator;
     }
 
-    // 폰트 적용 메서드 (간단한 버전)
-    void ApplyFont(TextMeshProUGUI textComponent)
-    {
-        if (dungGeunMoFont != null)
-        {
-            textComponent.font = dungGeunMoFont;
-            Debug.Log("DungGeunMo 폰트 적용 완료");
-        }
-        else
-        {
-            Debug.LogWarning("DungGeunMo 폰트가 없어서 기본 폰트 사용");
-        }
-    }
 
     void Update()
     {
