@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static TestCat;
 
 public class TestCat : MonoBehaviour
 {
@@ -49,6 +50,9 @@ public class TestCat : MonoBehaviour
     private bool isPaused = false;
     private float stateTimer;
 
+    // 방향 추적
+    private CatPlayerAnimator.CatDirection currentFacingDirection = CatPlayerAnimator.CatDirection.Left;
+    private Vector3 lastMovementPosition;
 
     // 움직임 영역 경계
     private Vector2 movementAreaMin;
@@ -106,6 +110,9 @@ public class TestCat : MonoBehaviour
         // 초기 상태 설정
         SetMovementState(MovementState.Idle);
 
+        // 초기 방향 추적 위치 설정
+        lastMovementPosition = transform.position;
+
         // 고양이 레이어 설정 (Layer 8 = Interactable)
         gameObject.layer = 8;
 
@@ -116,14 +123,61 @@ public class TestCat : MonoBehaviour
             collider.isTrigger = true;
         }
 
-        Debug.Log($"TestCat 초기화 완료 - 움직임 영역: Y({movementAreaMin.y:F2} ~ {movementAreaMax.y:F2})");
-        DebugLogger.LogToFile($"TestCat 초기화 완료 - 움직임 영역: Y({movementAreaMin.y:F2} ~ {movementAreaMax.y:F2})");
+        Debug.Log($"TestCat 초기화 완료 - 움직임 영역: Y({movementAreaMin.y:F2} ~ {movementAreaMax.y:F2}), 방향별 애니메이션 시스템");
+        DebugLogger.LogToFile($"TestCat 초기화 완료 - 움직임 영역: Y({movementAreaMin.y:F2} ~ {movementAreaMax.y:F2}), 방향별 애니메이션 시스템");
     }
 
     void Update()
     {
         UpdateMovement();
+        UpdateDirection(); // 방향 업데이트 추가
         CheckInteraction();
+    }
+
+    void UpdateDirection()
+    {
+        // 현재 움직임 방향에 따라 고양이가 바라보는 방향 결정
+        Vector3 currentPosition = transform.position;
+        Vector3 movement = currentPosition - lastMovementPosition;
+        Debug.Log("movement.x: " + movement.x);
+
+
+            CatPlayerAnimator.CatDirection newDirection;
+
+            // X값이 감소하면 Left, 증가하면 Right
+            if (movement.x < 0) // X값이 줄어들면 (왼쪽으로 이동)
+            {
+                newDirection = CatPlayerAnimator.CatDirection.Left;
+            }
+            else // X값이 늘어나면 (오른쪽으로 이동)
+            {
+                newDirection = CatPlayerAnimator.CatDirection.Right;
+            }
+            // 방향이 실제로 바뀌었을 때만 로그 출력
+            if (newDirection != currentFacingDirection)
+            {
+                currentFacingDirection = newDirection;
+                Debug.Log($"🐱 고양이 방향 변경: X={movement.x:F3} → {currentFacingDirection}");
+                DebugLogger.LogToFile($"고양이 방향 변경: X={movement.x:F3} → {currentFacingDirection}");
+
+                // 애니메이터에 방향 변경 알림
+                if (catAnimator != null)
+                {
+                    // 애니메이터에서 방향을 자동으로 처리하므로 별도 호출 불필요
+                    // catAnimator의 UpdateMovementDetection에서 자동으로 처리됨
+                    Debug.Log($"  → CatAnimator에 방향 정보 전달: {currentFacingDirection}");
+                }
+            }
+
+
+        // 방향 추적을 위한 위치 업데이트
+        lastMovementPosition = currentPosition;
+
+        // spriteRenderer.flipX는 더 이상 사용하지 않음 (애니메이션 클립으로 처리)
+        // if (spriteRenderer != null)
+        // {
+        //     spriteRenderer.flipX = currentFacingDirection == CatPlayerAnimator.CatDirection.Left;
+        // }
     }
 
     void CalculateMovementBounds()
@@ -161,6 +215,7 @@ public class TestCat : MonoBehaviour
         );
 
         transform.position = randomPosition;
+        lastMovementPosition = randomPosition; // 방향 추적 위치도 초기화
         Debug.Log($"고양이 위치 설정: {randomPosition}");
     }
 
@@ -195,18 +250,28 @@ public class TestCat : MonoBehaviour
         {
             moveDirection.x = -moveDirection.x;
             hitBoundary = true;
+            Debug.Log($"좌우 경계 충돌 - 새 방향: {moveDirection}");
         }
 
         if (newPosition.y <= movementAreaMin.y || newPosition.y >= movementAreaMax.y)
         {
             moveDirection.y = -moveDirection.y;
             hitBoundary = true;
+            Debug.Log($"상하 경계 충돌 - 새 방향: {moveDirection}");
         }
 
         // 위치를 움직임 영역 내로 제한
         newPosition.x = Mathf.Clamp(newPosition.x, movementAreaMin.x, movementAreaMax.x);
         newPosition.y = Mathf.Clamp(newPosition.y, movementAreaMin.y, movementAreaMax.y);
         transform.position = newPosition;
+
+        // 경계 충돌 시 잠시 멈출 확률 추가
+        if (hitBoundary && Random.value < 0.3f) // 30% 확률로 경계 충돌 시 idle
+        {
+            Debug.Log("경계 충돌 후 잠시 멈춤");
+            SetMovementState(MovementState.Idle);
+            return;
+        }
 
         // 타이머 업데이트
         directionTimer += Time.deltaTime;
@@ -328,6 +393,7 @@ public class TestCat : MonoBehaviour
         if (catAnimator != null)
         {
             Debug.Log($"  → CatAnimator에 상태 변경 알림: {newState}");
+            // CatPlayerAnimator.UpdateAnimationState()에서 자동으로 처리됨
         }
     }
 
@@ -348,6 +414,7 @@ public class TestCat : MonoBehaviour
             // 중앙을 향하는 방향으로 설정
             Vector2 center = (movementAreaMin + movementAreaMax) * 0.5f;
             targetDirection = (center - currentPos).normalized;
+            Debug.Log($"경계 근처에서 중앙 방향으로 설정: {targetDirection}");
         }
         else
         {
@@ -356,6 +423,7 @@ public class TestCat : MonoBehaviour
                 Random.Range(-1f, 1f),
                 Random.Range(-1f, 1f)
             ).normalized;
+            Debug.Log($"랜덤 방향 설정: {targetDirection}");
         }
 
         moveDirection = targetDirection;
@@ -417,7 +485,7 @@ public class TestCat : MonoBehaviour
         // 애니메이션: 잠깐 아이들 상태로 (반응 표현)
         if (catAnimator != null)
         {
-            catAnimator.PlayTemporaryAnimation(CatPlayerAnimator.CatAnimationState.Idle, 1f);
+            catAnimator.PlayTemporaryAnimationSafe(CatPlayerAnimator.CatBaseState.Idle, 1f);
         }
 
         Debug.Log("고양이를 클릭했습니다! (쓰다듬기)");
@@ -457,7 +525,7 @@ public class TestCat : MonoBehaviour
         // 애니메이션: 잠깐 아이들 상태로 (관심 표현)
         if (catAnimator != null)
         {
-            catAnimator.PlayTemporaryAnimation(CatPlayerAnimator.CatAnimationState.Idle, 0.5f);
+            catAnimator.PlayTemporaryAnimationSafe(CatPlayerAnimator.CatBaseState.Idle, 0.5f);
         }
 
         Debug.Log("고양이 우클릭! 컨텍스트 메뉴 표시");
@@ -547,7 +615,7 @@ public class TestCat : MonoBehaviour
         if (catAnimator != null)
         {
             // 먹이를 먹는 동안 잠깐 아이들 상태로
-            catAnimator.PlayTemporaryAnimation(CatPlayerAnimator.CatAnimationState.Idle, 2f);
+            catAnimator.PlayTemporaryAnimationSafe(CatPlayerAnimator.CatBaseState.Idle, 2f);
         }
 
         // 행복도 증가
@@ -570,7 +638,7 @@ public class TestCat : MonoBehaviour
         if (catAnimator != null)
         {
             // 쓰다듬기 동안 아이들 상태로
-            catAnimator.PlayTemporaryAnimation(CatPlayerAnimator.CatAnimationState.Idle, 1.5f);
+            catAnimator.PlayTemporaryAnimationSafe(CatPlayerAnimator.CatBaseState.Idle, 1.5f);
         }
 
         // 행복도 약간 증가
@@ -598,6 +666,22 @@ public class TestCat : MonoBehaviour
         }
     }
 
+    // 방향 강제 설정 (외부에서 호출 가능)
+    public void SetFacingDirection(CatPlayerAnimator.CatDirection direction)
+    {
+        if (currentFacingDirection != direction)
+        {
+            currentFacingDirection = direction;
+            Debug.Log($"고양이 방향 강제 설정: {currentFacingDirection}");
+
+            // 애니메이터에 즉시 반영
+            if (catAnimator != null)
+            {
+                catAnimator.ForceStateWithDirection(catAnimator.CurrentBaseState, direction);
+            }
+        }
+    }
+
     // 디버그용 - 움직임 영역 시각화
     void OnDrawGizmos()
     {
@@ -608,7 +692,7 @@ public class TestCat : MonoBehaviour
             Gizmos.DrawWireSphere(transform.position, GetComponent<Collider2D>().bounds.size.x / 2f);
         }
 
-        // 움직임 영역 표시
+        // 움직임 영역 시각화
         if (Application.isPlaying)
         {
             Gizmos.color = Color.green;
@@ -623,14 +707,23 @@ public class TestCat : MonoBehaviour
                 0.1f
             );
             Gizmos.DrawWireCube(center, size);
+
+            // 방향 표시 화살표
+            Gizmos.color = currentFacingDirection == CatPlayerAnimator.CatDirection.Left ? Color.red : Color.cyan;
+            Vector3 arrowStart = transform.position + Vector3.up * 0.5f;
+            Vector3 arrowEnd = arrowStart + (currentFacingDirection == CatPlayerAnimator.CatDirection.Left ? Vector3.left : Vector3.right) * 0.5f;
+            Gizmos.DrawLine(arrowStart, arrowEnd);
+            Gizmos.DrawWireSphere(arrowEnd, 0.1f);
         }
     }
+    
 
     // 외부에서 접근할 수 있는 프로퍼티들
     public bool IsMoving => currentMovementState == MovementState.Walking;
     public bool IsSleeping => currentMovementState == MovementState.Sleeping;
     public bool IsIdle => currentMovementState == MovementState.Idle;
     public MovementState CurrentMovementState => currentMovementState;
+    public CatPlayerAnimator.CatDirection CurrentFacingDirection => currentFacingDirection;
     public CatPlayerAnimator.CatAnimationState CurrentAnimationState =>
-        catAnimator != null ? catAnimator.currentState : CatPlayerAnimator.CatAnimationState.Idle;
+        catAnimator != null ? catAnimator.currentState : CatPlayerAnimator.CatAnimationState.IdleRight;
 }
