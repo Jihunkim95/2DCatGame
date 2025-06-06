@@ -17,7 +17,7 @@ public class TestCat : MonoBehaviour
 
     [Header("움직임 영역 설정")]
     [Range(0.1f, 1f)]
-    public float movementAreaHeight = 0.25f; // 화면 하단 1/4 영역 (25%)
+    public float movementAreaHeight = 0.2f; // 화면 하단 1/5 영역 (20%)
     public float bottomMargin = 0.5f; // 화면 하단에서의 여백
 
     [Header("애니메이션")]
@@ -47,7 +47,6 @@ public class TestCat : MonoBehaviour
     private Vector2 moveDirection;
     private float directionTimer;
     private float pauseTimer;
-    private bool isPaused = false;
     private float stateTimer;
 
     // 방향 추적

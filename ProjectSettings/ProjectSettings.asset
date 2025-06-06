@@ -14,7 +14,7 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: DefaultCompany
   productName: CatsLoveChewy
-  defaultCursor: {fileID: 0}
+  defaultCursor: {fileID: 2800000, guid: 68e6277d284ed6c45a77149b2317d40f, type: 3}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_ShowUnitySplashScreen: 1
@@ -140,7 +140,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 2.1.3
+  bundleVersion: 2.2.3
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -290,7 +290,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 38c6d553a0a1ea94491308b8dc834ecb, type: 3}
+      m_Icon: {fileID: 2800000, guid: 68e6277d284ed6c45a77149b2317d40f, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
