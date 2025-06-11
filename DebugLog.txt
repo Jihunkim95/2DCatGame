@@ -2,188 +2,361 @@
 Unity 버전: 2022.3.55f1
 플랫폼: WindowsEditor
 해상도: 2560x1440
-[11:50:09.042] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[11:50:09.048] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[11:50:09.050] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[11:50:09.247] [Log] 마지막 저장: 2025-06-11 오전 11:50:06, 경과 시간: 0.0분
-마지막 저장: 2025-06-11 오전 11:50:06, 경과 시간: 0.0분
-[11:50:09.248] [Log] 오프라인 행복도 감소: -0.0% (현재: 100.0%)
-오프라인 행복도 감소: -0.0% (현재: 100.0%)
-[11:50:09.249] [Log] 게임 데이터 로드 시작!
+[12:09:08.984] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[12:09:08.991] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[12:09:08.993] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[12:09:09.185] [Log] 마지막 저장: 2025-06-11 오후 12:07:46, 경과 시간: 1.4분
+마지막 저장: 2025-06-11 오후 12:07:46, 경과 시간: 1.4분
+[12:09:09.186] [Log] 오프라인 행복도 감소: -0.2% (현재: 99.8%)
+오프라인 행복도 감소: -0.2% (현재: 99.8%)
+[12:09:09.187] [Log] 게임 데이터 로드 시작!
 게임 데이터 로드 시작!
-[11:50:09.250] [Log] 세이브 시스템 초기화 완료
+[12:09:09.188] [Log] 세이브 시스템 초기화 완료
 세이브 시스템 초기화 완료 - Easy Save 사용
-[11:50:09.251] [Log] UI Layer 자동 설정: Layer 5
-[11:50:09.251] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
-[11:50:09.251] [Log] ClickDetector 초기화 완료 - UI 감지 포함
+[12:09:09.188] [Log] UI Layer 자동 설정: Layer 5
+[12:09:09.188] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
+[12:09:09.190] [Log] ClickDetector 초기화 완료 - UI 감지 포함
 ClickDetector 초기화 완료 - UI 감지 포함
-[11:50:09.252] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
-[11:50:09.282] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
+[12:09:09.191] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
+[12:09:09.212] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
-[11:50:09.282] [Log] 카메라 설정 완료!
-[11:50:09.283] [Log] Clear Flags: SolidColor
-[11:50:09.283] [Log] Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
+[12:09:09.213] [Log] 카메라 설정 완료!
+[12:09:09.213] [Log] Clear Flags: SolidColor
+[12:09:09.214] [Log] Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
 카메라 Clear Flags: SolidColor
 카메라 Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
 검은색 강제 렌더링 모드 활성화!
-[11:50:09.286] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
-움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
-[11:50:09.287] [Log] 고양이 위치 설정: (3.54, -2.76, 0.00)
-[11:50:09.287] [Log] TestCat 초기화 완료 - 움직임 영역: Y(-4.50 ~ -2.50), 방향별 애니메이션 시스템
-TestCat 초기화 완료 - 움직임 영역: Y(-4.50 ~ -2.50), 방향별 애니메이션 시스템
-[11:50:09.288] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:09.216] [Log] 리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처
+리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처
+[12:09:09.217] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
-[11:50:09.288] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: False
-[11:50:09.289] [Log] 고양이가 가만히 있습니다 - 방향: Left
-[11:50:09.289] [Log] CatPlayerAnimator 초기화 완료 - 방향별 애니메이션 시스템
-CatPlayerAnimator 초기화 완료 - 방향별 애니메이션 시스템
-[11:50:09.290] [Log] 타워 이미지 Resources에서 로드 성공
-[11:50:09.292] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[12:09:09.217] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:09.218] [Log] CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용
+CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용
+[12:09:09.219] [Log] 타워 이미지 Resources에서 로드 성공
+[12:09:09.221] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[11:50:09.293] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
+[12:09:09.222] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
 캣타워 생성 완료 - 업그레이드 가능 빌드
-[11:50:09.295] [Log] 게임 데이터 매니저 초기화
-게임 데이터 매니저 초기화 - 초기 행복도: 99.99213%
-[11:50:09.302] [Log] 🐱 고양이 방향 변경: X=0.000 → Right
-고양이 방향 변경: X=0.000 → Right
-[11:50:09.302] [Log]   → CatAnimator에 방향 정보 전달: Right
-[11:50:09.303] [Log] 애니메이터: TestCat으로부터 방향 업데이트 - Right
-[11:50:09.303] [Log] Animator 파라미터 즉시 업데이트: IsFacingRight = True
-[11:50:09.303] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleRight
-고양이 애니메이션 상태 변경: IdleLeft → IdleRight
-[11:50:09.304] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: True
-[11:50:09.304] [Log] 고양이가 가만히 있습니다 - 방향: Right
-[11:50:10.611] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[11:50:10.614] [Log] 타워 이미지 Resources에서 로드 성공
-[11:50:10.615] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[12:09:09.226] [Log] 게임 데이터 매니저 초기화
+게임 데이터 매니저 초기화 - 초기 행복도: 99.77134%
+[12:09:09.227] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
+[12:09:09.227] [Log] 고양이 위치 설정: (3.60, -3.63, 0.00)
+[12:09:09.939] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:10.570] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:10.573] [Log] 타워 이미지 Resources에서 로드 성공
+[12:09:10.574] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[11:50:10.615] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 176개
-캣타워 데이터 로드: 레벨 1, 츄르 176개
-[11:50:10.617] [Log] 게임 데이터 로드: 행복도 100.0%
+[12:09:10.575] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 190개
+캣타워 데이터 로드: 레벨 1, 츄르 190개
+[12:09:10.576] [Log] 게임 데이터 로드: 행복도 100.0%
 게임 데이터 로드: 행복도 100.0%
-[11:50:10.618] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
+[12:09:10.577] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
 에디터에서는 윈도우 설정이 비활성화됩니다.
-[11:50:11.113] [Log] 고양이 위치 로드: (-4.05, -4.14)
-고양이 위치 로드: (-4.05, -4.14)
-[11:50:11.128] [Log] 🐱 고양이 방향 변경: X=-7.586 → Left
-고양이 방향 변경: X=-7.586 → Left
-[11:50:11.129] [Log]   → CatAnimator에 방향 정보 전달: Left
-[11:50:11.129] [Log] 애니메이터: TestCat으로부터 방향 업데이트 - Left
-[11:50:11.129] [Log] Animator 파라미터 즉시 업데이트: IsFacingRight = False
-[11:50:11.130] [Log] 고양이 애니메이션 상태 변경: IdleRight → IdleLeft
-고양이 애니메이션 상태 변경: IdleRight → IdleLeft
-[11:50:11.130] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: False
-[11:50:11.131] [Log] 고양이가 가만히 있습니다 - 방향: Left
-[11:50:11.145] [Log] 🐱 고양이 방향 변경: X=0.000 → Right
-고양이 방향 변경: X=0.000 → Right
-[11:50:11.146] [Log]   → CatAnimator에 방향 정보 전달: Right
-[11:50:11.146] [Log] 애니메이터: TestCat으로부터 방향 업데이트 - Right
-[11:50:11.146] [Log] Animator 파라미터 즉시 업데이트: IsFacingRight = True
-[11:50:11.147] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleRight
-고양이 애니메이션 상태 변경: IdleLeft → IdleRight
-[11:50:11.147] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: True
-[11:50:11.148] [Log] 고양이가 가만히 있습니다 - 방향: Right
-[11:50:11.595] [Log] Idle → Walking 전환 (40% 확률)
-[11:50:11.595] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-고양이 움직임 상태 변경: Idle → Walking
-[11:50:11.597] [Log] 경계 근처에서 중앙 방향으로 설정: (0.99, 0.16)
-[11:50:11.598] [Log] 새로운 이동 방향 설정: (0.99, 0.16)
-[11:50:11.598] [Log]   → Walking 시작: 방향 (0.99, 0.16), 2.7초 후 재평가
-[11:50:11.598] [Log]   → CatAnimator에 상태 변경 알림: Walking
-[11:50:11.599] [Log] 고양이 애니메이션 상태 변경: IdleRight → WalkRight
-고양이 애니메이션 상태 변경: IdleRight → WalkRight
-[11:50:11.599] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: True
-[11:50:11.599] [Log] 고양이가 걷기 시작했습니다 - 방향: Right
-[11:50:11.599] [Log] Animation State Update - TestCat State: Walking, Target Animation: Walk Right
-[11:50:11.613] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:12.045] [Log] 츄르 생산: +2 (총 178개)
-츄르 생산: +2 (총 178개)
-[11:50:12.611] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:13.612] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:14.313] [Log] 경계 근처에서 중앙 방향으로 설정: (0.99, 0.16)
-[11:50:14.313] [Log] 새로운 이동 방향 설정: (0.99, 0.16)
-[11:50:14.314] [Log] Walking 상태 유지, 새로운 방향 설정
-[11:50:14.381] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 178개
-캣타워 데이터 저장: 레벨 1, 츄르 178개
-[11:50:14.385] [Log] 게임 데이터 저장: 행복도 100.0%
+[12:09:10.805] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:11.013] [Log] 고양이 우클릭! 컨텍스트 메뉴 표시
+고양이 우클릭! 컨텍스트 메뉴 표시
+[12:09:11.014] [Log] ShowCatMenu 호출됨! 오브젝트 위치: (3.50, -3.62, -9.70)
+[12:09:11.015] [Log] 메뉴 위치 계산: 오브젝트 (3.50, -3.62, -9.70) → 메뉴 (4.19, -3.62, -9.70)
+[12:09:11.016] [Log] ShowMenu 시작
+[12:09:11.016] [Log] ForceCleanupMenu 시작
+[12:09:11.016] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:11.018] [Log] ForceCleanupMenu 완료
+[12:09:11.018] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:11.020] [Log] 메뉴 위치 조정 완료: (452.70, -390.82, 0.00)
+[12:09:11.020] [Log] CreateMenuItems 시작 - 아이템 개수: 4
+[12:09:11.023] [Log] CreateMenuItems 완료!
+[12:09:11.024] [Log] ShowMenu 완료!
+[12:09:11.024] [Log] 고양이 컨텍스트 메뉴 표시 완료
+고양이 컨텍스트 메뉴 표시 완료
+[12:09:11.025] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:11.025] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:11.026] [Log] 일시적 애니메이션 재생: Idle Left (0.5초)
+일시적 애니메이션 재생: Idle Left (0.5초)
+[12:09:11.054] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:11.082] [Log] 고양이 위치 로드: (-1.29, -3.70)
+고양이 위치 로드: (-1.29, -3.70)
+[12:09:11.214] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:11.515] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:11.516] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:11.516] [Log] 강제 애니메이션 상태 종료, 자동 상태로 복귀
+[12:09:11.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:11.747] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:11.898] [Log] 우클릭으로 이전 메뉴 닫기
+[12:09:11.898] [Log] HideMenu 호출됨
+[12:09:11.899] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:11.899] [Log] 메뉴 숨기기 완료
+[12:09:11.899] [Log] 고양이 우클릭! 컨텍스트 메뉴 표시
+고양이 우클릭! 컨텍스트 메뉴 표시
+[12:09:11.900] [Log] ShowCatMenu 호출됨! 오브젝트 위치: (-1.30, -3.72, -9.70)
+[12:09:11.901] [Log] 메뉴 위치 계산: 오브젝트 (-1.30, -3.72, -9.70) → 메뉴 (-0.60, -3.72, -9.70)
+[12:09:11.901] [Log] ShowMenu 시작
+[12:09:11.901] [Log] ForceCleanupMenu 시작
+[12:09:11.902] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:11.902] [Log] ForceCleanupMenu 완료
+[12:09:11.902] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:11.903] [Log] 메뉴 위치 조정 완료: (-64.89, -401.31, 0.00)
+[12:09:11.903] [Log] CreateMenuItems 시작 - 아이템 개수: 4
+[12:09:11.904] [Log] CreateMenuItems 완료!
+[12:09:11.904] [Log] ShowMenu 완료!
+[12:09:11.904] [Log] 고양이 컨텍스트 메뉴 표시 완료
+고양이 컨텍스트 메뉴 표시 완료
+[12:09:11.905] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:11.906] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:11.906] [Log] 일시적 애니메이션 재생: Idle Left (0.5초)
+일시적 애니메이션 재생: Idle Left (0.5초)
+[12:09:11.911] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:12.097] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:12.115] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:12.398] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:12.399] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:12.399] [Log] 강제 애니메이션 상태 종료, 자동 상태로 복귀
+[12:09:12.498] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:12.580] [Log] 우클릭으로 이전 메뉴 닫기
+[12:09:12.581] [Log] HideMenu 호출됨
+[12:09:12.581] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:12.582] [Log] 메뉴 숨기기 완료
+[12:09:12.582] [Log] 고양이 우클릭! 컨텍스트 메뉴 표시
+고양이 우클릭! 컨텍스트 메뉴 표시
+[12:09:12.583] [Log] ShowCatMenu 호출됨! 오브젝트 위치: (-1.46, -3.75, -9.70)
+[12:09:12.583] [Log] 메뉴 위치 계산: 오브젝트 (-1.46, -3.75, -9.70) → 메뉴 (-0.76, -3.75, -9.70)
+[12:09:12.583] [Log] ShowMenu 시작
+[12:09:12.584] [Log] ForceCleanupMenu 시작
+[12:09:12.584] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:12.584] [Log] ForceCleanupMenu 완료
+[12:09:12.584] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:12.586] [Log] 메뉴 위치 조정 완료: (-82.38, -404.81, 0.00)
+[12:09:12.586] [Log] CreateMenuItems 시작 - 아이템 개수: 4
+[12:09:12.587] [Log] CreateMenuItems 완료!
+[12:09:12.587] [Log] ShowMenu 완료!
+[12:09:12.588] [Log] 고양이 컨텍스트 메뉴 표시 완료
+고양이 컨텍스트 메뉴 표시 완료
+[12:09:12.588] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:12.589] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:12.589] [Log] 일시적 애니메이션 재생: Idle Left (0.5초)
+일시적 애니메이션 재생: Idle Left (0.5초)
+[12:09:12.593] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:12.594] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:12.780] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:12.797] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:13.048] [Log] 우클릭으로 이전 메뉴 닫기
+[12:09:13.049] [Log] HideMenu 호출됨
+[12:09:13.049] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:13.050] [Log] 메뉴 숨기기 완료
+[12:09:13.051] [Log] 고양이 우클릭! 컨텍스트 메뉴 표시
+고양이 우클릭! 컨텍스트 메뉴 표시
+[12:09:13.051] [Log] ShowCatMenu 호출됨! 오브젝트 위치: (-1.44, -3.75, -9.70)
+[12:09:13.051] [Log] 메뉴 위치 계산: 오브젝트 (-1.44, -3.75, -9.70) → 메뉴 (-0.75, -3.75, -9.70)
+[12:09:13.051] [Log] ShowMenu 시작
+[12:09:13.052] [Log] ForceCleanupMenu 시작
+[12:09:13.052] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:13.053] [Log] ForceCleanupMenu 완료
+[12:09:13.053] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:13.053] [Log] 메뉴 위치 조정 완료: (-80.63, -404.81, 0.00)
+[12:09:13.054] [Log] CreateMenuItems 시작 - 아이템 개수: 4
+[12:09:13.055] [Log] CreateMenuItems 완료!
+[12:09:13.055] [Log] ShowMenu 완료!
+[12:09:13.055] [Log] 고양이 컨텍스트 메뉴 표시 완료
+고양이 컨텍스트 메뉴 표시 완료
+[12:09:13.056] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:13.057] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:13.057] [Log] 일시적 애니메이션 재생: Idle Left (0.5초)
+일시적 애니메이션 재생: Idle Left (0.5초)
+[12:09:13.061] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:13.263] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:13.281] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:13.365] [Log] 메뉴 외부 클릭으로 메뉴 닫기
+[12:09:13.366] [Log] HideMenu 호출됨
+[12:09:13.366] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:13.367] [Log] 메뉴 숨기기 완료
+[12:09:13.367] [Log] 고양이를 클릭했습니다! (쓰다듬기)
+고양이를 클릭했습니다! (쓰다듬기)
+[12:09:13.368] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:13.368] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:13.369] [Log] 일시적 애니메이션 재생: Idle Left (1초)
+일시적 애니메이션 재생: Idle Left (1초)
+[12:09:13.382] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:13.564] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:13.580] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:13.598] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:13.780] [Log] 고양이를 클릭했습니다! (쓰다듬기)
+고양이를 클릭했습니다! (쓰다듬기)
+[12:09:13.781] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:13.782] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:13.782] [Log] 일시적 애니메이션 재생: Idle Left (1초)
+일시적 애니메이션 재생: Idle Left (1초)
+[12:09:13.798] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:13.980] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:13.997] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:14.030] [Log] 츄르 생산: +2 (총 192개)
+츄르 생산: +2 (총 192개)
+[12:09:14.181] [Log] 고양이를 클릭했습니다! (쓰다듬기)
+고양이를 클릭했습니다! (쓰다듬기)
+[12:09:14.181] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:14.182] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:14.182] [Log] 일시적 애니메이션 재생: Idle Left (1초)
+일시적 애니메이션 재생: Idle Left (1초)
+[12:09:14.197] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:14.380] [Log] 고양이를 클릭했습니다! (쓰다듬기)
+고양이를 클릭했습니다! (쓰다듬기)
+[12:09:14.381] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:14.382] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:14.382] [Log] 일시적 애니메이션 재생: Idle Left (1초)
+일시적 애니메이션 재생: Idle Left (1초)
+[12:09:14.383] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:14.397] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:14.548] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
+[12:09:14.549] [Log] TestCat: 움직임 상태 변경됨 - Sleeping
+[12:09:14.580] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:14.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:14.597] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:14.648] [Log] 고양이 우클릭! 컨텍스트 메뉴 표시
+고양이 우클릭! 컨텍스트 메뉴 표시
+[12:09:14.649] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Idle
+[12:09:14.649] [Log] TestCat: 움직임 상태 변경됨 - Idle
+[12:09:14.649] [Log] ShowCatMenu 호출됨! 오브젝트 위치: (-1.36, -3.68, -9.70)
+[12:09:14.650] [Log] 메뉴 위치 계산: 오브젝트 (-1.36, -3.68, -9.70) → 메뉴 (-0.67, -3.68, -9.70)
+[12:09:14.650] [Log] ShowMenu 시작
+[12:09:14.650] [Log] ForceCleanupMenu 시작
+[12:09:14.651] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:14.651] [Log] ForceCleanupMenu 완료
+[12:09:14.652] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:14.652] [Log] 메뉴 위치 조정 완료: (-71.89, -397.81, 0.00)
+[12:09:14.652] [Log] CreateMenuItems 시작 - 아이템 개수: 4
+[12:09:14.652] [Log] CreateMenuItems 완료!
+[12:09:14.654] [Log] ShowMenu 완료!
+[12:09:14.654] [Log] 고양이 컨텍스트 메뉴 표시 완료
+고양이 컨텍스트 메뉴 표시 완료
+[12:09:14.655] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:14.656] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:14.656] [Log] 일시적 애니메이션 재생: Idle Left (0.5초)
+일시적 애니메이션 재생: Idle Left (0.5초)
+[12:09:14.659] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:14.830] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:14.848] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:15.148] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:15.149] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:15.149] [Log] 강제 애니메이션 상태 종료, 자동 상태로 복귀
+[12:09:15.514] [Log] 우클릭으로 이전 메뉴 닫기
+[12:09:15.516] [Log] HideMenu 호출됨
+[12:09:15.516] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:15.517] [Log] 메뉴 숨기기 완료
+[12:09:15.517] [Log] 고양이 우클릭! 컨텍스트 메뉴 표시
+고양이 우클릭! 컨텍스트 메뉴 표시
+[12:09:15.518] [Log] ShowCatMenu 호출됨! 오브젝트 위치: (-1.41, -3.72, -9.70)
+[12:09:15.518] [Log] 메뉴 위치 계산: 오브젝트 (-1.41, -3.72, -9.70) → 메뉴 (-0.71, -3.72, -9.70)
+[12:09:15.518] [Log] ShowMenu 시작
+[12:09:15.518] [Log] ForceCleanupMenu 시작
+[12:09:15.518] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:15.519] [Log] ForceCleanupMenu 완료
+[12:09:15.520] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:15.520] [Log] 메뉴 위치 조정 완료: (-77.13, -401.31, 0.00)
+[12:09:15.520] [Log] CreateMenuItems 시작 - 아이템 개수: 4
+[12:09:15.521] [Log] CreateMenuItems 완료!
+[12:09:15.521] [Log] ShowMenu 완료!
+[12:09:15.521] [Log] 고양이 컨텍스트 메뉴 표시 완료
+고양이 컨텍스트 메뉴 표시 완료
+[12:09:15.522] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:15.523] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:15.523] [Log] 일시적 애니메이션 재생: Idle Left (0.5초)
+일시적 애니메이션 재생: Idle Left (0.5초)
+[12:09:15.527] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:15.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:15.714] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[12:09:15.731] [Log] 고양이에 마우스를 올렸습니다!
+[12:09:15.947] [Log] 메뉴 외부 클릭으로 메뉴 닫기
+[12:09:15.948] [Log] HideMenu 호출됨
+[12:09:15.948] [Log] 빈 공간에 있어서 click-through 활성화
+[12:09:15.949] [Log] 메뉴 숨기기 완료
+[12:09:16.030] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[12:09:16.031] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[12:09:16.031] [Log] 강제 애니메이션 상태 종료, 자동 상태로 복귀
+[12:09:16.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:17.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:18.596] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:19.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:20.598] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:21.598] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:22.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:23.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[12:09:24.030] [Log] 츄르 생산: +2 (총 194개)
+츄르 생산: +2 (총 194개)
+[12:09:24.297] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
+[12:09:24.298] [Log] TestCat: 움직임 상태 변경됨 - Walking
+[12:09:24.298] [Log] 고양이 애니메이션 상태 변경: IdleLeft → WalkLeft
+고양이 애니메이션 상태 변경: IdleLeft → WalkLeft
+[12:09:24.299] [Log] 고양이가 걷기 시작했습니다 - 방향: Left
+[12:09:24.299] [Log] Movement State 변경에 따른 Animation 업데이트: Walking → Walk Left
+[12:09:24.314] [Log] 🐱 고양이 방향 변경: X=0.025 → Right
+고양이 방향 변경: X=0.025 → Right
+[12:09:24.315] [Log] TestCat: 방향 변경됨 - Right
+[12:09:24.316] [Log] Direction 변경에 따른 Animation 업데이트: Right
+[12:09:24.316] [Log] 고양이 애니메이션 상태 변경: WalkLeft → WalkRight
+고양이 애니메이션 상태 변경: WalkLeft → WalkRight
+[12:09:24.317] [Log] 고양이가 걷기 시작했습니다 - 방향: Right
+[12:09:24.530] [Log] ShowTowerMenu 호출됨! 오브젝트 위치: (8.04, -4.21, -0.01)
+[12:09:24.531] [Log] 메뉴 위치 계산: 오브젝트 (8.04, -4.21, -0.01) → 메뉴 (8.47, -4.21, -0.01)
+[12:09:24.532] [Log] ShowMenu 시작
+[12:09:24.532] [Log] ForceCleanupMenu 시작
+[12:09:24.532] [Log] 상호작용 가능한 오브젝트 위에 있어서 click-through 비활성화 유지
+[12:09:24.533] [Log] ForceCleanupMenu 완료
+[12:09:24.533] [Log] 컨텍스트 메뉴 표시로 인한 click-through 비활성화
+[12:09:24.534] [Log] 메뉴가 오른쪽 경계를 벗어나서 왼쪽으로 이동
+[12:09:24.534] [Log] 메뉴가 아래쪽 경계를 벗어나서 위로 이동
+[12:09:24.534] [Log] 메뉴 위치 조정 완료: (755.00, -448.50, 0.00)
+[12:09:24.535] [Log] CreateMenuItems 시작 - 아이템 개수: 6
+[12:09:24.536] [Log] CreateMenuItems 완료!
+[12:09:24.536] [Log] ShowMenu 완료!
+[12:09:24.537] [Log] 타워 컨텍스트 메뉴 표시 완료
+타워 컨텍스트 메뉴 표시 완료
+[12:09:24.537] [Log] 타워 우클릭!
+타워 우클릭 - 컨텍스트 메뉴 표시
+[12:09:24.597] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.51
+[12:09:25.464] [Log] 메뉴 외부 클릭으로 메뉴 닫기
+[12:09:25.465] [Log] HideMenu 호출됨
+[12:09:25.465] [Log] 빈 공간에 있어서 click-through 활성화
+[12:09:25.465] [Log] 메뉴 숨기기 완료
+[12:09:25.597] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.62
+[12:09:26.598] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.52
+[12:09:27.099] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
+[12:09:27.099] [Log] TestCat: 움직임 상태 변경됨 - Idle
+[12:09:27.099] [Log] 고양이 애니메이션 상태 변경: WalkRight → IdleRight
+고양이 애니메이션 상태 변경: WalkRight → IdleRight
+[12:09:27.100] [Log] 고양이가 가만히 있습니다 - 방향: Right
+[12:09:27.100] [Log] Movement State 변경에 따른 Animation 업데이트: Idle → Idle Right
+[12:09:27.598] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[12:09:28.599] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[12:09:29.599] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[12:09:30.600] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[12:09:31.599] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[12:09:32.381] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 194개
+캣타워 데이터 저장: 레벨 1, 츄르 194개
+[12:09:32.385] [Log] 게임 데이터 저장: 행복도 100.0%
 게임 데이터 저장: 행복도 100.0%
-[11:50:14.393] [Log] 고양이 위치 저장: (-3.23, -4.01)
-고양이 위치 저장: (-3.23, -4.01)
-[11:50:14.396] [Log] 게임 데이터 저장 완료!
+[12:09:32.392] [Log] 고양이 위치 저장: (2.87, -3.05)
+고양이 위치 저장: (2.87, -3.05)
+[12:09:32.395] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
-[11:50:14.633] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:15.633] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:16.583] [Log] 경계 근처에서 중앙 방향으로 설정: (0.99, 0.16)
-[11:50:16.583] [Log] 새로운 이동 방향 설정: (0.99, 0.16)
-[11:50:16.584] [Log] Walking 상태 유지, 새로운 방향 설정
-[11:50:16.634] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:17.634] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:18.635] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:19.433] [Log] 경계 근처에서 중앙 방향으로 설정: (0.99, 0.16)
-[11:50:19.433] [Log] 새로운 이동 방향 설정: (0.99, 0.16)
-[11:50:19.435] [Log] Walking 상태 유지, 새로운 방향 설정
-[11:50:19.633] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:20.633] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:21.634] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:22.050] [Log] 경계 근처에서 중앙 방향으로 설정: (0.99, 0.16)
-[11:50:22.051] [Log] 새로운 이동 방향 설정: (0.99, 0.16)
-[11:50:22.051] [Log] Walking 상태 유지, 새로운 방향 설정
-[11:50:22.052] [Log] 츄르 생산: +2 (총 180개)
-츄르 생산: +2 (총 180개)
-[11:50:22.663] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:23.662] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:24.147] [Log] 경계 근처에서 중앙 방향으로 설정: (0.99, 0.16)
-[11:50:24.148] [Log] 새로운 이동 방향 설정: (0.99, 0.16)
-[11:50:24.148] [Log] Walking 상태 유지, 새로운 방향 설정
-[11:50:24.662] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:25.662] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 0.30
-[11:50:26.346] [Log] 경계 근처에서 중앙 방향으로 설정: (-0.99, -0.16)
-[11:50:26.346] [Log] 새로운 이동 방향 설정: (-0.99, -0.16)
-[11:50:26.347] [Log] Walking 상태 유지, 새로운 방향 설정
-[11:50:26.363] [Log] 🐱 고양이 방향 변경: X=-0.005 → Left
-고양이 방향 변경: X=-0.005 → Left
-[11:50:26.364] [Log]   → CatAnimator에 방향 정보 전달: Left
-[11:50:26.364] [Log] 애니메이터: TestCat으로부터 방향 업데이트 - Left
-[11:50:26.364] [Log] Animator 파라미터 즉시 업데이트: IsFacingRight = False
-[11:50:26.365] [Log] 고양이 애니메이션 상태 변경: WalkRight → WalkLeft
-고양이 애니메이션 상태 변경: WalkRight → WalkLeft
-[11:50:26.365] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: False
-[11:50:26.365] [Log] 고양이가 걷기 시작했습니다 - 방향: Left
-[11:50:26.662] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 0.30
-[11:50:27.663] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 0.30
-[11:50:28.663] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 0.30
-[11:50:29.211] [Log] Walking → Sleeping 전환 (희귀 케이스)
-[11:50:29.212] [Log] 🐱 고양이 움직임 상태 변경: Walking → Sleeping
-고양이 움직임 상태 변경: Walking → Sleeping
-[11:50:29.213] [Log]   → Sleeping 시작 (10-40초 후 자연 깨어남 가능)
-[11:50:29.213] [Log]   → CatAnimator에 상태 변경 알림: Sleeping
-[11:50:29.213] [Log] 고양이 애니메이션 상태 변경: WalkLeft → SleepLeft
-고양이 애니메이션 상태 변경: WalkLeft → SleepLeft
-[11:50:29.215] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: False
-[11:50:29.215] [Log] 고양이가 잠들었습니다 (+1 행복도) - 방향: Left
-[11:50:29.215] [Log] Animation State Update - TestCat State: Sleeping, Target Animation: Sleep Left
-[11:50:29.229] [Log] 🐱 고양이 방향 변경: X=0.000 → Right
-고양이 방향 변경: X=0.000 → Right
-[11:50:29.229] [Log]   → CatAnimator에 방향 정보 전달: Right
-[11:50:29.230] [Log] 애니메이터: TestCat으로부터 방향 업데이트 - Right
-[11:50:29.230] [Log] Animator 파라미터 즉시 업데이트: IsFacingRight = True
-[11:50:29.230] [Log] 고양이 애니메이션 상태 변경: SleepLeft → SleepRight
-고양이 애니메이션 상태 변경: SleepLeft → SleepRight
-[11:50:29.231] [Log] SetAnimationState에서 IsFacingRight 파라미터 업데이트: True
-[11:50:29.231] [Log] 고양이가 잠들었습니다 (+1 행복도) - 방향: Right
-[11:50:29.663] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[11:50:30.663] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[11:50:31.663] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[11:50:32.064] [Log] 츄르 생산: +2 (총 182개)
-츄르 생산: +2 (총 182개)
-[11:50:32.664] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[11:50:33.663] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[11:50:34.309] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 182개
-캣타워 데이터 저장: 레벨 1, 츄르 182개
-[11:50:34.313] [Log] 게임 데이터 저장: 행복도 100.0%
+[12:09:32.483] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 194개
+캣타워 데이터 저장: 레벨 1, 츄르 194개
+[12:09:32.487] [Log] 게임 데이터 저장: 행복도 100.0%
 게임 데이터 저장: 행복도 100.0%
-[11:50:34.319] [Log] 고양이 위치 저장: (-0.53, -3.58)
-고양이 위치 저장: (-0.53, -3.58)
-[11:50:34.322] [Log] 게임 데이터 저장 완료!
+[12:09:32.495] [Log] 고양이 위치 저장: (2.87, -3.05)
+고양이 위치 저장: (2.87, -3.05)
+[12:09:32.499] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
 === Debug Logger 종료 ===

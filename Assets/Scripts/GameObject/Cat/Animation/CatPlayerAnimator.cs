@@ -7,9 +7,9 @@ public class CatPlayerAnimator : MonoBehaviour
     public SpriteRenderer spriteRenderer;
 
     [Header("상태 변경 조건")]
-    public float idleTime = 3f; // idle 상태 유지 시간
-    public float sleepTime = 8f; // sleep으로 전환되는 시간 (15초 → 8초로 단축)
-    public float moveThreshold = 0.15f; // 움직임 감지 임계값 (약간 증가)
+    public float idleTime = 3f;
+    public float sleepTime = 8f;
+    public float moveThreshold = 0.15f;
 
     [Header("애니메이션 상태")]
     public CatAnimationState currentState = CatAnimationState.IdleLeft;
@@ -42,7 +42,7 @@ public class CatPlayerAnimator : MonoBehaviour
         Sleep
     }
 
-    // 애니메이션 파라미터 이름 (Animator Controller와 일치해야 함)
+    // 애니메이션 파라미터 이름
     private static readonly string PARAM_IS_WALKING = "IsWalking";
     private static readonly string PARAM_IS_SLEEPING = "IsSleeping";
     private static readonly string PARAM_IS_FACING_RIGHT = "IsFacingRight";
@@ -57,8 +57,9 @@ public class CatPlayerAnimator : MonoBehaviour
     private float forceStateTimer = 0f;
     private float forceStateDuration = 0f;
 
-    // 참조
-    private TestCat testCat;
+    // 컴포넌트 참조들 (리팩터링된 구조에 맞게 변경)
+    private CatMovementController movementController;
+    private CatDirectionTracker directionTracker;
 
     void Start()
     {
@@ -69,17 +70,50 @@ public class CatPlayerAnimator : MonoBehaviour
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (testCat == null)
-            testCat = GetComponent<TestCat>();
+        // 새로운 컴포넌트들 참조
+        movementController = GetComponent<CatMovementController>();
+        directionTracker = GetComponent<CatDirectionTracker>();
 
         // 초기 위치 저장
         lastPosition = transform.position;
 
-        // 초기 상태 설정 (Animator Controller의 기본 상태와 일치시키기)
+        // 초기 상태 설정
         SetAnimationState(CatAnimationState.IdleLeft);
 
-        Debug.Log("CatPlayerAnimator 초기화 완료 - 방향별 애니메이션 시스템");
-        DebugLogger.LogToFile("CatPlayerAnimator 초기화 완료 - 방향별 애니메이션 시스템");
+        // 이벤트 리스너 등록
+        SetupEventListeners();
+
+        Debug.Log("CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용");
+        DebugLogger.LogToFile("CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용");
+    }
+
+    void SetupEventListeners()
+    {
+        // MovementController의 상태 변경 이벤트 구독
+        if (movementController != null)
+        {
+            movementController.OnMovementStateChanged += OnMovementStateChanged;
+        }
+
+        // DirectionTracker의 방향 변경 이벤트 구독
+        if (directionTracker != null)
+        {
+            directionTracker.OnDirectionChanged += OnDirectionChanged;
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 이벤트 리스너 해제
+        if (movementController != null)
+        {
+            movementController.OnMovementStateChanged -= OnMovementStateChanged;
+        }
+
+        if (directionTracker != null)
+        {
+            directionTracker.OnDirectionChanged -= OnDirectionChanged;
+        }
     }
 
     void Update()
@@ -96,6 +130,50 @@ public class CatPlayerAnimator : MonoBehaviour
         UpdateAnimatorParameters();
     }
 
+    // 이벤트 핸들러들
+    void OnMovementStateChanged(CatMovementController.MovementState newMovementState)
+    {
+        if (forceStateActive) return; // 강제 상태 중에는 무시
+
+        CatBaseState targetBaseState = ConvertMovementStateToBaseState(newMovementState);
+        SetAnimationStateWithDirection(targetBaseState, currentDirection);
+
+        Debug.Log($"Movement State 변경에 따른 Animation 업데이트: {newMovementState} → {targetBaseState} {currentDirection}");
+    }
+
+    void OnDirectionChanged(CatDirection newDirection)
+    {
+        if (currentDirection != newDirection)
+        {
+            currentDirection = newDirection;
+            Debug.Log($"Direction 변경에 따른 Animation 업데이트: {currentDirection}");
+
+            // 즉시 Animator 파라미터 업데이트
+            if (animator != null)
+            {
+                animator.SetBool(PARAM_IS_FACING_RIGHT, currentDirection == CatDirection.Right);
+            }
+
+            // 현재 기본 상태 유지하면서 방향만 변경
+            CatBaseState baseState = GetBaseState(currentState);
+            SetAnimationStateWithDirection(baseState, currentDirection);
+        }
+    }
+
+    CatBaseState ConvertMovementStateToBaseState(CatMovementController.MovementState movementState)
+    {
+        switch (movementState)
+        {
+            case CatMovementController.MovementState.Walking:
+                return CatBaseState.Walk;
+            case CatMovementController.MovementState.Sleeping:
+                return CatBaseState.Sleep;
+            case CatMovementController.MovementState.Idle:
+            default:
+                return CatBaseState.Idle;
+        }
+    }
+
     void UpdateForceState()
     {
         forceStateTimer += Time.deltaTime;
@@ -106,10 +184,10 @@ public class CatPlayerAnimator : MonoBehaviour
             forceStateActive = false;
             forceStateTimer = 0f;
 
-            // TestCat의 현재 움직임 상태에 맞춰 애니메이션 상태 복원
-            if (testCat != null)
+            // 현재 MovementController의 상태에 맞춰 애니메이션 상태 복원
+            if (movementController != null)
             {
-                CatBaseState baseState = GetBaseStateFromTestCat();
+                CatBaseState baseState = ConvertMovementStateToBaseState(movementController.CurrentMovementState);
                 SetAnimationStateWithDirection(baseState, currentDirection);
             }
 
@@ -131,44 +209,18 @@ public class CatPlayerAnimator : MonoBehaviour
     {
         // 현재 속도 계산
         Vector3 currentPosition = transform.position;
-        Vector3 movement = currentPosition - lastPosition;
         float distance = Vector3.Distance(currentPosition, lastPosition);
         currentSpeed = distance / Time.deltaTime;
 
-        // 움직임 감지 (더 정확한 임계값 적용)
-        isMoving = currentSpeed > moveThreshold;
-
-        // TestCat에서 방향 정보를 가져오기 (TestCat이 방향 감지의 주체)
-        if (testCat != null)
+        // 움직임 감지 (MovementController와 동기화)
+        if (movementController != null)
         {
-            // TestCat의 현재 방향을 사용
-            CatDirection testCatDirection = testCat.CurrentFacingDirection;
-
-            // 방향이 바뀌었을 때만 업데이트
-            if (testCatDirection != currentDirection)
-            {
-                currentDirection = testCatDirection;
-                Debug.Log($"애니메이터: TestCat으로부터 방향 업데이트 - {currentDirection}");
-
-                // 즉시 Animator 파라미터 업데이트
-                if (animator != null)
-                {
-                    animator.SetBool(PARAM_IS_FACING_RIGHT, currentDirection == CatDirection.Right);
-                    Debug.Log($"Animator 파라미터 즉시 업데이트: IsFacingRight = {currentDirection == CatDirection.Right}");
-                }
-
-                // 현재 기본 상태 유지하면서 방향만 변경
-                CatBaseState baseState = GetBaseState(currentState);
-                SetAnimationStateWithDirection(baseState, currentDirection);
-            }
-
-            // TestCat의 실제 움직임 상태 확인
-            bool testCatIsMoving = testCat.IsMoving;
-
-            // TestCat이 실제로 움직이고 있고, 속도도 임계값을 넘을 때만 움직임으로 판정
-            isMoving = testCatIsMoving && currentSpeed > moveThreshold;
-
-            //Debug.Log($"Movement Detection - TestCat Moving: {testCatIsMoving}, Speed: {currentSpeed:F3}, IsMoving: {isMoving}, Direction: {currentDirection}, IsFacingRight: {currentDirection == CatDirection.Right}");
+            isMoving = movementController.IsMoving && currentSpeed > moveThreshold;
+        }
+        else
+        {
+            // fallback: 속도 기반 감지
+            isMoving = currentSpeed > moveThreshold;
         }
 
         // 위치 업데이트
@@ -180,77 +232,16 @@ public class CatPlayerAnimator : MonoBehaviour
 
     void UpdateAnimationState()
     {
-        // TestCat의 움직임 상태와 동기화
-        if (testCat != null)
+        // MovementController의 상태와 동기화 (이벤트로 이미 처리되지만 안전장치)
+        if (movementController != null && !forceStateActive)
         {
-            CatBaseState targetBaseState = CatBaseState.Idle;
-
-            // TestCat의 MovementState에 따라 기본 애니메이션 상태 결정
-            switch (testCat.CurrentMovementState)
-            {
-                case TestCat.MovementState.Walking:
-                    targetBaseState = CatBaseState.Walk;
-                    break;
-
-                case TestCat.MovementState.Idle:
-                    targetBaseState = CatBaseState.Idle;
-                    break;
-
-                case TestCat.MovementState.Sleeping:
-                    targetBaseState = CatBaseState.Sleep;
-                    break;
-            }
-
-            // 현재 기본 상태와 다르면 방향을 포함한 새 상태로 변경
+            CatBaseState targetBaseState = ConvertMovementStateToBaseState(movementController.CurrentMovementState);
             CatBaseState currentBaseState = GetBaseState(currentState);
+
             if (targetBaseState != currentBaseState)
             {
                 SetAnimationStateWithDirection(targetBaseState, currentDirection);
-                Debug.Log($"Animation State Update - TestCat State: {testCat.CurrentMovementState}, Target Animation: {targetBaseState} {currentDirection}");
-            }
-        }
-        else
-        {
-            // TestCat 참조가 없을 때의 기본 로직 (속도 기반)
-            CatBaseState currentBaseState = GetBaseState(currentState);
-            CatBaseState newBaseState = currentBaseState;
-
-            switch (currentBaseState)
-            {
-                case CatBaseState.Idle:
-                    if (isMoving)
-                    {
-                        newBaseState = CatBaseState.Walk;
-                    }
-                    else if (stateTimer >= sleepTime)
-                    {
-                        newBaseState = CatBaseState.Sleep;
-                    }
-                    break;
-
-                case CatBaseState.Walk:
-                    if (!isMoving)
-                    {
-                        newBaseState = CatBaseState.Idle;
-                    }
-                    break;
-
-                case CatBaseState.Sleep:
-                    if (isMoving)
-                    {
-                        newBaseState = CatBaseState.Walk;
-                    }
-                    else if (currentSpeed > moveThreshold * 2f)
-                    {
-                        newBaseState = CatBaseState.Idle;
-                    }
-                    break;
-            }
-
-            // 상태 변경
-            if (newBaseState != currentBaseState)
-            {
-                SetAnimationStateWithDirection(newBaseState, currentDirection);
+                Debug.Log($"Animation State 동기화: {targetBaseState} {currentDirection}");
             }
         }
     }
@@ -291,7 +282,6 @@ public class CatPlayerAnimator : MonoBehaviour
         if (animator != null)
         {
             animator.SetBool(PARAM_IS_FACING_RIGHT, currentDirection == CatDirection.Right);
-            Debug.Log($"SetAnimationState에서 IsFacingRight 파라미터 업데이트: {currentDirection == CatDirection.Right}");
         }
 
         // 상태별 특별한 처리
@@ -329,20 +319,14 @@ public class CatPlayerAnimator : MonoBehaviour
         animator.SetBool(PARAM_IS_SLEEPING, baseState == CatBaseState.Sleep);
         animator.SetBool(PARAM_IS_FACING_RIGHT, currentDirection == CatDirection.Right);
 
-        // Float 파라미터 업데이트 (애니메이션 속도 조절용)
+        // Float 파라미터 업데이트
         animator.SetFloat(PARAM_SPEED, currentSpeed);
 
-        // 디버그 정보 (너무 많이 출력되지 않도록 조건부)
-        if (Time.frameCount % 60 == 0) // 1초마다 한 번씩만 출력
+        // 디버그 정보 (60프레임마다 한 번씩만 출력)
+        if (Time.frameCount % 60 == 0)
         {
             Debug.Log($"Animator Parameters - Walking: {baseState == CatBaseState.Walk}, Sleeping: {baseState == CatBaseState.Sleep}, FacingRight: {currentDirection == CatDirection.Right}, Speed: {currentSpeed:F2}");
         }
-
-        // 스프라이트 뒤집기는 더 이상 사용하지 않음 (애니메이션 클립으로 처리)
-        // if (spriteRenderer != null)
-        // {
-        //     spriteRenderer.flipX = currentDirection == CatDirection.Left;
-        // }
     }
 
     // 유틸리티 메서드들
@@ -381,22 +365,7 @@ public class CatPlayerAnimator : MonoBehaviour
         }
     }
 
-    CatBaseState GetBaseStateFromTestCat()
-    {
-        if (testCat == null) return CatBaseState.Idle;
-
-        switch (testCat.CurrentMovementState)
-        {
-            case TestCat.MovementState.Walking:
-                return CatBaseState.Walk;
-            case TestCat.MovementState.Sleeping:
-                return CatBaseState.Sleep;
-            default:
-                return CatBaseState.Idle;
-        }
-    }
-
-    // 외부에서 강제로 상태 변경 (방향 고려)
+    // 외부에서 강제로 상태 변경
     public void ForceState(CatBaseState baseState)
     {
         forceStateActive = false; // 기존 강제 상태 해제
@@ -410,12 +379,6 @@ public class CatPlayerAnimator : MonoBehaviour
         currentDirection = direction;
         SetAnimationStateWithDirection(baseState, direction);
         Debug.Log($"애니메이션 상태와 방향 강제 변경: {baseState} {direction}");
-    }
-
-    // 특정 상태로 일시적 변경 (예: 먹이를 먹을 때)
-    public void PlayTemporaryAnimation(CatBaseState temporaryBaseState, float duration)
-    {
-        StartCoroutine(TemporaryStateCoroutine(temporaryBaseState, duration));
     }
 
     // 일시적 애니메이션 재생 (더 안전한 방식)
@@ -454,42 +417,23 @@ public class CatPlayerAnimator : MonoBehaviour
         DebugLogger.LogToFile($"일시적 애니메이션 재생: {temporaryBaseState} {currentDirection} ({duration}초)");
     }
 
-    private System.Collections.IEnumerator TemporaryStateCoroutine(CatBaseState tempBaseState, float duration)
-    {
-        CatAnimationState originalState = currentState;
-        SetAnimationStateWithDirection(tempBaseState, currentDirection);
-
-        yield return new WaitForSeconds(duration);
-
-        // TestCat의 현재 상태에 맞춰 복원
-        if (testCat != null)
-        {
-            CatBaseState restoreState = GetBaseStateFromTestCat();
-            SetAnimationStateWithDirection(restoreState, currentDirection);
-        }
-        else
-        {
-            SetAnimationState(originalState);
-        }
-    }
-
-    // 강제로 잠들게 하기 (TestCat과 연동)
+    // 강제로 잠들게 하기
     public void MakeSleep()
     {
         ForceState(CatBaseState.Sleep);
-        if (testCat != null)
+        if (movementController != null)
         {
-            testCat.MakeCatSleep();
+            movementController.MakeCatSleep();
         }
     }
 
-    // 강제로 깨우기 (TestCat과 연동)
+    // 강제로 깨우기
     public void WakeUp()
     {
         ForceState(CatBaseState.Idle);
-        if (testCat != null)
+        if (movementController != null)
         {
-            testCat.WakeCatUp();
+            movementController.WakeCatUp();
         }
     }
 
@@ -498,8 +442,8 @@ public class CatPlayerAnimator : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            GUILayout.BeginArea(new Rect(10, 10, 400, 250));
-            GUILayout.Label($"=== Cat Animation Debug (Directional) ===");
+            GUILayout.BeginArea(new Rect(10, 10, 400, 300));
+            GUILayout.Label($"=== Cat Animation Debug (리팩터링됨) ===");
             GUILayout.Label($"Current State: {currentState}");
             GUILayout.Label($"Base State: {GetBaseState(currentState)}");
             GUILayout.Label($"Direction: {currentDirection}");
@@ -513,11 +457,17 @@ public class CatPlayerAnimator : MonoBehaviour
                 GUILayout.Label($"Forced State: {forcedState} ({forceStateTimer:F1}/{forceStateDuration:F1}s)");
             }
 
-            if (testCat != null)
+            // 컴포넌트 상태 표시
+            if (movementController != null)
             {
-                GUILayout.Label($"TestCat State: {testCat.CurrentMovementState}");
-                GUILayout.Label($"TestCat Moving: {testCat.IsMoving}");
-                GUILayout.Label($"TestCat Sleeping: {testCat.IsSleeping}");
+                GUILayout.Label($"MovementController State: {movementController.CurrentMovementState}");
+                GUILayout.Label($"MovementController Moving: {movementController.IsMoving}");
+                GUILayout.Label($"MovementController Sleeping: {movementController.IsSleeping}");
+            }
+
+            if (directionTracker != null)
+            {
+                GUILayout.Label($"DirectionTracker Direction: {directionTracker.CurrentFacingDirection}");
             }
 
             GUILayout.Space(10);
@@ -561,30 +511,4 @@ public class CatPlayerAnimator : MonoBehaviour
     public bool IsForceStateActive => forceStateActive;
     public CatDirection CurrentDirection => currentDirection;
     public CatBaseState CurrentBaseState => GetBaseState(currentState);
-
-    // 기존 코드와의 호환성을 위한 메서드들
-    public void PlayTemporaryAnimation(CatPlayerAnimator.CatAnimationState oldState, float duration)
-    {
-        // 기존 enum을 새 시스템으로 변환
-        CatBaseState baseState = CatBaseState.Idle;
-
-        // 기존 enum에서 기본 상태 추출 (방향 정보는 무시)
-        string stateName = oldState.ToString();
-        if (stateName.Contains("Walk"))
-            baseState = CatBaseState.Walk;
-        else if (stateName.Contains("Sleep"))
-            baseState = CatBaseState.Sleep;
-        else
-            baseState = CatBaseState.Idle;
-
-        PlayTemporaryAnimation(baseState, duration);
-    }
-
-    // 기존 enum과의 호환성을 위한 정의 (기존 코드에서 사용하는 경우)
-    public enum OldCatAnimationState
-    {
-        Idle,
-        Walk,
-        Sleep
-    }
 }

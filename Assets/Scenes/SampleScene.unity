@@ -1008,16 +1008,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adb991c624611a24189d561ab5420a82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteRenderer: {fileID: 1221367171}
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  hoverColor: {r: 0.76862746, g: 0.69803923, b: 0.77254903, a: 1}
-  clickColor: {r: 0, g: 0.86517644, b: 1, a: 1}
-  moveSpeed: 0.3
-  changeDirectionTime: 5
-  pauseTime: 2
-  idleChance: 0
-  movementAreaHeight: 0.2
-  bottomMargin: 0.5
   catAnimator: {fileID: 1221367173}
 --- !u!212 &1221367171
 SpriteRenderer:
@@ -1106,9 +1096,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1221367172}
   spriteRenderer: {fileID: 1221367171}
-  idleTime: 0
-  sleepTime: 0
-  moveThreshold: 0.1
+  idleTime: 3
+  sleepTime: 8
+  moveThreshold: 0.15
   currentState: 0
   currentDirection: 0
   isMoving: 0
