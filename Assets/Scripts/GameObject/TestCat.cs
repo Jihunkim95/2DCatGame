@@ -138,7 +138,6 @@ public class TestCat : MonoBehaviour
         // 현재 움직임 방향에 따라 고양이가 바라보는 방향 결정
         Vector3 currentPosition = transform.position;
         Vector3 movement = currentPosition - lastMovementPosition;
-        Debug.Log("movement.x: " + movement.x);
 
 
             CatPlayerAnimator.CatDirection newDirection;

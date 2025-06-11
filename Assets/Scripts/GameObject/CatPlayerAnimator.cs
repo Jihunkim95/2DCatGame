@@ -168,7 +168,7 @@ public class CatPlayerAnimator : MonoBehaviour
             // TestCat이 실제로 움직이고 있고, 속도도 임계값을 넘을 때만 움직임으로 판정
             isMoving = testCatIsMoving && currentSpeed > moveThreshold;
 
-            Debug.Log($"Movement Detection - TestCat Moving: {testCatIsMoving}, Speed: {currentSpeed:F3}, IsMoving: {isMoving}, Direction: {currentDirection}, IsFacingRight: {currentDirection == CatDirection.Right}");
+            //Debug.Log($"Movement Detection - TestCat Moving: {testCatIsMoving}, Speed: {currentSpeed:F3}, IsMoving: {isMoving}, Direction: {currentDirection}, IsFacingRight: {currentDirection == CatDirection.Right}");
         }
 
         // 위치 업데이트
