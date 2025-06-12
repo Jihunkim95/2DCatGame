@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CameraTransparencyFix : MonoBehaviour
 {
@@ -14,49 +14,49 @@ public class CameraTransparencyFix : MonoBehaviour
         mainCamera = Camera.main;
         if (mainCamera == null)
         {
-            Debug.LogError("¸ŞÀÎ Ä«¸Ş¶ó¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù!");
+            Debug.LogError("ë©”ì¸ ì¹´ë©”ë¼ë¥¼ ì°¾ì„ ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
             return;
         }
 
-        // Unity Åõ¸íÈ­ ¹®Á¦ ÇØ°á: °ËÀº»öÀ¸·Î °­Á¦ ¼³Á¤
-        // Windows API°¡ °ËÀº»öÀ» Åõ¸íÀ¸·Î Ã³¸®ÇÏµµ·Ï ¼³Á¤ÇßÀ½
+        // Unity íˆ¬ëª…í™” ë¬¸ì œ í•´ê²°: ê²€ì€ìƒ‰ìœ¼ë¡œ ê°•ì œ ì„¤ì •
+        // Windows APIê°€ ê²€ì€ìƒ‰ì„ íˆ¬ëª…ìœ¼ë¡œ ì²˜ë¦¬í•˜ë„ë¡ ì„¤ì •í–ˆìŒ
         mainCamera.clearFlags = CameraClearFlags.SolidColor;
-        mainCamera.backgroundColor = Color.black; // ¿ÏÀü °ËÀº»öÀ¸·Î º¯°æ!
+        mainCamera.backgroundColor = Color.black; // ì™„ì „ ê²€ì€ìƒ‰ìœ¼ë¡œ ë³€ê²½!
 
-        // Built-in Pipeline¿ë Ãß°¡ ¼³Á¤
+        // Built-in Pipelineìš© ì¶”ê°€ ì„¤ì •
         mainCamera.allowHDR = false;
         mainCamera.allowMSAA = false;
         mainCamera.useOcclusionCulling = false;
 
-        // ·»´õ¸µ ÃÖÀûÈ­
+        // ë Œë”ë§ ìµœì í™”
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
-        Debug.Log($"Ä«¸Ş¶ó ¼³Á¤ ¿Ï·á!");
-        Debug.Log($"Clear Flags: {mainCamera.clearFlags}");
-        Debug.Log($"Background Color: {mainCamera.backgroundColor}");
+        Debug.Log($"ì¹´ë©”ë¼ ì„¤ì • ì™„ë£Œ!");
+        //Debug.Log($"Clear Flags: {mainCamera.clearFlags}");
+        //Debug.Log($"Background Color: {mainCamera.backgroundColor}");
 
-        // ·Î±× ÆÄÀÏ¿¡µµ ±â·Ï
-        DebugLogger.LogToFile($"Ä«¸Ş¶ó Clear Flags: {mainCamera.clearFlags}");
-        DebugLogger.LogToFile($"Ä«¸Ş¶ó Background Color: {mainCamera.backgroundColor}");
-        DebugLogger.LogToFile("°ËÀº»ö °­Á¦ ·»´õ¸µ ¸ğµå È°¼ºÈ­!");
+        // ë¡œê·¸ íŒŒì¼ì—ë„ ê¸°ë¡
+        DebugLogger.LogToFile($"ì¹´ë©”ë¼ Clear Flags: {mainCamera.clearFlags}");
+        DebugLogger.LogToFile($"ì¹´ë©”ë¼ Background Color: {mainCamera.backgroundColor}");
+        DebugLogger.LogToFile("ê²€ì€ìƒ‰ ê°•ì œ ë Œë”ë§ ëª¨ë“œ í™œì„±í™”!");
     }
 
-    // ¸Å ÇÁ·¹ÀÓ¸¶´Ù Ä«¸Ş¶ó ¼³Á¤ È®ÀÎ
+    // ë§¤ í”„ë ˆì„ë§ˆë‹¤ ì¹´ë©”ë¼ ì„¤ì • í™•ì¸
     void Update()
     {
         if (mainCamera != null)
         {
             if (mainCamera.clearFlags != CameraClearFlags.SolidColor)
             {
-                Debug.LogWarning("Ä«¸Ş¶ó Clear Flags°¡ º¯°æµÊ! º¹±¸ Áß...");
+                Debug.LogWarning("ì¹´ë©”ë¼ Clear Flagsê°€ ë³€ê²½ë¨! ë³µêµ¬ ì¤‘...");
                 mainCamera.clearFlags = CameraClearFlags.SolidColor;
             }
 
             if (mainCamera.backgroundColor != Color.black)
             {
-                Debug.LogWarning("Ä«¸Ş¶ó Background Color°¡ º¯°æµÊ! º¹±¸ Áß...");
-                mainCamera.backgroundColor = Color.black; // °ËÀº»ö À¯Áö
+                Debug.LogWarning("ì¹´ë©”ë¼ Background Colorê°€ ë³€ê²½ë¨! ë³µêµ¬ ì¤‘...");
+                mainCamera.backgroundColor = Color.black; // ê²€ì€ìƒ‰ ìœ ì§€
             }
         }
     }

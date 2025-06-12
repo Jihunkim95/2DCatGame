@@ -42,10 +42,7 @@ public class ItemManager : MonoBehaviour
 
     void Start()
     {
-        // 디버그: Resources 폴더 테스트
-        Debug.Log("=== Resources 폴더 테스트 ===");
-        Sprite testSprite = Resources.Load<Sprite>("Images/Hats/(1)cat_beauty");
-        Debug.Log($"테스트 로드 결과: {(testSprite != null ? "성공" : "실패")}");
+
 
         if (generateDefaultItems)
         {

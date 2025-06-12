@@ -2,307 +2,185 @@
 Unity 버전: 2022.3.55f1
 플랫폼: WindowsEditor
 해상도: 2560x1440
-[15:26:01.640] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[15:26:01.647] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[15:26:01.647] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[15:26:01.649] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[15:26:01.911] [Log] === Resources 폴더 테스트 ===
-[15:26:01.911] [Log] 테스트 로드 결과: 성공
-[15:26:01.913] [Log] 모자 스프라이트 할당 성공: 고양이 모자 1
-[15:26:01.914] [Log] 모자 스프라이트 할당 성공: 고양이 모자 2
-[15:26:01.915] [Log] 모자 스프라이트 할당 성공: 고양이 모자 3
-[15:26:01.915] [Log] 모자 아이템 3개 생성 완료
-[15:26:01.924] [Log] 아이템 데이터 로드 완료 - 소유: 2개, 착용: 고양이 모자 3
-[15:26:01.925] [Log] 아이템 매니저 초기화 완료 - 총 3개 아이템
-아이템 매니저 초기화 완료 - 총 3개 아이템
-[15:26:01.929] [Log] 마지막 저장: 2025-06-12 오후 3:24:52, 경과 시간: 1.2분
-마지막 저장: 2025-06-12 오후 3:24:52, 경과 시간: 1.2분
-[15:26:01.930] [Log] 오프라인 행복도 감소: -0.2% (현재: 99.8%)
-오프라인 행복도 감소: -0.2% (현재: 99.8%)
-[15:26:01.931] [Log] 게임 데이터 로드 시작!
+[18:26:39.477] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[18:26:39.483] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[18:26:39.483] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[18:26:39.485] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[18:26:39.850] [Log] 마지막 저장: 2025-06-12 오후 6:26:18, 경과 시간: 0.4분
+마지막 저장: 2025-06-12 오후 6:26:18, 경과 시간: 0.4분
+[18:26:39.851] [Log] 오프라인 행복도 감소: -0.1% (현재: 99.9%)
+오프라인 행복도 감소: -0.1% (현재: 99.9%)
+[18:26:39.852] [Log] 게임 데이터 로드 시작!
 게임 데이터 로드 시작!
-[15:26:01.932] [Log] 세이브 시스템 초기화 완료
+[18:26:39.853] [Log] 세이브 시스템 초기화 완료
 세이브 시스템 초기화 완료 - Easy Save 사용
-[15:26:01.932] [Log] UI Layer 자동 설정: Layer 5
-[15:26:01.933] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
-[15:26:01.933] [Log] ClickDetector 초기화 완료 - UI 감지 포함
+[18:26:39.854] [Log] UI Layer 자동 설정: Layer 5
+[18:26:39.854] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
+[18:26:39.854] [Log] ClickDetector 초기화 완료 - UI 감지 포함
 ClickDetector 초기화 완료 - UI 감지 포함
-[15:26:01.934] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
-[15:26:01.986] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
+[18:26:39.855] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
+[18:26:39.869] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
-[15:26:01.988] [Log] 카메라 설정 완료!
-[15:26:01.988] [Log] Clear Flags: SolidColor
-[15:26:01.989] [Log] Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
+[18:26:39.870] [Log] 카메라 설정 완료!
 카메라 Clear Flags: SolidColor
 카메라 Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
 검은색 강제 렌더링 모드 활성화!
-[15:26:01.991] [Log] 리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템
+[18:26:39.872] [Log] 모자 스프라이트 할당 성공: 고양이 모자 1
+[18:26:39.873] [Log] 모자 스프라이트 할당 성공: 고양이 모자 2
+[18:26:39.873] [Log] 모자 스프라이트 할당 성공: 고양이 모자 3
+[18:26:39.873] [Log] 모자 아이템 3개 생성 완료
+[18:26:39.875] [Log] 아이템 데이터 로드 완료 - 소유: 2개, 착용: 고양이 모자 3
+[18:26:39.875] [Log] 아이템 매니저 초기화 완료 - 총 3개 아이템
+아이템 매니저 초기화 완료 - 총 3개 아이템
+[18:26:39.876] [Log] 리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템
 리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템
-[15:26:01.992] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
+[18:26:39.877] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
 고양이 애니메이션 상태 변경: IdleLeft → IdleLeft
-[15:26:01.993] [Log] 고양이가 가만히 있습니다 - 방향: Left
-[15:26:01.993] [Log] CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용
+[18:26:39.877] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[18:26:39.879] [Log] CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용
 CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용
-[15:26:01.995] [Log] 타워 이미지 Resources에서 로드 성공
-[15:26:01.997] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[18:26:39.880] [Log] 타워 이미지 Resources에서 로드 성공
+[18:26:39.882] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[15:26:01.998] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
+[18:26:39.883] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
 캣타워 생성 완료 - 업그레이드 가능 빌드
-[15:26:02.000] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
-[15:26:02.004] [Log] 아이템 UI 초기화 완료
+[18:26:39.884] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
+[18:26:39.887] [Log] 아이템 UI 초기화 완료
 아이템 UI 초기화 완료
-[15:26:02.012] [Log] 게임 데이터 매니저 초기화
-게임 데이터 매니저 초기화 - 초기 행복도: 99.8073%
-[15:26:02.013] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
-[15:26:02.015] [Log] 고양이 위치 설정: (6.04, -3.37, -0.01)
-[15:26:02.035] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:02.036] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:02.036] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:02.994] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:02.995] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:02.996] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:03.496] [Log] 타워 이미지 Resources에서 로드 성공
-[15:26:03.498] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[18:26:39.889] [Log] 게임 데이터 매니저 초기화
+게임 데이터 매니저 초기화 - 초기 행복도: 99.93953%
+[18:26:39.889] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
+[18:26:39.890] [Log] 고양이 위치 설정: (-4.63, -4.02, -0.01)
+[18:26:39.917] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:40.746] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:41.248] [Log] 타워 이미지 Resources에서 로드 성공
+[18:26:41.249] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[15:26:03.499] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 12개
-캣타워 데이터 로드: 레벨 1, 츄르 12개
-[15:26:03.500] [Log] 게임 데이터 로드: 행복도 99.9%
-게임 데이터 로드: 행복도 99.9%
-[15:26:03.503] [Log] 모자 방향 업데이트: 왼쪽
-[15:26:03.503] [Log] 모자 착용 완료: 고양이 모자 3
+[18:26:41.249] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 182개
+캣타워 데이터 로드: 레벨 1, 츄르 182개
+[18:26:41.250] [Log] 게임 데이터 로드: 행복도 99.8%
+게임 데이터 로드: 행복도 99.8%
+[18:26:41.252] [Log] 모자 방향 업데이트: 왼쪽
+[18:26:41.252] [Log] 모자 착용 완료: 고양이 모자 3
 모자 착용 완료: 고양이 모자 3
-[15:26:03.505] [Log] 저장된 모자 복원 완료
-[15:26:03.506] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
+[18:26:41.252] [Log] 저장된 모자 복원 완료
+[18:26:41.254] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
 에디터에서는 윈도우 설정이 비활성화됩니다.
-[15:26:03.507] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:03.508] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:03.508] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:03.514] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:03.515] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:03.516] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:03.613] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:03.998] [Log] 고양이 위치 로드: (-1.49, -3.59)
-고양이 위치 로드: (-1.49, -3.59)
-[15:26:04.013] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:04.014] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:04.014] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:04.513] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:04.514] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:04.515] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:04.530] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:04.530] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:04.530] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:04.613] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:05.032] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:05.032] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:05.033] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:05.530] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:05.530] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:05.530] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:05.548] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:05.548] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:05.549] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:05.730] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:06.047] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:06.048] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:06.048] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:06.547] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:06.548] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:06.548] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:06.564] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:06.564] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:06.565] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:06.730] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:07.064] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:07.064] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:07.065] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:07.564] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:07.564] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:07.565] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:07.581] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:07.581] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:07.582] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:07.729] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:08.080] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:08.080] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:08.081] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:08.581] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:08.582] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:08.582] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:08.598] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:08.599] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:08.599] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:08.731] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:09.097] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:09.097] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:09.098] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:09.598] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:09.598] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:09.599] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:09.614] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:09.615] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:09.615] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:09.730] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:10.114] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:10.115] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:10.115] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:10.616] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:10.616] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:10.616] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:10.630] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:10.632] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:10.633] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:10.729] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:10.814] [Log] 츄르 생산: +2 (총 14개)
-츄르 생산: +2 (총 14개)
-[15:26:11.130] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:11.130] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:11.131] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:11.631] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:11.632] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:11.632] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:11.647] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:11.647] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:11.648] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:11.731] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:12.147] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:12.147] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:12.148] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:12.464] [Log] 고양이에 마우스를 올렸습니다!
-[15:26:12.647] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:12.648] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:12.648] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:12.664] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:12.664] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:12.665] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:12.731] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:12.864] [Log] 고양이에 마우스를 올렸습니다!
-[15:26:13.164] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:13.164] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:13.165] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:13.664] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:13.664] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:13.665] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:13.680] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:13.681] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:13.681] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:13.730] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:14.180] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:14.180] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:14.182] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:14.680] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:14.681] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:14.681] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:14.697] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:14.697] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:14.698] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:14.730] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:15.062] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 14개
-캣타워 데이터 저장: 레벨 1, 츄르 14개
-[15:26:15.065] [Log] 게임 데이터 저장: 행복도 99.9%
-게임 데이터 저장: 행복도 99.9%
-[15:26:15.070] [Log] 고양이 위치 저장: (-1.49, -3.59)
-고양이 위치 저장: (-1.49, -3.59)
-[15:26:15.074] [Log] 게임 데이터 저장 완료!
+[18:26:41.254] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:41.259] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[18:26:41.259] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:41.747] [Log] 고양이 위치 로드: (0.68, -3.40)
+고양이 위치 로드: (0.68, -3.40)
+[18:26:41.760] [Log] 🐱 고양이 방향 변경: X=5.311 → Right
+고양이 방향 변경: X=5.311 → Right
+[18:26:41.761] [Log] TestCat: 방향 변경됨 - Right
+[18:26:41.761] [Log] Direction 변경에 따른 Animation 업데이트: Right
+[18:26:41.762] [Log] 고양이 애니메이션 상태 변경: IdleLeft → IdleRight
+고양이 애니메이션 상태 변경: IdleLeft → IdleRight
+[18:26:41.762] [Log] 고양이가 가만히 있습니다 - 방향: Right
+[18:26:41.763] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:41.779] [Log] 모자 방향 업데이트: 오른쪽
+[18:26:41.780] [Log] 고양이 방향 변경 감지: Right
+[18:26:41.780] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:42.246] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:42.264] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:42.746] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:42.764] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:43.246] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:43.262] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:43.747] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:43.761] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:44.244] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:44.377] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:44.760] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:44.778] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:45.244] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:45.376] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:45.377] [Log] 고양이에 마우스를 올렸습니다!
+[18:26:45.475] [Log] 고양이를 클릭했습니다! (쓰다듬기)
+고양이를 클릭했습니다! (쓰다듬기)
+[18:26:45.476] [Log] 고양이 애니메이션 상태 변경: IdleRight → IdleRight
+고양이 애니메이션 상태 변경: IdleRight → IdleRight
+[18:26:45.477] [Log] 고양이가 가만히 있습니다 - 방향: Right
+[18:26:45.477] [Log] 일시적 애니메이션 재생: Idle Right (1초)
+일시적 애니메이션 재생: Idle Right (1초)
+[18:26:45.478] [Log] 모자 착용 중 쓰다듬기: 고양이 모자 3 - 특별 효과!
+[18:26:45.479] [Log] ✨ 고양이 모자 3 효과: 패션센스로 인한 기분 좋음!
+[18:26:45.493] [Log] 고양이에 마우스를 올렸습니다!
+[18:26:45.678] [Log] 클릭 효과 리셋 - 스케일: (0.20, 0.20, 0.00)
+[18:26:45.693] [Log] 고양이에 마우스를 올렸습니다!
+[18:26:45.744] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:45.761] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:46.261] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:46.377] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:46.477] [Log] 고양이 애니메이션 상태 변경: IdleRight → IdleRight
+고양이 애니메이션 상태 변경: IdleRight → IdleRight
+[18:26:46.478] [Log] 고양이가 가만히 있습니다 - 방향: Right
+[18:26:46.478] [Log] 강제 애니메이션 상태 종료, 자동 상태로 복귀
+[18:26:46.744] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:46.778] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:47.025] [Log] 츄르 생산: +2 (총 184개)
+츄르 생산: +2 (총 184개)
+[18:26:47.245] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:47.377] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:47.635] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 184개
+캣타워 데이터 저장: 레벨 1, 츄르 184개
+[18:26:47.639] [Log] 게임 데이터 저장: 행복도 100.0%
+게임 데이터 저장: 행복도 100.0%
+[18:26:47.646] [Log] 고양이 위치 저장: (0.68, -3.40)
+고양이 위치 저장: (0.68, -3.40)
+[18:26:47.649] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
-[15:26:15.199] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:15.200] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:15.200] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:15.858] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:15.859] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:15.859] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:15.860] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:15.861] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:15.861] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:15.899] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:16.216] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:16.217] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:16.217] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:16.716] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:16.717] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:16.718] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:16.732] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:16.732] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:16.733] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:16.899] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:17.232] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:17.233] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:17.233] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:17.737] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:17.738] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:17.738] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:17.754] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:17.754] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:17.754] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:17.921] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:18.253] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:18.254] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:18.254] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:18.754] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:18.755] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:18.755] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:18.770] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:18.772] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:18.772] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:18.921] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:19.271] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:19.274] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:19.274] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:19.770] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:19.770] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:19.771] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:19.787] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:19.787] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:19.788] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:19.920] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:20.287] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:20.288] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:20.288] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:20.788] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:20.788] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:20.788] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:20.803] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:20.804] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:20.804] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:20.820] [Log] 츄르 생산: +2 (총 16개)
-츄르 생산: +2 (총 16개)
-[15:26:20.921] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:21.304] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:21.304] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:21.305] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:21.803] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:21.803] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:21.803] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:21.824] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:21.824] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:21.826] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:21.922] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:22.322] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:22.322] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:22.323] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:22.822] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:22.823] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:22.823] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:22.839] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:22.840] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:22.840] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:22.936] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:23.338] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:23.338] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:23.339] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:23.838] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:23.839] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:23.840] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:23.855] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:23.855] [Log] 😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState
-[15:26:23.856] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
-[15:26:23.939] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[15:26:24.221] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 16개
-캣타워 데이터 저장: 레벨 1, 츄르 16개
-[15:26:24.224] [Log] 게임 데이터 저장: 행복도 99.9%
-게임 데이터 저장: 행복도 99.9%
-[15:26:24.230] [Log] 고양이 위치 저장: (-1.49, -3.59)
-고양이 위치 저장: (-1.49, -3.59)
-[15:26:24.233] [Log] 게임 데이터 저장 완료!
+[18:26:47.750] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:47.767] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:48.246] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:48.497] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:48.746] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:48.763] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:49.245] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:49.496] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[18:26:49.746] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:49.762] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:50.245] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:50.313] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
+[18:26:50.314] [Log] TestCat: 움직임 상태 변경됨 - Walking
+[18:26:50.314] [Log] 고양이 애니메이션 상태 변경: IdleRight → WalkRight
+고양이 애니메이션 상태 변경: IdleRight → WalkRight
+[18:26:50.314] [Log] 고양이가 걷기 시작했습니다 - 방향: Right
+[18:26:50.316] [Log] Movement State 변경에 따른 Animation 업데이트: Walking → Walk Right
+[18:26:50.330] [Log] 🐱 고양이 방향 변경: X=-0.025 → Left
+고양이 방향 변경: X=-0.025 → Left
+[18:26:50.331] [Log] TestCat: 방향 변경됨 - Left
+[18:26:50.331] [Log] Direction 변경에 따른 Animation 업데이트: Left
+[18:26:50.331] [Log] 고양이 애니메이션 상태 변경: WalkRight → WalkLeft
+고양이 애니메이션 상태 변경: WalkRight → WalkLeft
+[18:26:50.332] [Log] 고양이가 걷기 시작했습니다 - 방향: Left
+[18:26:50.343] [Log] 모자 방향 업데이트: 왼쪽
+[18:26:50.344] [Log] 고양이 방향 변경 감지: Left
+[18:26:50.344] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:50.495] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.54
+[18:26:51.496] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.40
+[18:26:51.913] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
+[18:26:51.913] [Log] TestCat: 움직임 상태 변경됨 - Idle
+[18:26:51.914] [Log] 고양이 애니메이션 상태 변경: WalkLeft → IdleLeft
+고양이 애니메이션 상태 변경: WalkLeft → IdleLeft
+[18:26:51.914] [Log] 고양이가 가만히 있습니다 - 방향: Left
+[18:26:51.914] [Log] Movement State 변경에 따른 Animation 업데이트: Idle → Idle Left
+[18:26:51.944] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:52.446] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:52.497] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[18:26:52.929] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:52.963] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:53.446] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:53.497] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[18:26:53.963] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:53.980] [Log] 😐 애니메이션 이벤트 호출: OnIdleState
+[18:26:54.416] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 184개
+캣타워 데이터 저장: 레벨 1, 츄르 184개
+[18:26:54.420] [Log] 게임 데이터 저장: 행복도 100.0%
+게임 데이터 저장: 행복도 100.0%
+[18:26:54.427] [Log] 고양이 위치 저장: (-1.69, -3.74)
+고양이 위치 저장: (-1.69, -3.74)
+[18:26:54.430] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
 === Debug Logger 종료 ===

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using static CatPlayerAnimator;
 
 /// <summary>
 /// 리팩터링된 TestCat 클래스 - 아이템 시스템 통합
@@ -12,7 +13,7 @@ public class TestCat : MonoBehaviour
 
     [Header("아이템 시스템")]
     public Transform hatPoint; // 모자 착용 위치
-    public bool useAnimationEvents = false; // 애니메이션 이벤트 사용 여부 (기본값: false)
+    public bool useAnimationEvents = true; // 애니메이션 이벤트 사용 여부 (기본값: true)
 
     [Header("모자 위치 오프셋")]
     public Vector3 walkHatOffset = new Vector3(0, 0.02f, 0);
@@ -120,7 +121,7 @@ public class TestCat : MonoBehaviour
         {
             GameObject hatPointObj = new GameObject("HatPoint");
             hatPointObj.transform.SetParent(transform);
-            hatPointObj.transform.localPosition = new Vector3(0.0f, 0.3f, 0);
+            hatPointObj.transform.localPosition = new Vector3(-0.05f, -0.35f, 0);
             hatPoint = hatPointObj.transform;
             Debug.Log("모자 착용 포인트 자동 생성");
         }
@@ -228,7 +229,7 @@ public class TestCat : MonoBehaviour
         return offset;
     }
 
-    // 애니메이션 이벤트가 없을 때의 백업 메서드
+    // 애니메이션 이벤트가 없을 때의 백업 메서드도 수정
     void UpdateHatPositionForFallback(CatPlayerAnimator.CatAnimationState animState)
     {
         if (currentHat == null || hatPoint == null) return;
@@ -239,8 +240,12 @@ public class TestCat : MonoBehaviour
         switch (animState)
         {
             case CatPlayerAnimator.CatAnimationState.SleepLeft:
+                // 왼쪽으로 잘 때 오프셋 적용
+                targetPosition = basePosition + new Vector3(sleepHatOffset.x + 0.4f, sleepHatOffset.y, sleepHatOffset.z);
+                break;
             case CatPlayerAnimator.CatAnimationState.SleepRight:
-                targetPosition = basePosition + sleepHatOffset;
+                // 오른쪽으로 잘 때 오프셋 적용
+                targetPosition = basePosition + new Vector3(sleepHatOffset.x - 0.4f, sleepHatOffset.y, sleepHatOffset.z);
                 break;
 
             case CatPlayerAnimator.CatAnimationState.WalkLeft:
@@ -256,35 +261,27 @@ public class TestCat : MonoBehaviour
         hatPoint.localPosition = Vector3.Lerp(hatPoint.localPosition, targetPosition, Time.deltaTime * 5f);
     }
 
-    // 애니메이션 이벤트에서 호출할 메서드들
-    public void OnWalkFrame1()
-    {
-        Debug.Log("🚶 애니메이션 이벤트 호출: OnWalkFrame1");
-        if (useAnimationEvents) SetHatOffset(new Vector3(0.01f, 0.02f, 0));
-    }
-
-    public void OnWalkFrame2()
-    {
-        Debug.Log("🚶 애니메이션 이벤트 호출: OnWalkFrame2");
-        if (useAnimationEvents) SetHatOffset(new Vector3(0f, -0.01f, 0));
-    }
-
-    public void OnWalkFrame3()
-    {
-        Debug.Log("🚶 애니메이션 이벤트 호출: OnWalkFrame3");
-        if (useAnimationEvents) SetHatOffset(new Vector3(-0.01f, 0.02f, 0));
-    }
-
-    public void OnWalkFrame4()
-    {
-        Debug.Log("🚶 애니메이션 이벤트 호출: OnWalkFrame4");
-        if (useAnimationEvents) SetHatOffset(new Vector3(0f, 0f, 0));
-    }
 
     public void OnSleepStart()
     {
-        Debug.Log($" 애니메이션 이벤트 호출: OnSleepStart{sleepHatOffset}, useAnimationEvents:{useAnimationEvents}");
-        if (useAnimationEvents) SetHatOffset(sleepHatOffset);
+        // 방향에 따른 잠자는 모자 오프셋 계산
+        Vector3 adjustedSleepOffset;
+
+        if (lastDirection == CatPlayerAnimator.CatDirection.Left)
+        {
+            adjustedSleepOffset = new Vector3(sleepHatOffset.x + 0.4f, sleepHatOffset.y, sleepHatOffset.z);
+        }
+        else // Right
+        {
+            adjustedSleepOffset = new Vector3(sleepHatOffset.x - 0.4f, sleepHatOffset.y, sleepHatOffset.z);
+        }
+
+        Debug.Log($"😴 애니메이션 이벤트 호출: OnSleepStart, 방향: {lastDirection}, 오프셋: {adjustedSleepOffset}, useAnimationEvents:{useAnimationEvents}");
+
+        if (useAnimationEvents)
+        {
+            SetHatOffset(adjustedSleepOffset);
+        }
     }
 
     public void OnWakeUp()
@@ -309,10 +306,10 @@ public class TestCat : MonoBehaviour
     {
         if (hatPoint != null && useAnimationEvents)
         {
-            Vector3 basePosition = new Vector3(0.2f, -0.5f, 0);
+            Vector3 basePosition = new Vector3(-0.05f, -0.35f, 0);
             Vector3 targetPosition = basePosition + offset;
             // 부드러운 전환
-            StartCoroutine(SmoothMoveHat(targetPosition, 0.1f));
+            StartCoroutine(SmoothMoveHat(targetPosition, 0.02f));
         }
     }
 
