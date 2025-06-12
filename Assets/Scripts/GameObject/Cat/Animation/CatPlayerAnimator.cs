@@ -60,6 +60,7 @@ public class CatPlayerAnimator : MonoBehaviour
     // 컴포넌트 참조들 (리팩터링된 구조에 맞게 변경)
     private CatMovementController movementController;
     private CatDirectionTracker directionTracker;
+    private TestCat testCat; // TestCat 참조 추가
 
     void Start()
     {
@@ -73,6 +74,7 @@ public class CatPlayerAnimator : MonoBehaviour
         // 새로운 컴포넌트들 참조
         movementController = GetComponent<CatMovementController>();
         directionTracker = GetComponent<CatDirectionTracker>();
+        testCat = GetComponent<TestCat>(); // TestCat 참조 추가
 
         // 초기 위치 저장
         lastPosition = transform.position;
@@ -128,6 +130,79 @@ public class CatPlayerAnimator : MonoBehaviour
         UpdateMovementDetection();
         UpdateAnimationState();
         UpdateAnimatorParameters();
+    }
+
+    // 🎬 Animation Event 함수들 - TestCat에 위임
+    public void OnWalkFrame1()
+    {
+        Debug.Log("🚶 CatPlayerAnimator에서 Animation Event 수신: OnWalkFrame1");
+        if (testCat != null)
+        {
+            testCat.OnWalkFrame1();
+        }
+    }
+
+    public void OnWalkFrame2()
+    {
+        Debug.Log("🚶 CatPlayerAnimator에서 Animation Event 수신: OnWalkFrame2");
+        if (testCat != null)
+        {
+            testCat.OnWalkFrame2();
+        }
+    }
+
+    public void OnWalkFrame3()
+    {
+        Debug.Log("🚶 CatPlayerAnimator에서 Animation Event 수신: OnWalkFrame3");
+        if (testCat != null)
+        {
+            testCat.OnWalkFrame3();
+        }
+    }
+
+    public void OnWalkFrame4()
+    {
+        Debug.Log("🚶 CatPlayerAnimator에서 Animation Event 수신: OnWalkFrame4");
+        if (testCat != null)
+        {
+            testCat.OnWalkFrame4();
+        }
+    }
+
+    public void OnSleepStart()
+    {
+        Debug.Log("😴 CatPlayerAnimator에서 Animation Event 수신: OnSleepStart");
+        if (testCat != null)
+        {
+            testCat.OnSleepStart();
+        }
+    }
+
+    public void OnWakeUp()
+    {
+        Debug.Log("😊 CatPlayerAnimator에서 Animation Event 수신: OnWakeUp");
+        if (testCat != null)
+        {
+            testCat.OnWakeUp();
+        }
+    }
+
+    public void OnIdleState()
+    {
+        Debug.Log("😐 CatPlayerAnimator에서 Animation Event 수신: OnIdleState");
+        if (testCat != null)
+        {
+            testCat.OnIdleState();
+        }
+    }
+
+    public void TestAnimationEvent()
+    {
+        Debug.Log("🎯 CatPlayerAnimator 테스트 애니메이션 이벤트 성공!");
+        if (testCat != null)
+        {
+            testCat.TestAnimationEvent();
+        }
     }
 
     // 이벤트 핸들러들
