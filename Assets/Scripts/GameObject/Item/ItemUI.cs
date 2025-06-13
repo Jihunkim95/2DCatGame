@@ -1,26 +1,24 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
-using TMPro;
 
 /// <summary>
-/// 아이템 창 UI 관리자
+/// 아이템 창 UI 관리자 - 우측하단 세로 배치, 이미지만 표시
 /// </summary>
 public class ItemUI : MonoBehaviour
 {
     [Header("UI 요소들")]
-    public Button itemButton;           // Item 버튼
-    public GameObject itemPanel;        // 아이템 창 패널
-    public Transform itemListParent;    // 아이템 목록 부모
-    public GameObject itemSlotPrefab;   // 아이템 슬롯 프리팹
+    public Button itemButton;           // Item 버튼 (Inspector에서 할당)
+    public GameObject itemPanel;        // 아이템 패널 (자동 생성됨)
+    public Transform itemListParent;    // 아이템 목록 부모 (자동 생성됨)
+    public GameObject itemSlotPrefab;   // 아이템 슬롯 프리팹 (자동 생성됨)
 
     [Header("아이템 창 설정")]
-    public Vector2 panelSize = new Vector2(200f, 400f);
-    public float slotHeight = 60f;
+    public float slotSize = 50f;        // 슬롯 크기 (정사각형)
+    public float slotSpacing = 5f;      // 슬롯 간격
+    public Vector2 panelOffset = new Vector2(0f, 150f); // 화면 우측하단에서의 오프셋
 
-    [Header("폰트 설정")]
-    public TMP_FontAsset dungGeunMoFont;
-
+    private List<GameObject> itemSlots = new List<GameObject>();
     private bool isPanelVisible = false;
 
     // 싱글톤
@@ -41,76 +39,35 @@ public class ItemUI : MonoBehaviour
 
     void Start()
     {
-        LoadDungGeunMoFont();
         SetupUI();
+
+        // 상태 초기화 (중요!)
+        isPanelVisible = false;
 
         // Item 버튼 클릭 이벤트 연결
         if (itemButton != null)
         {
             itemButton.onClick.AddListener(ToggleItemPanel);
         }
-
-        Debug.Log("아이템 UI 초기화 완료");
-        DebugLogger.LogToFile("아이템 UI 초기화 완료");
-    }
-
-    void LoadDungGeunMoFont()
-    {
-        if (dungGeunMoFont != null) return;
-
-        string[] resourcePaths = {
-            "Font/DungGeunMo SDF",
-            "Font/DungGeunMo",
-            "DungGeunMo SDF",
-            "DungGeunMo"
-        };
-
-        foreach (string path in resourcePaths)
+        else
         {
-            TMP_FontAsset font = Resources.Load<TMP_FontAsset>(path);
-            if (font != null)
-            {
-                dungGeunMoFont = font;
-                Debug.Log($"DungGeunMo 폰트 로드 성공: {path}");
-                return;
-            }
+            Debug.LogWarning("ItemButton이 Inspector에서 할당되지 않았습니다! 자동으로 생성합니다.");
+            CreateItemButton();
         }
 
-        // 기본 폰트 사용
-        dungGeunMoFont = TMP_Settings.defaultFontAsset;
-        Debug.LogWarning("DungGeunMo 폰트를 찾을 수 없어 기본 폰트 사용");
-    }
-
-    void ApplyFont(TextMeshProUGUI textComponent)
-    {
-        if (textComponent == null) return;
-
-        if (dungGeunMoFont != null)
+        // 초기에는 패널 숨김 (강제)
+        if (itemPanel != null)
         {
-            try
-            {
-                textComponent.font = dungGeunMoFont;
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"폰트 적용 실패: {e.Message}");
-                textComponent.font = TMP_Settings.defaultFontAsset;
-            }
+            itemPanel.SetActive(false);
         }
-        else if (textComponent.font == null)
-        {
-            textComponent.font = TMP_Settings.defaultFontAsset;
-        }
+
+        Debug.Log($"아이템 UI 초기화 완료 - 패널 상태: {isPanelVisible}");
+        DebugLogger.LogToFile("아이템 UI 초기화 완료 (우측하단 세로배치)");
     }
 
     void SetupUI()
     {
         // UI 요소들이 없으면 자동 생성
-        if (itemButton == null)
-        {
-            CreateItemButton();
-        }
-
         if (itemPanel == null)
         {
             CreateItemPanel();
@@ -119,12 +76,6 @@ public class ItemUI : MonoBehaviour
         if (itemSlotPrefab == null)
         {
             CreateItemSlotPrefab();
-        }
-
-        // 초기에는 패널 숨김
-        if (itemPanel != null)
-        {
-            itemPanel.SetActive(false);
         }
     }
 
@@ -150,18 +101,16 @@ public class ItemUI : MonoBehaviour
 
         image.color = new Color(0.2f, 0.4f, 0.8f, 0.8f);
 
-        // 텍스트 추가 (TextMeshPro 사용)
+        // 텍스트 추가
         GameObject textObj = new GameObject("Text");
         textObj.transform.SetParent(buttonObj.transform, false);
 
-        TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
+        Text text = textObj.AddComponent<Text>();
         text.text = "Item";
         text.color = Color.white;
-        text.alignment = TextAlignmentOptions.Center;
+        text.alignment = TextAnchor.MiddleCenter;
         text.fontSize = 14;
-
-        // DungGeunMo 폰트 적용
-        ApplyFont(text);
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
 
         RectTransform textRect = textObj.GetComponent<RectTransform>();
         textRect.anchorMin = Vector2.zero;
@@ -169,6 +118,8 @@ public class ItemUI : MonoBehaviour
         textRect.offsetMin = Vector2.zero;
         textRect.offsetMax = Vector2.zero;
 
+        // 클릭 이벤트 연결
+        button.onClick.AddListener(ToggleItemPanel);
         itemButton = button;
     }
 
@@ -178,55 +129,40 @@ public class ItemUI : MonoBehaviour
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null) return;
 
-        // 아이템 패널 생성
+        // 아이템 패널 생성 (우측 하단)
         GameObject panelObj = new GameObject("ItemPanel");
         panelObj.transform.SetParent(canvas.transform, false);
 
         RectTransform rect = panelObj.AddComponent<RectTransform>();
-        Image image = panelObj.AddComponent<Image>();
-        ScrollRect scrollRect = panelObj.AddComponent<ScrollRect>();
+        VerticalLayoutGroup layoutGroup = panelObj.AddComponent<VerticalLayoutGroup>();
+        ContentSizeFitter sizeFitter = panelObj.AddComponent<ContentSizeFitter>();
 
-        // 패널 설정 (화면 좌측에 배치)
-        rect.anchorMin = new Vector2(0f, 0.5f);
-        rect.anchorMax = new Vector2(0f, 0.5f);
-        rect.anchoredPosition = new Vector2(panelSize.x * 0.5f + 10f, 0f);
-        rect.sizeDelta = panelSize;
+        // 우측 하단에 앵커 설정
+        rect.anchorMin = new Vector2(1f, 0f);
+        rect.anchorMax = new Vector2(1f, 0f);
+        rect.pivot = new Vector2(1f, 0f);
+        rect.anchoredPosition = panelOffset;
 
-        image.color = new Color(0.1f, 0.1f, 0.2f, 0.9f);
-
-        // 스크롤 영역 생성
-        GameObject contentObj = new GameObject("Content");
-        contentObj.transform.SetParent(panelObj.transform, false);
-
-        RectTransform contentRect = contentObj.AddComponent<RectTransform>();
-        VerticalLayoutGroup layoutGroup = contentObj.AddComponent<VerticalLayoutGroup>();
-        ContentSizeFitter sizeFitter = contentObj.AddComponent<ContentSizeFitter>();
-
-        contentRect.anchorMin = new Vector2(0f, 1f);
-        contentRect.anchorMax = new Vector2(1f, 1f);
-        contentRect.pivot = new Vector2(0.5f, 1f);
-        contentRect.anchoredPosition = Vector2.zero;
-
-        layoutGroup.spacing = 5f;
-        layoutGroup.padding = new RectOffset(10, 10, 10, 10);
+        // 레이아웃 설정 (세로 배치, 아래에서 위로)
+        layoutGroup.childAlignment = TextAnchor.LowerCenter;
         layoutGroup.childControlWidth = true;
-        layoutGroup.childControlHeight = false;
-        layoutGroup.childForceExpandWidth = true;
+        layoutGroup.childControlHeight = true;
+        layoutGroup.childForceExpandWidth = false;
+        layoutGroup.childForceExpandHeight = false;
+        layoutGroup.spacing = slotSpacing;
+        layoutGroup.padding = new RectOffset(0, 0, 0, 0);
 
+        // 크기 자동 조정
+        sizeFitter.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
         sizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
 
-        // 스크롤 설정
-        scrollRect.content = contentRect;
-        scrollRect.vertical = true;
-        scrollRect.horizontal = false;
-
         itemPanel = panelObj;
-        itemListParent = contentObj.transform;
+        itemListParent = panelObj.transform;
     }
 
     void CreateItemSlotPrefab()
     {
-        // 아이템 슬롯 프리팹 생성
+        // 아이템 슬롯 프리팹 생성 (정사각형, 이미지만)
         GameObject slotObj = new GameObject("ItemSlot");
 
         RectTransform rect = slotObj.AddComponent<RectTransform>();
@@ -234,41 +170,56 @@ public class ItemUI : MonoBehaviour
         Button button = slotObj.AddComponent<Button>();
         LayoutElement layoutElement = slotObj.AddComponent<LayoutElement>();
 
-        rect.sizeDelta = new Vector2(0f, slotHeight);
-        image.color = new Color(0.15f, 0.15f, 0.25f, 1f);
-        layoutElement.minHeight = slotHeight;
-        layoutElement.preferredHeight = slotHeight;
+        // 정사각형 슬롯 설정
+        rect.sizeDelta = new Vector2(slotSize, slotSize);
 
-        // 아이콘 이미지
-        GameObject iconObj = new GameObject("Icon");
-        iconObj.transform.SetParent(slotObj.transform, false);
+        // 기본 배경색 (투명)
+        image.color = new Color(0f, 0f, 0f, 0.3f);
 
-        RectTransform iconRect = iconObj.AddComponent<RectTransform>();
-        Image iconImage = iconObj.AddComponent<Image>();
+        // 레이아웃 설정
+        layoutElement.minWidth = slotSize;
+        layoutElement.minHeight = slotSize;
+        layoutElement.preferredWidth = slotSize;
+        layoutElement.preferredHeight = slotSize;
 
-        iconRect.anchorMin = new Vector2(0f, 0.5f);
-        iconRect.anchorMax = new Vector2(0f, 0.5f);
-        iconRect.anchoredPosition = new Vector2(30f, 0f);
-        iconRect.sizeDelta = new Vector2(40f, 40f);
+        // 버튼 색상 설정
+        ColorBlock colors = button.colors;
+        colors.normalColor = new Color(1f, 1f, 1f, 0.3f);
+        colors.highlightedColor = new Color(1f, 1f, 1f, 0.6f);
+        colors.pressedColor = new Color(0.8f, 0.8f, 0.8f, 0.8f);
+        colors.selectedColor = new Color(0.9f, 0.9f, 0.9f, 0.5f);
+        button.colors = colors;
 
-        // 텍스트 (TextMeshPro 사용)
-        GameObject textObj = new GameObject("Text");
-        textObj.transform.SetParent(slotObj.transform, false);
+        // 아이템 이미지 (슬롯 전체를 덮도록)
+        GameObject itemImageObj = new GameObject("ItemImage");
+        itemImageObj.transform.SetParent(slotObj.transform, false);
 
-        RectTransform textRect = textObj.AddComponent<RectTransform>();
-        TextMeshProUGUI text = textObj.AddComponent<TextMeshProUGUI>();
+        RectTransform itemImageRect = itemImageObj.AddComponent<RectTransform>();
+        Image itemImage = itemImageObj.AddComponent<Image>();
 
-        textRect.anchorMin = new Vector2(0f, 0f);
-        textRect.anchorMax = new Vector2(1f, 1f);
-        textRect.offsetMin = new Vector2(70f, 0f);
-        textRect.offsetMax = new Vector2(-10f, 0f);
+        // 이미지가 슬롯 전체를 덮도록 설정
+        itemImageRect.anchorMin = Vector2.zero;
+        itemImageRect.anchorMax = Vector2.one;
+        itemImageRect.offsetMin = Vector2.zero;
+        itemImageRect.offsetMax = Vector2.zero;
 
-        text.color = Color.white;
-        text.alignment = TextAlignmentOptions.MidlineLeft;
-        text.fontSize = 12;
+        // 기본적으로 이미지는 숨김
+        itemImage.color = new Color(1f, 1f, 1f, 0f);
 
-        // DungGeunMo 폰트 적용
-        ApplyFont(text);
+        // 착용 상태 표시용 테두리
+        GameObject borderObj = new GameObject("EquipBorder");
+        borderObj.transform.SetParent(slotObj.transform, false);
+
+        RectTransform borderRect = borderObj.AddComponent<RectTransform>();
+        Image borderImage = borderObj.AddComponent<Image>();
+
+        borderRect.anchorMin = Vector2.zero;
+        borderRect.anchorMax = Vector2.one;
+        borderRect.offsetMin = Vector2.zero;
+        borderRect.offsetMax = Vector2.zero;
+
+        // 기본적으로 테두리는 숨김
+        borderImage.color = new Color(0f, 1f, 0f, 1f); // 녹색 테두리
 
         itemSlotPrefab = slotObj;
         slotObj.SetActive(false);
@@ -276,14 +227,20 @@ public class ItemUI : MonoBehaviour
 
     public void ToggleItemPanel()
     {
+        Debug.Log($"ToggleItemPanel 호출 - 현재 상태: {isPanelVisible}");
+
         isPanelVisible = !isPanelVisible;
+
+        Debug.Log($"ToggleItemPanel - 변경된 상태: {isPanelVisible}");
 
         if (itemPanel != null)
         {
             itemPanel.SetActive(isPanelVisible);
+            Debug.Log($"itemPanel.SetActive({isPanelVisible}) 완료");
 
             if (isPanelVisible)
             {
+                Debug.Log("패널 열기 - RefreshItemList 호출");
                 RefreshItemList();
 
                 // 패널이 열릴 때 click-through 비활성화
@@ -294,17 +251,22 @@ public class ItemUI : MonoBehaviour
             }
             else
             {
+                Debug.Log("패널 닫기 - click-through 상태 복원");
                 // 패널이 닫힐 때 click-through 상태 복원
                 RestoreClickThroughState();
             }
         }
+        else
+        {
+            Debug.LogError("itemPanel이 null입니다!");
+        }
 
-        Debug.Log($"아이템 패널 {(isPanelVisible ? "열기" : "닫기")}");
+        Debug.Log($"아이템 패널 {(isPanelVisible ? "열기" : "닫기")} 완료");
     }
 
     public void RefreshItemList()
     {
-        Debug.Log("=== RefreshItemList 시작 ===");
+        Debug.Log("=== RefreshItemList 시작 (세로배치) ===");
 
         if (itemListParent == null)
         {
@@ -320,21 +282,37 @@ public class ItemUI : MonoBehaviour
 
         Debug.Log($"ItemManager 아이템 개수: {ItemManager.Instance.AllItems.Count}");
 
-        // 기존 아이템들 제거
-        foreach (Transform child in itemListParent)
-        {
-            Destroy(child.gameObject);
-        }
+        // 기존 슬롯들 제거
+        ClearItemSlots();
 
         // 새 아이템들 생성
         foreach (ItemData item in ItemManager.Instance.AllItems)
         {
-            Debug.Log($"아이템 생성 중: {item.itemName}");
+            Debug.Log($"아이템 슬롯 생성 중: {item.itemName}");
             CreateItemSlot(item);
         }
 
         Debug.Log($"아이템 목록 갱신 완료 - {ItemManager.Instance.AllItems.Count}개");
         Debug.Log("=== RefreshItemList 완료 ===");
+    }
+
+    void ClearItemSlots()
+    {
+        // 기존 슬롯들 제거
+        foreach (GameObject slot in itemSlots)
+        {
+            if (slot != null)
+            {
+                Destroy(slot);
+            }
+        }
+        itemSlots.Clear();
+
+        // 혹시 남은 자식들도 제거
+        foreach (Transform child in itemListParent)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
     void CreateItemSlot(ItemData item)
@@ -343,36 +321,50 @@ public class ItemUI : MonoBehaviour
 
         GameObject slotObj = Instantiate(itemSlotPrefab, itemListParent);
         slotObj.SetActive(true);
+        itemSlots.Add(slotObj);
 
-        // 아이콘 설정
-        Image iconImage = slotObj.transform.Find("Icon").GetComponent<Image>();
-        if (iconImage != null && item.itemIcon != null)
-        {
-            iconImage.sprite = item.itemIcon;
-        }
+        // 아이템 이미지 설정
+        Image itemImage = slotObj.transform.Find("ItemImage").GetComponent<Image>();
+        Image borderImage = slotObj.transform.Find("EquipBorder").GetComponent<Image>();
+        Image bgImage = slotObj.GetComponent<Image>();
 
-        // 텍스트 설정
-        TextMeshProUGUI text = slotObj.transform.Find("Text").GetComponent<TextMeshProUGUI>();
-        if (text != null)
+        bool isOwned = ItemManager.Instance.IsItemOwned(item.itemName);
+        bool isEquipped = ItemManager.Instance.IsItemEquipped(item);
+
+        if (isOwned && item.itemIcon != null)
         {
-            bool isOwned = ItemManager.Instance.IsItemOwned(item.itemName);
-            bool isEquipped = ItemManager.Instance.IsItemEquipped(item);
+            // 소유한 아이템 - 이미지 표시
+            itemImage.sprite = item.itemIcon;
+            itemImage.color = Color.white;
 
             if (isEquipped)
             {
-                text.text = $"[착용중] {item.itemName}";
-                text.color = Color.green;
-            }
-            else if (isOwned)
-            {
-                text.text = item.itemName;
-                text.color = Color.white;
+                // 착용중 - 녹색 테두리 표시
+                borderImage.color = new Color(96f/255f, 134f / 255f, 247f / 255f, 0.8f);
+                bgImage.color = new Color(0.2f, 0.6f, 0.2f, 0.5f);
             }
             else
             {
-                text.text = $"{item.itemName} ({item.cost} 츄르)";
-                text.color = Color.gray;
+                // 소유하지만 미착용
+                borderImage.color = new Color(0f, 1f, 0f, 0f);
+                bgImage.color = new Color(0f, 0f, 0f, 0.3f);
             }
+        }
+        else
+        {
+            // 미소유 아이템
+            if (item.itemIcon != null)
+            {
+                itemImage.sprite = item.itemIcon;
+                itemImage.color = new Color(0.3f, 0.3f, 0.3f, 0.7f); // 어둡게 표시
+            }
+            else
+            {
+                itemImage.color = new Color(1f, 1f, 1f, 0f); // 숨김
+            }
+
+            borderImage.color = new Color(1f, 0f, 0f, 0.3f); // 빨간색 테두리
+            bgImage.color = new Color(0.5f, 0.1f, 0.1f, 0.4f);
         }
 
         // 버튼 이벤트 설정
@@ -383,23 +375,8 @@ public class ItemUI : MonoBehaviour
             button.onClick.AddListener(() => OnItemSlotClicked(item));
         }
 
-        // 배경색 설정
-        Image bgImage = slotObj.GetComponent<Image>();
-        if (bgImage != null)
-        {
-            if (ItemManager.Instance.IsItemEquipped(item))
-            {
-                bgImage.color = new Color(0.2f, 0.4f, 0.2f, 1f); // 녹색 (착용중)
-            }
-            else if (ItemManager.Instance.IsItemOwned(item.itemName))
-            {
-                bgImage.color = new Color(0.15f, 0.15f, 0.25f, 1f); // 기본색 (소유)
-            }
-            else
-            {
-                bgImage.color = new Color(0.3f, 0.15f, 0.15f, 1f); // 빨간색 (미소유)
-            }
-        }
+        // 슬롯 이름 설정 (디버그용)
+        slotObj.name = $"ItemSlot_{item.itemName}";
     }
 
     void OnItemSlotClicked(ItemData item)
@@ -415,6 +392,9 @@ public class ItemUI : MonoBehaviour
             ItemManager.Instance.UnequipItem();
             RefreshItemList();
             Debug.Log($"아이템 해제: {item.itemName}");
+
+            // click-through 상태 복원
+            RestoreClickThroughState();
         }
         else if (isOwned)
         {
@@ -422,6 +402,9 @@ public class ItemUI : MonoBehaviour
             ItemManager.Instance.EquipItem(item);
             RefreshItemList();
             Debug.Log($"아이템 착용: {item.itemName}");
+
+            // click-through 상태 복원
+            RestoreClickThroughState();
         }
         else
         {
@@ -432,6 +415,9 @@ public class ItemUI : MonoBehaviour
                 ItemManager.Instance.EquipItem(item);
                 RefreshItemList();
                 Debug.Log($"아이템 구매 및 착용: {item.itemName}");
+
+                // click-through 상태 복원
+                RestoreClickThroughState();
             }
             else
             {
@@ -477,8 +463,8 @@ public class ItemUI : MonoBehaviour
             ToggleItemPanel();
         }
 
-        // 패널 외부 클릭으로 닫기
-        if (Input.GetMouseButtonDown(0) && isPanelVisible)
+        // 패널 외부 클릭으로 닫기 (패널이 보일 때만)
+        if (Input.GetMouseButtonDown(0) && isPanelVisible && itemPanel != null)
         {
             Vector2 mousePos = Input.mousePosition;
             RectTransform panelRect = itemPanel.GetComponent<RectTransform>();
@@ -489,10 +475,10 @@ public class ItemUI : MonoBehaviour
             }
         }
 
-        // 디버그: T 키로 강제 아이템 생성 테스트
+        // 디버그: T 키로 강제 아이템 갱신 테스트
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Debug.Log("=== 강제 아이템 테스트 ===");
+            Debug.Log("=== 강제 아이템 테스트 (세로배치) ===");
             if (ItemManager.Instance != null)
             {
                 Debug.Log($"ItemManager 존재, 아이템 개수: {ItemManager.Instance.AllItems.Count}");
@@ -500,19 +486,49 @@ public class ItemUI : MonoBehaviour
                 {
                     Debug.Log($"- {item.itemName} ({item.cost} 츄르)");
                 }
+                if (isPanelVisible)
+                {
+                    RefreshItemList();
+                }
             }
             else
             {
                 Debug.LogError("ItemManager.Instance가 null!");
             }
+        }
+    }
 
-            if (isPanelVisible)
-            {
-                RefreshItemList();
-            }
+    // 슬롯 위치 조정 메서드 (런타임에서 호출 가능)
+    public void SetSlotSize(float newSize)
+    {
+        slotSize = newSize;
+        if (itemSlotPrefab != null)
+        {
+            RectTransform rect = itemSlotPrefab.GetComponent<RectTransform>();
+            LayoutElement layout = itemSlotPrefab.GetComponent<LayoutElement>();
+
+            rect.sizeDelta = new Vector2(slotSize, slotSize);
+            layout.minWidth = slotSize;
+            layout.minHeight = slotSize;
+            layout.preferredWidth = slotSize;
+            layout.preferredHeight = slotSize;
+        }
+        RefreshItemList();
+    }
+
+    public void SetPanelOffset(Vector2 newOffset)
+    {
+        panelOffset = newOffset;
+        if (itemListParent != null)
+        {
+            RectTransform rect = itemListParent.GetComponent<RectTransform>();
+            rect.anchoredPosition = panelOffset;
         }
     }
 
     // 프로퍼티
+    public int ItemCount => itemSlots.Count;
+    public Vector2 PanelOffset => panelOffset;
+    public float SlotSize => slotSize;
     public bool IsPanelVisible => isPanelVisible;
 }
