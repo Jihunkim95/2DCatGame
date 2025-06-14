@@ -52,8 +52,8 @@ public class TestCat : MonoBehaviour
         SetupEventListeners();
         SetupItemSystem();
 
-        Debug.Log("리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템");
-        DebugLogger.LogToFile("리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템");
+        //Debug.Log("리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템");
+        //DebugLogger.LogToFile("리팩터링된 TestCat 초기화 완료 - 컴포넌트 기반 아키텍처 + 아이템 시스템");
     }
 
     void InitializeComponents()
@@ -123,7 +123,7 @@ public class TestCat : MonoBehaviour
             hatPointObj.transform.SetParent(transform);
             hatPointObj.transform.localPosition = new Vector3(-0.05f, -0.35f, 0);
             hatPoint = hatPointObj.transform;
-            Debug.Log("모자 착용 포인트 자동 생성");
+            //Debug.Log("모자 착용 포인트 자동 생성");
         }
     }
 
@@ -162,7 +162,7 @@ public class TestCat : MonoBehaviour
         {
             lastDirection = catAnimator.CurrentDirection;
             UpdateHatDirection();
-            Debug.Log($"고양이 방향 변경 감지: {lastDirection}");
+            //Debug.Log($"고양이 방향 변경 감지: {lastDirection}");
         }
 
         // 애니메이션 이벤트를 사용하지 않는 경우에만 자동 조정
@@ -276,7 +276,7 @@ public class TestCat : MonoBehaviour
             adjustedSleepOffset = new Vector3(sleepHatOffset.x - 0.4f, sleepHatOffset.y, sleepHatOffset.z);
         }
 
-        Debug.Log($"😴 애니메이션 이벤트 호출: OnSleepStart, 방향: {lastDirection}, 오프셋: {adjustedSleepOffset}, useAnimationEvents:{useAnimationEvents}");
+        //Debug.Log($"😴 애니메이션 이벤트 호출: OnSleepStart, 방향: {lastDirection}, 오프셋: {adjustedSleepOffset}, useAnimationEvents:{useAnimationEvents}");
 
         if (useAnimationEvents)
         {
@@ -286,20 +286,20 @@ public class TestCat : MonoBehaviour
 
     public void OnWakeUp()
     {
-        Debug.Log("😊 애니메이션 이벤트 호출: OnWakeUp");
+        //Debug.Log("😊 애니메이션 이벤트 호출: OnWakeUp");
         if (useAnimationEvents) SetHatOffset(Vector3.zero);
     }
 
     public void OnIdleState()
     {
-        Debug.Log("😐 애니메이션 이벤트 호출: OnIdleState");
+        //Debug.Log("😐 애니메이션 이벤트 호출: OnIdleState");
         if (useAnimationEvents) SetHatOffset(Vector3.zero);
     }
 
     // 테스트용 간단한 함수
     public void TestAnimationEvent()
     {
-        Debug.Log("🎯 테스트 애니메이션 이벤트 성공!");
+        //Debug.Log("🎯 테스트 애니메이션 이벤트 성공!");
     }
 
     void SetHatOffset(Vector3 offset)
@@ -340,7 +340,7 @@ public class TestCat : MonoBehaviour
             {
                 bool facingRight = (lastDirection == CatPlayerAnimator.CatDirection.Right);
                 hatRenderer.flipX = facingRight;
-                Debug.Log($"모자 방향 업데이트: {(facingRight ? "오른쪽" : "왼쪽")}");
+                //Debug.Log($"모자 방향 업데이트: {(facingRight ? "오른쪽" : "왼쪽")}");
             }
         }
     }
@@ -348,13 +348,13 @@ public class TestCat : MonoBehaviour
     // 이벤트 핸들러들
     void OnMovementStateChanged(CatMovementController.MovementState newState)
     {
-        Debug.Log($"TestCat: 움직임 상태 변경됨 - {newState}");
+        //Debug.Log($"TestCat: 움직임 상태 변경됨 - {newState}");
         // CatPlayerAnimator가 movementController의 상태를 자동으로 감지함
     }
 
     void OnDirectionChanged(CatPlayerAnimator.CatDirection newDirection)
     {
-        Debug.Log($"TestCat: 방향 변경됨 - {newDirection}");
+        //Debug.Log($"TestCat: 방향 변경됨 - {newDirection}");
         // 모자 방향도 업데이트 (CheckDirectionChange에서 처리)
     }
 
@@ -405,7 +405,7 @@ public class TestCat : MonoBehaviour
 
     void OnCatHovered()
     {
-        Debug.Log("고양이에 마우스를 올렸습니다!");
+        //Debug.Log("고양이에 마우스를 올렸습니다!");
     }
 
     // 아이템 시스템 메서드들
@@ -441,8 +441,8 @@ public class TestCat : MonoBehaviour
             UpdateHatPositionForFallback(catAnimator.currentState);
         }
 
-        Debug.Log($"모자 착용 완료: {hatItem.itemName}");
-        DebugLogger.LogToFile($"모자 착용 완료: {hatItem.itemName}");
+        //Debug.Log($"모자 착용 완료: {hatItem.itemName}");
+        //DebugLogger.LogToFile($"모자 착용 완료: {hatItem.itemName}");
     }
 
     public void UnequipHat()
@@ -453,8 +453,8 @@ public class TestCat : MonoBehaviour
             Destroy(currentHat);
             currentHat = null;
 
-            Debug.Log($"모자 해제 완료: {hatName}");
-            DebugLogger.LogToFile($"모자 해제 완료: {hatName}");
+            //Debug.Log($"모자 해제 완료: {hatName}");
+            //DebugLogger.LogToFile($"모자 해제 완료: {hatName}");
         }
     }
 
@@ -463,7 +463,7 @@ public class TestCat : MonoBehaviour
         if (ItemManager.Instance != null && ItemManager.Instance.EquippedItem != null)
         {
             EquipHat(ItemManager.Instance.EquippedItem);
-            Debug.Log("저장된 모자 복원 완료");
+            //Debug.Log("저장된 모자 복원 완료");
         }
     }
 
@@ -473,7 +473,7 @@ public class TestCat : MonoBehaviour
             return;
 
         var equippedHat = ItemManager.Instance.EquippedItem;
-        Debug.Log($"모자 착용 중 {interactionType}: {equippedHat.itemName} - 특별 효과!");
+        //Debug.Log($"모자 착용 중 {interactionType}: {equippedHat.itemName} - 특별 효과!");
 
         // 모자별 특별 효과
         ApplyHatSpecialEffect(equippedHat, interactionType);
@@ -490,29 +490,29 @@ public class TestCat : MonoBehaviour
         {
             case "왕관":
                 bonusHappiness = 3f;
-                Debug.Log("👑 왕관 효과: 고급스러운 행복도 증가!");
+                //Debug.Log("👑 왕관 효과: 고급스러운 행복도 증가!");
                 break;
 
             case "마법사 모자":
                 bonusHappiness = 1f;
                 bonusChur = 1;
-                Debug.Log("🎩 마법사 모자 효과: 마법으로 츄르 1개 생성!");
+                //Debug.Log("🎩 마법사 모자 효과: 마법으로 츄르 1개 생성!");
                 break;
 
             case "해적 모자":
                 bonusHappiness = 2f;
-                Debug.Log("🏴‍☠️ 해적 모자 효과: 모험심 자극으로 행복도 증가!");
+                //Debug.Log("🏴‍☠️ 해적 모자 효과: 모험심 자극으로 행복도 증가!");
                 break;
 
             case "빨간 모자":
             case "파란 모자":
                 bonusHappiness = 1f;
-                Debug.Log($"🧢 {hat.itemName} 효과: 활기찬 에너지!");
+                //Debug.Log($"🧢 {hat.itemName} 효과: 활기찬 에너지!");
                 break;
 
             default:
                 bonusHappiness = 0.5f;
-                Debug.Log($"✨ {hat.itemName} 효과: 패션센스로 인한 기분 좋음!");
+                //Debug.Log($"✨ {hat.itemName} 효과: 패션센스로 인한 기분 좋음!");
                 break;
         }
 
@@ -553,7 +553,7 @@ public class TestCat : MonoBehaviour
         // 모자 착용 시 추가 효과
         ApplyHatInteractionBonus("먹이주기");
 
-        Debug.Log("고양이가 먹이를 먹었습니다!");
+        //Debug.Log("고양이가 먹이를 먹었습니다!");
     }
 
     public void PetCat()
@@ -579,7 +579,7 @@ public class TestCat : MonoBehaviour
         // 모자 착용 시 추가 효과
         ApplyHatInteractionBonus("쓰다듬기");
 
-        Debug.Log("고양이를 쓰다듬었습니다!");
+        //Debug.Log("고양이를 쓰다듬었습니다!");
     }
 
     // 움직임 상태 제어

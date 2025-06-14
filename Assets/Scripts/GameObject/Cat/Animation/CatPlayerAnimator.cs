@@ -85,8 +85,8 @@ public class CatPlayerAnimator : MonoBehaviour
         // 이벤트 리스너 등록
         SetupEventListeners();
 
-        Debug.Log("CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용");
-        DebugLogger.LogToFile("CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용");
+        //Debug.Log("CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용");
+        //DebugLogger.LogToFile("CatPlayerAnimator 초기화 완료 - 리팩터링된 컴포넌트 구조 적용");
     }
 
     void SetupEventListeners()
@@ -140,7 +140,7 @@ public class CatPlayerAnimator : MonoBehaviour
         CatBaseState targetBaseState = ConvertMovementStateToBaseState(newMovementState);
         SetAnimationStateWithDirection(targetBaseState, currentDirection);
 
-        Debug.Log($"Movement State 변경에 따른 Animation 업데이트: {newMovementState} → {targetBaseState} {currentDirection}");
+        //Debug.Log($"Movement State 변경에 따른 Animation 업데이트: {newMovementState} → {targetBaseState} {currentDirection}");
     }
 
     void OnDirectionChanged(CatDirection newDirection)
@@ -148,7 +148,7 @@ public class CatPlayerAnimator : MonoBehaviour
         if (currentDirection != newDirection)
         {
             currentDirection = newDirection;
-            Debug.Log($"Direction 변경에 따른 Animation 업데이트: {currentDirection}");
+            //Debug.Log($"Direction 변경에 따른 Animation 업데이트: {currentDirection}");
 
             // 즉시 Animator 파라미터 업데이트
             if (animator != null)
@@ -193,7 +193,7 @@ public class CatPlayerAnimator : MonoBehaviour
                 SetAnimationStateWithDirection(baseState, currentDirection);
             }
 
-            Debug.Log("강제 애니메이션 상태 종료, 자동 상태로 복귀");
+            //Debug.Log("강제 애니메이션 상태 종료, 자동 상태로 복귀");
         }
         else
         {
@@ -243,7 +243,7 @@ public class CatPlayerAnimator : MonoBehaviour
             if (targetBaseState != currentBaseState)
             {
                 SetAnimationStateWithDirection(targetBaseState, currentDirection);
-                Debug.Log($"Animation State 동기화: {targetBaseState} {currentDirection}");
+                //Debug.Log($"Animation State 동기화: {targetBaseState} {currentDirection}");
             }
         }
     }
@@ -271,8 +271,8 @@ public class CatPlayerAnimator : MonoBehaviour
 
     void SetAnimationState(CatAnimationState newState)
     {
-        Debug.Log($"고양이 애니메이션 상태 변경: {currentState} → {newState}");
-        DebugLogger.LogToFile($"고양이 애니메이션 상태 변경: {currentState} → {newState}");
+        //Debug.Log($"고양이 애니메이션 상태 변경: {currentState} → {newState}");
+        //DebugLogger.LogToFile($"고양이 애니메이션 상태 변경: {currentState} → {newState}");
 
         currentState = newState;
         stateTimer = 0f;
@@ -297,15 +297,15 @@ public class CatPlayerAnimator : MonoBehaviour
                     GameDataManager.Instance.happiness += 1f;
                     GameDataManager.Instance.happiness = Mathf.Clamp(GameDataManager.Instance.happiness, 0f, 100f);
                 }
-                Debug.Log($"고양이가 잠들었습니다 (+1 행복도) - 방향: {currentDirection}");
+                //Debug.Log($"고양이가 잠들었습니다 (+1 행복도) - 방향: {currentDirection}");
                 break;
 
             case CatBaseState.Walk:
-                Debug.Log($"고양이가 걷기 시작했습니다 - 방향: {currentDirection}");
+                //Debug.Log($"고양이가 걷기 시작했습니다 - 방향: {currentDirection}");
                 break;
 
             case CatBaseState.Idle:
-                Debug.Log($"고양이가 가만히 있습니다 - 방향: {currentDirection}");
+                //Debug.Log($"고양이가 가만히 있습니다 - 방향: {currentDirection}");
                 break;
         }
     }
@@ -372,7 +372,7 @@ public class CatPlayerAnimator : MonoBehaviour
     {
         forceStateActive = false; // 기존 강제 상태 해제
         SetAnimationStateWithDirection(baseState, currentDirection);
-        Debug.Log($"애니메이션 상태 강제 변경: {baseState} {currentDirection}");
+        //Debug.Log($"애니메이션 상태 강제 변경: {baseState} {currentDirection}");
     }
 
     public void ForceStateWithDirection(CatBaseState baseState, CatDirection direction)
@@ -380,7 +380,7 @@ public class CatPlayerAnimator : MonoBehaviour
         forceStateActive = false; // 기존 강제 상태 해제
         currentDirection = direction;
         SetAnimationStateWithDirection(baseState, direction);
-        Debug.Log($"애니메이션 상태와 방향 강제 변경: {baseState} {direction}");
+        //Debug.Log($"애니메이션 상태와 방향 강제 변경: {baseState} {direction}");
     }
 
     // 일시적 애니메이션 재생 (더 안전한 방식)
@@ -415,8 +415,8 @@ public class CatPlayerAnimator : MonoBehaviour
 
         SetAnimationState(tempState);
 
-        Debug.Log($"일시적 애니메이션 재생: {temporaryBaseState} {currentDirection} ({duration}초)");
-        DebugLogger.LogToFile($"일시적 애니메이션 재생: {temporaryBaseState} {currentDirection} ({duration}초)");
+        //Debug.Log($"일시적 애니메이션 재생: {temporaryBaseState} {currentDirection} ({duration}초)");
+        //DebugLogger.LogToFile($"일시적 애니메이션 재생: {temporaryBaseState} {currentDirection} ({duration}초)");
     }
 
     // 강제로 잠들게 하기
@@ -445,7 +445,7 @@ public class CatPlayerAnimator : MonoBehaviour
         if (Debug.isDebugBuild)
         {
             GUILayout.BeginArea(new Rect(10, 10, 400, 300));
-            GUILayout.Label($"=== Cat Animation Debug (리팩터링됨) ===");
+            GUILayout.Label($"=== Cat Animation //Debug (리팩터링됨) ===");
             GUILayout.Label($"Current State: {currentState}");
             GUILayout.Label($"Base State: {GetBaseState(currentState)}");
             GUILayout.Label($"Direction: {currentDirection}");
