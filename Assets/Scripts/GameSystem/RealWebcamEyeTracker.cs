@@ -3,6 +3,8 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
 using System.Threading;
+using System.Linq;
+
 
 #if OPENCV_FOR_UNITY
 using OpenCVForUnity.CoreModule;
@@ -1112,48 +1114,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
     }
 
 
-    void StartSampleCollection()
-    {
-        if (!isCalibrating || !isGazeValid)
-        {
-            Debug.LogWarning("⚠️ 시선이 감지되지 않습니다. 얼굴이 웹캠에 잘 보이는지 확인하세요.");
-            return;
-        }
-
-        isCollectingSamples = true;
-        currentSampleCount = 0;
-        calibrationPointTimer = 0f;
-
-        Debug.Log($"📍 보정 점 {calibrationIndex + 1}/9 - 샘플 수집 시작");
-    }
-    void UpdateSampleCollection()
-    {
-        calibrationPointTimer += Time.deltaTime;
-
-        // 일정 간격으로 샘플 수집
-        if (calibrationPointTimer >= (calibrationWaitTime / calibrationSamplesPerPoint))
-        {
-            if (isGazeValid && currentSampleCount < calibrationSamplesPerPoint)
-            {
-                calibrationSamplesPerTarget[calibrationIndex].Add(currentGazePoint);
-                currentSampleCount++;
-                calibrationPointTimer = 0f;
-
-                Debug.Log($"샘플 {currentSampleCount}/{calibrationSamplesPerPoint} 수집됨 - 시선: {currentGazePoint}");
-
-                if (currentSampleCount >= calibrationSamplesPerPoint)
-                {
-                    ProcessAdvancedCalibrationPoint();
-                }
-            }
-            else if (!isGazeValid)
-            {
-                Debug.LogWarning("⚠️ 시선 감지 실패. 얼굴을 웹캠 쪽으로 향하세요.");
-                calibrationPointTimer = 0f; // 타이머 리셋
-            }
-        }
-    }
-
     // 보정 품질 개선을 위한 추가 메서드
     void ProcessCalibrationPoint()
     {
@@ -1451,6 +1411,570 @@ public class RealWebcamEyeTracker : MonoBehaviour
         }
     }
 
+    // RealWebcamEyeTracker.cs에 추가/수정할 코드
+
+    #region 개선된 시선 추적 안정화 시스템
+
+    [Header("시선 안정화 설정")]
+    public float gazeStabilityThreshold = 30f;     // 안정성 임계값 (픽셀)
+    public int minStableSamples = 10;              // 최소 안정 샘플 수
+    public float outlierThreshold = 100f;          // 이상치 제거 임계값
+    public bool useAdvancedFiltering = true;       // 고급 필터링 사용
+
+    [Header("보정 개선 설정")]
+    public float calibrationStabilityWait = 1f;    // 보정 점별 안정화 대기 시간
+    public int calibrationSamplesRequired = 15;    // 보정에 필요한 샘플 수 (기존 5에서 증가)
+    public float maxCalibrationVariance = 40f;     // 허용 가능한 최대 분산
+
+    // 시선 안정화를 위한 변수들
+    private Queue<Vector2> gazeHistory = new Queue<Vector2>();
+    private Vector2 filteredGazePosition;
+    private float lastStableTime;
+    private bool isGazeStable = false;
+
+    // 보정 개선을 위한 변수들
+    private List<Vector2> currentCalibrationSamples = new List<Vector2>();
+    private float calibrationPointStartTime;
+    private bool isWaitingForStability = false;
+
+    // 기존 UpdateSampleCollection 메서드를 개선된 버전으로 교체
+    void UpdateSampleCollection()
+    {
+        if (!isCollectingSamples || !isCalibrating) return;
+
+        calibrationPointTimer += Time.deltaTime;
+
+        // 1단계: 안정화 대기
+        if (isWaitingForStability)
+        {
+            if (IsGazeStableForCalibration())
+            {
+                isWaitingForStability = false;
+                currentCalibrationSamples.Clear();
+                calibrationPointStartTime = Time.time;
+                Debug.Log($"✅ 시선 안정화 완료 - 샘플 수집 시작");
+            }
+            else if (calibrationPointTimer > 10f) // 10초 후에도 안정화 안되면 강제 진행
+            {
+                Debug.LogWarning("⚠️ 시선 안정화 타임아웃 - 강제 진행");
+                isWaitingForStability = false;
+                currentCalibrationSamples.Clear();
+                calibrationPointStartTime = Time.time;
+            }
+            return;
+        }
+
+        // 2단계: 안정된 샘플 수집
+        if (isGazeValid && IsGazeStableForCalibration())
+        {
+            float sampleInterval = calibrationWaitTime / calibrationSamplesRequired;
+
+            if (Time.time - calibrationPointStartTime > currentCalibrationSamples.Count * sampleInterval)
+            {
+                // 현재 시선이 충분히 안정적인지 확인
+                Vector2 currentGaze = GetStabilizedGazePosition();
+
+                // 이전 샘플들과의 일관성 체크
+                if (currentCalibrationSamples.Count == 0 || IsConsistentWithPreviousSamples(currentGaze))
+                {
+                    currentCalibrationSamples.Add(currentGaze);
+                    currentSampleCount = currentCalibrationSamples.Count;
+
+                    Debug.Log($"📍 안정 샘플 {currentSampleCount}/{calibrationSamplesRequired} 수집됨 - 시선: {currentGaze}");
+
+                    if (currentSampleCount >= calibrationSamplesRequired)
+                    {
+                        ProcessImprovedCalibrationPoint();
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("⚠️ 시선이 불안정합니다. 점을 정확히 바라보세요.");
+                }
+            }
+        }
+        else
+        {
+            if (calibrationPointTimer > 15f) // 15초 후에도 충분한 샘플이 없으면 포기
+            {
+                Debug.LogWarning("⚠️ 보정 점 타임아웃 - 수집된 샘플로 진행");
+                if (currentCalibrationSamples.Count >= 5) // 최소 5개는 있어야 함
+                {
+                    ProcessImprovedCalibrationPoint();
+                }
+                else
+                {
+                    Debug.LogError("❌ 충분한 샘플을 수집하지 못했습니다. 다음 점으로 건너뜁니다.");
+                    SkipCalibrationPoint();
+                }
+            }
+        }
+    }
+
+    // 개선된 시선 안정성 체크
+    bool IsGazeStableForCalibration()
+    {
+        if (!isGazeValid) return false;
+
+        Vector2 currentGaze = smoothedGazePoint;
+
+        // 최근 시선 히스토리 업데이트
+        gazeHistory.Enqueue(currentGaze);
+        if (gazeHistory.Count > 30) // 최근 30프레임만 유지
+        {
+            gazeHistory.Dequeue();
+        }
+
+        if (gazeHistory.Count < minStableSamples) return false;
+
+        // 분산 계산
+        Vector2 average = Vector2.zero;
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            average += gaze;
+        }
+        average /= gazeHistory.Count;
+
+        float variance = 0f;
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            variance += Vector2.Distance(gaze, average);
+        }
+        variance /= gazeHistory.Count;
+
+        bool isStable = variance < gazeStabilityThreshold;
+
+        if (isStable && !isGazeStable)
+        {
+            lastStableTime = Time.time;
+            isGazeStable = true;
+        }
+        else if (!isStable)
+        {
+            isGazeStable = false;
+        }
+
+        // 최소 0.5초 이상 안정적이어야 함
+        return isStable && (Time.time - lastStableTime > 0.5f);
+    }
+
+    // 안정화된 시선 위치 반환
+    Vector2 GetStabilizedGazePosition()
+    {
+        if (gazeHistory.Count == 0) return currentGazePoint;
+
+        // 이상치 제거 후 평균 계산
+        List<Vector2> validSamples = new List<Vector2>();
+        Vector2 roughAverage = Vector2.zero;
+
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            roughAverage += gaze;
+        }
+        roughAverage /= gazeHistory.Count;
+
+        // 이상치 제거
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            if (Vector2.Distance(gaze, roughAverage) < outlierThreshold)
+            {
+                validSamples.Add(gaze);
+            }
+        }
+
+        if (validSamples.Count == 0) return currentGazePoint;
+
+        Vector2 stableAverage = Vector2.zero;
+        foreach (Vector2 sample in validSamples)
+        {
+            stableAverage += sample;
+        }
+        stableAverage /= validSamples.Count;
+
+        return stableAverage;
+    }
+
+    // 이전 샘플들과의 일관성 체크
+    bool IsConsistentWithPreviousSamples(Vector2 newSample)
+    {
+        if (currentCalibrationSamples.Count == 0) return true;
+
+        Vector2 average = Vector2.zero;
+        foreach (Vector2 sample in currentCalibrationSamples)
+        {
+            average += sample;
+        }
+        average /= currentCalibrationSamples.Count;
+
+        float distance = Vector2.Distance(newSample, average);
+        return distance < gazeStabilityThreshold * 1.5f; // 안정성 임계값의 1.5배까지 허용
+    }
+
+    // 개선된 보정 점 처리
+    void ProcessImprovedCalibrationPoint()
+    {
+        if (!isCalibrating) return;
+
+        isCollectingSamples = false;
+
+        // 고급 이상치 제거 및 평균 계산
+        Vector2 finalGaze = CalculateRobustAverage(currentCalibrationSamples);
+
+        // 분산 계산
+        float variance = 0f;
+        foreach (Vector2 sample in currentCalibrationSamples)
+        {
+            variance += Vector2.Distance(sample, finalGaze);
+        }
+        variance /= currentCalibrationSamples.Count;
+
+        calibrationGazes.Add(finalGaze);
+        calibrationIndex++;
+
+        Debug.Log($"✅ 개선된 보정 점 {calibrationIndex}/9 완료");
+        Debug.Log($"📊 최종 시선: {finalGaze}, 분산: {variance:F1}px ({currentCalibrationSamples.Count}개 샘플)");
+
+        // 품질 평가
+        if (variance < 20f)
+        {
+            Debug.Log($"🏆 우수한 품질의 보정 점!");
+        }
+        else if (variance < maxCalibrationVariance)
+        {
+            Debug.Log($"✅ 양호한 품질의 보정 점");
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ 품질이 낮은 보정 점 (분산: {variance:F1}px > {maxCalibrationVariance}px)");
+            Debug.LogWarning("💡 다음 점에서는 머리를 더 고정하고 정확히 바라보세요.");
+        }
+
+        if (calibrationIndex >= calibrationTargets.Count)
+        {
+            CompleteAdvancedCalibration();
+        }
+        else
+        {
+            // 다음 점 준비
+            isWaitingForStability = true;
+            calibrationPointTimer = 0f;
+            currentCalibrationSamples.Clear();
+        }
+    }
+
+    // 강건한 평균 계산 (이상치 제거)
+    Vector2 CalculateRobustAverage(List<Vector2> samples)
+    {
+        if (samples.Count <= 3)
+        {
+            // 샘플이 적으면 단순 평균
+            Vector2 simpleAverage = Vector2.zero;
+            foreach (Vector2 sample in samples)
+            {
+                simpleAverage += sample;
+            }
+            return simpleAverage / samples.Count;
+        }
+
+        // 1차 평균 계산
+        Vector2 roughAverage = Vector2.zero;
+        foreach (Vector2 sample in samples)
+        {
+            roughAverage += sample;
+        }
+        roughAverage /= samples.Count;
+
+        // 거리별로 정렬
+        List<Vector2> sortedSamples = new List<Vector2>(samples);
+        sortedSamples.Sort((a, b) => Vector2.Distance(a, roughAverage).CompareTo(Vector2.Distance(b, roughAverage)));
+
+        // 상위 70%만 사용 (이상치 제거)
+        int validCount = Mathf.Max(3, (int)(sortedSamples.Count * 0.7f));
+
+        Vector2 robustAverage = Vector2.zero;
+        for (int i = 0; i < validCount; i++)
+        {
+            robustAverage += sortedSamples[i];
+        }
+        robustAverage /= validCount;
+
+        Debug.Log($"🔧 강건한 평균: {validCount}/{samples.Count} 샘플 사용");
+        return robustAverage;
+    }
+
+    // 보정 점 건너뛰기
+    void SkipCalibrationPoint()
+    {
+        // 마지막으로 안정적이었던 시선 위치 사용
+        Vector2 fallbackGaze = gazeHistory.Count > 0 ? GetStabilizedGazePosition() : currentGazePoint;
+
+        calibrationGazes.Add(fallbackGaze);
+        calibrationIndex++;
+
+        Debug.LogWarning($"⚠️ 보정 점 {calibrationIndex}/9 건너뜀 (대체값 사용: {fallbackGaze})");
+
+        if (calibrationIndex >= calibrationTargets.Count)
+        {
+            CompleteAdvancedCalibration();
+        }
+        else
+        {
+            isWaitingForStability = true;
+            calibrationPointTimer = 0f;
+            currentCalibrationSamples.Clear();
+        }
+    }
+
+    // 개선된 보정 시작
+    void StartSampleCollection()
+    {
+        if (!isCalibrating || !isGazeValid)
+        {
+            Debug.LogWarning("⚠️ 시선이 감지되지 않습니다. 얼굴이 웹캠에 잘 보이는지 확인하세요.");
+            return;
+        }
+
+        isCollectingSamples = true;
+        isWaitingForStability = true;  // 먼저 안정화 대기
+        currentSampleCount = 0;
+        calibrationPointTimer = 0f;
+        currentCalibrationSamples.Clear();
+
+        Debug.Log($"📍 보정 점 {calibrationIndex + 1}/9 - 안정화 대기 중...");
+        Debug.Log($"💡 점을 정확히 바라보고 머리를 고정하세요.");
+    }
+
+    #endregion
+
+    #region 실시간 진단 및 자동 조정 시스템
+
+    [ContextMenu("Real-time Calibration Diagnostics")]
+    public void StartRealtimeDiagnostics()
+    {
+        StartCoroutine(RealtimeCalibrationDiagnostics());
+    }
+
+    System.Collections.IEnumerator RealtimeCalibrationDiagnostics()
+    {
+        Debug.Log("🔍 실시간 보정 진단 시작");
+
+        while (isCalibrating)
+        {
+            // 현재 상태 진단
+            DiagnoseCurrentCalibrationState();
+
+            yield return new WaitForSeconds(2f); // 2초마다 진단
+        }
+    }
+
+    void DiagnoseCurrentCalibrationState()
+    {
+        if (!isGazeValid)
+        {
+            Debug.LogWarning("❌ 시선 감지 실패 - 얼굴을 웹캠 정면으로 향하세요");
+            return;
+        }
+
+        // 현재 시선의 안정성 체크
+        bool stable = IsGazeStableForCalibration();
+        Vector2 currentGaze = GetStabilizedGazePosition();
+
+        if (isCollectingSamples && calibrationIndex < calibrationTargets.Count)
+        {
+            Vector2 target = calibrationTargets[calibrationIndex];
+            float distance = Vector2.Distance(currentGaze, target);
+
+            Debug.Log($"📊 진단 - 점 {calibrationIndex + 1}/9:");
+            Debug.Log($"   타겟: {target}");
+            Debug.Log($"   현재 시선: {currentGaze}");
+            Debug.Log($"   거리: {distance:F1}px");
+            Debug.Log($"   안정성: {(stable ? "✅" : "❌")}");
+
+            if (distance > 200f)
+            {
+                Debug.LogWarning("⚠️ 시선이 타겟에서 너무 멀리 있습니다!");
+            }
+            else if (distance > 100f)
+            {
+                Debug.LogWarning("💡 시선을 타겟에 더 가깝게 맞추세요.");
+            }
+
+            if (!stable)
+            {
+                Debug.LogWarning("💡 머리를 고정하고 눈만 움직여 타겟을 바라보세요.");
+            }
+        }
+    }
+
+    // 자동 환경 최적화
+    [ContextMenu("Auto Optimize Environment")]
+    public void AutoOptimizeEnvironment()
+    {
+        StartCoroutine(AutoOptimizeCalibrationEnvironment());
+    }
+
+    System.Collections.IEnumerator AutoOptimizeCalibrationEnvironment()
+    {
+        Debug.Log("🔧 자동 환경 최적화 시작");
+
+        // 1. 현재 설정 백업
+        float originalSmoothing = gazeSmoothing;
+        int originalProcessingRate = processEveryNthFrame;
+
+        // 2. 보정용 최적 설정 적용
+        gazeSmoothing = 12f; // 더 강한 스무딩
+        processEveryNthFrame = 2; // 더 자주 처리
+
+        Debug.Log("📈 보정용 설정 적용 - 더 안정적인 시선 추적");
+
+        yield return new WaitForSeconds(2f);
+
+        // 3. 성능 테스트
+        float testDuration = 5f;
+        float elapsed = 0f;
+        List<float> stabilityScores = new List<float>();
+
+        Debug.Log("📊 5초간 성능 테스트 중...");
+
+        while (elapsed < testDuration)
+        {
+            if (isGazeValid)
+            {
+                bool stable = IsGazeStableForCalibration();
+                stabilityScores.Add(stable ? 1f : 0f);
+            }
+
+            elapsed += Time.deltaTime;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        float stabilityRate = stabilityScores.Count > 0 ? stabilityScores.Average() : 0f;
+
+        Debug.Log($"📊 안정성 테스트 결과: {stabilityRate * 100:F1}%");
+
+        if (stabilityRate > 0.7f)
+        {
+            Debug.Log("✅ 현재 설정으로 보정 진행 권장");
+        }
+        else
+        {
+            Debug.Log("⚠️ 환경 개선 필요:");
+            Debug.Log("   1. 조명을 더 밝게");
+            Debug.Log("   2. 웹캠과 30-50cm 거리");
+            Debug.Log("   3. 배경을 단순하게");
+            Debug.Log("   4. 다른 사람 얼굴이 화면에 없도록");
+
+            // 더 극단적인 설정 시도
+            gazeSmoothing = 15f;
+            processEveryNthFrame = 1;
+            Debug.Log("🔧 극한 안정화 설정 적용");
+        }
+    }
+
+    #endregion
+
+    #region 향상된 사용자 가이드 시스템
+
+    [ContextMenu("Interactive Calibration Guide")]
+    public void StartInteractiveCalibrationGuide()
+    {
+        StartCoroutine(InteractiveCalibrationGuide());
+    }
+
+    System.Collections.IEnumerator InteractiveCalibrationGuide()
+    {
+        Debug.Log("🎯 대화형 보정 가이드 시작");
+
+        // 1. 준비 단계
+        Debug.Log("📋 보정 준비 체크리스트:");
+        Debug.Log("   □ 조명이 충분히 밝은가요?");
+        Debug.Log("   □ 웹캠과 30-50cm 거리인가요?");
+        Debug.Log("   □ 배경이 단순한가요?");
+        Debug.Log("   □ 안경 착용 시 반사광은 없나요?");
+
+        yield return new WaitForSeconds(5f);
+
+        // 2. 얼굴 감지 확인
+        Debug.Log("🔍 얼굴 감지 상태 확인 중...");
+
+        float checkTime = 3f;
+        float elapsed = 0f;
+        int faceDetectedCount = 0;
+        int totalChecks = 0;
+
+        while (elapsed < checkTime)
+        {
+            if (isFaceDetected) faceDetectedCount++;
+            totalChecks++;
+
+            elapsed += Time.deltaTime;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        float faceDetectionRate = (float)faceDetectedCount / totalChecks;
+
+        if (faceDetectionRate > 0.8f)
+        {
+            Debug.Log("✅ 얼굴 감지 양호 - 보정 시작 가능");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ 얼굴 감지 불안정 - 환경 개선 후 다시 시도");
+            yield break;
+        }
+
+        // 3. 보정 시작 안내
+        Debug.Log("🎯 보정 시작 안내:");
+        Debug.Log("   1. 각 점을 차례로 정확히 바라보세요");
+        Debug.Log("   2. 머리는 움직이지 말고 눈만 움직이세요");
+        Debug.Log("   3. 각 점에서 스페이스 키를 눌러주세요");
+        Debug.Log("   4. 점이 안정화될 때까지 기다리세요");
+
+        yield return new WaitForSeconds(3f);
+
+        Debug.Log("🚀 이제 C키를 눌러 보정을 시작하세요!");
+    }
+
+    #endregion
+
+    // 런타임 설정 변경
+    [ContextMenu("Quick Calibration")]
+    public void QuickCalibration()
+    {
+        // 화면 중앙 기준으로 빠른 보정
+        Vector2 centerPoint = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+        gazeCalibrationOffset = Vector2.zero;
+        gazeScale = Vector2.one;
+        isCalibrated = true;
+        Debug.Log("⚡ 빠른 보정 완료 (화면 중앙 기준)");
+    }
+
+    [ContextMenu("Reset Settings")]
+    public void ResetSettings()
+    {
+        gazeCalibrationOffset = Vector2.zero;
+        gazeScale = new Vector2(1.2f, 1.2f);
+        gazeSmoothing = 8f;
+        processEveryNthFrame = 3;
+        Debug.Log("🔄 설정 초기화 완료");
+    }
+
+    [ContextMenu("Toggle Threading")]
+    public void ToggleThreading()
+    {
+        useThreading = !useThreading;
+        Debug.Log($"멀티스레딩: {(useThreading ? "ON" : "OFF")}");
+    }
+
+    [ContextMenu("Toggle Visualization")]
+    public void ToggleVisualization()
+    {
+        enableDebugVisualization = !enableDebugVisualization;
+        Debug.Log($"디버그 시각화: {(enableDebugVisualization ? "ON" : "OFF")}");
+    }
+
+
+
 
     // 런타임 디버그용 메서드들
     [ContextMenu("Force Disable Click Through")]
@@ -1640,40 +2164,8 @@ public class RealWebcamEyeTracker : MonoBehaviour
     public bool AreEyesDetected => areEyesDetected;
     public bool IsCalibrated => isCalibrated;
 
-    // 런타임 설정 변경
-    [ContextMenu("Quick Calibration")]
-    public void QuickCalibration()
-    {
-        // 화면 중앙 기준으로 빠른 보정
-        Vector2 centerPoint = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-        gazeCalibrationOffset = Vector2.zero;
-        gazeScale = Vector2.one;
-        isCalibrated = true;
-        Debug.Log("⚡ 빠른 보정 완료 (화면 중앙 기준)");
-    }
 
-    [ContextMenu("Reset Settings")]
-    public void ResetSettings()
-    {
-        gazeCalibrationOffset = Vector2.zero;
-        gazeScale = new Vector2(1.2f, 1.2f);
-        gazeSmoothing = 8f;
-        processEveryNthFrame = 3;
-        Debug.Log("🔄 설정 초기화 완료");
-    }
-
-    [ContextMenu("Toggle Threading")]
-    public void ToggleThreading()
-    {
-        useThreading = !useThreading;
-        Debug.Log($"멀티스레딩: {(useThreading ? "ON" : "OFF")}");
-    }
-
-    [ContextMenu("Toggle Visualization")]
-    public void ToggleVisualization()
-    {
-        enableDebugVisualization = !enableDebugVisualization;
-        Debug.Log($"디버그 시각화: {(enableDebugVisualization ? "ON" : "OFF")}");
-    }
 #endif
+
+
 }

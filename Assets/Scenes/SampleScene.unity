@@ -472,7 +472,7 @@ MonoBehaviour:
   maxChuruCount: 5
   targetCat: {fileID: 1221367170}
   mainCamera: {fileID: 519420031}
-  trackingMode: 2
+  trackingMode: 0
   gazeFixationTime: 1.5
   gazeFixationRadius: 50
   fallbackToMouse: 1
