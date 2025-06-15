@@ -5,7 +5,6 @@ using System.Collections;
 using System.Threading;
 using System.Linq;
 
-
 #if OPENCV_FOR_UNITY
 using OpenCVForUnity.CoreModule;
 using OpenCVForUnity.ImgprocModule;
@@ -15,11 +14,16 @@ using OpenCVForUnity.UtilsModule;
 #endif
 
 /// <summary>
-/// 실제 웹캠을 사용한 눈 추적 시스템
+/// 실제 웹캠을 사용한 눈 추적 시스템 (정리된 버전)
 /// OpenCV for Unity 필수
 /// </summary>
 public class RealWebcamEyeTracker : MonoBehaviour
 {
+    #region 싱글톤
+    public static RealWebcamEyeTracker Instance { get; private set; }
+    #endregion
+
+    #region Inspector 설정값들
     [Header("웹캠 설정")]
     public int webcamWidth = 640;
     public int webcamHeight = 480;
@@ -31,6 +35,7 @@ public class RealWebcamEyeTracker : MonoBehaviour
     public int minNeighbors = 3;
     public int minFaceSize = 60;
     public float eyeRegionScale = 0.3f;
+    public float eyeRegionMultiplier = 0.6f;
 
     [Header("시선 추정 설정")]
     public float gazeSmoothing = 8f;
@@ -39,8 +44,8 @@ public class RealWebcamEyeTracker : MonoBehaviour
     public bool enableGazeSmoothing = true;
 
     [Header("성능 설정")]
-    public int processEveryNthFrame = 3;  // 3프레임마다 한 번 처리
-    public bool useThreading = true;       // 멀티스레딩 사용
+    public int processEveryNthFrame = 3;
+    public bool useThreading = true;
     public bool enableDebugVisualization = true;
 
     [Header("UI 요소")]
@@ -50,37 +55,41 @@ public class RealWebcamEyeTracker : MonoBehaviour
     [Header("보정 설정")]
     public Texture2D calibrationPointTexture;
     public bool showCalibrationUI = true;
-
-    // 기존 변수들 다음에 추가
-    [Header("보정 개선 설정")]
     public bool showDetailedCalibrationInfo = true;
     public float calibrationWaitTime = 2f;
     public int calibrationSamplesPerPoint = 5;
     public bool useAdvancedCalibration = true;
 
-    // 보정 관련 추가 변수들
-    private List<List<Vector2>> calibrationSamplesPerTarget = new List<List<Vector2>>();
-    private float calibrationPointTimer = 0f;
-    private int currentSampleCount = 0;
-    private bool isCollectingSamples = false;
+    [Header("좌우 반전 및 눈 감지 수정")]
+    public bool flipHorizontal = true;
+    public bool useEyeTracking = true;
+    public bool useFaceCenterFallback = true;
+    public Vector2 eyePositionOffset = new Vector2(0f, -0.1f);
 
-    // 캐시된 값들
-    private int cachedWebcamWidth;
-    private int cachedWebcamHeight;
-    private int cachedScreenWidth;
-    private int cachedScreenHeight;
-    private Vector2 cachedGazeCalibrationOffset;
-    private Vector2 cachedGazeScale;
+    [Header("디버그 시각화")]
+    public bool showEyeDetectionDebug = true;
+    public bool showGazeDebugInfo = true;
+
+    [Header("시선 안정화 설정")]
+    public float gazeStabilityThreshold = 30f;
+    public int minStableSamples = 10;
+    public float outlierThreshold = 100f;
+    public bool useAdvancedFiltering = true;
+    public float calibrationStabilityWait = 1f;
+    public int calibrationSamplesRequired = 15;
+    public float maxCalibrationVariance = 40f;
+    #endregion
 
 #if OPENCV_FOR_UNITY
-    // OpenCV 관련
+    #region OpenCV 관련 변수들
+    // 웹캠 및 OpenCV
     private WebCamTexture webCamTexture;
     private Mat rgbaMat;
     private Mat grayMat;
     private Mat faceMat;
     private Texture2D outputTexture;
 
-    // 스레드 간 데이터 교환용 변수들
+    // 스레드 간 데이터 교환용
     private Mat threadRgbaMat;
     private Mat threadGrayMat;
     private bool hasNewFrame = false;
@@ -91,8 +100,10 @@ public class RealWebcamEyeTracker : MonoBehaviour
     private CascadeClassifier eyeCascade;
     private OpenCVForUnity.CoreModule.Rect[] faces;
     private OpenCVForUnity.CoreModule.Rect[] eyes;
+    #endregion
 
-    // 시선 추적 데이터
+    #region 시선 추적 관련 변수들
+    // 시선 데이터
     private Vector2 leftEyeCenter;
     private Vector2 rightEyeCenter;
     private Vector2 currentGazePoint;
@@ -101,29 +112,54 @@ public class RealWebcamEyeTracker : MonoBehaviour
     private bool isFaceDetected = false;
     private bool areEyesDetected = false;
 
-    // 보정 데이터
+    // 시선 안정화
+    private Queue<Vector2> gazeHistory = new Queue<Vector2>();
+    private Vector2 filteredGazePosition;
+    private float lastStableTime;
+    private bool isGazeStable = false;
+    #endregion
+
+    #region 보정 관련 변수들
+    // 기본 보정 데이터
     private List<Vector2> calibrationTargets = new List<Vector2>();
     private List<Vector2> calibrationGazes = new List<Vector2>();
     private bool isCalibrating = false;
     private int calibrationIndex = 0;
     private bool isCalibrated = false;
 
+    // 고급 보정 데이터
+    private List<List<Vector2>> calibrationSamplesPerTarget = new List<List<Vector2>>();
+    private float calibrationPointTimer = 0f;
+    private int currentSampleCount = 0;
+    private bool isCollectingSamples = false;
+    private List<Vector2> currentCalibrationSamples = new List<Vector2>();
+    private float calibrationPointStartTime;
+    private bool isWaitingForStability = false;
+    #endregion
+
+    #region 성능 최적화 관련 변수들
     // 성능 최적화
     private int frameCounter = 0;
     private bool isProcessing = false;
     private Thread processingThread;
     private object lockObject = new object();
 
-    // 임시 데이터 (스레드 간 공유)
+    // 스레드 간 임시 데이터
     private Vector2 tempGazePoint;
     private bool tempGazeValid;
     private bool tempFaceDetected;
     private bool tempEyesDetected;
-#endif
 
-    // 싱글톤
-    public static RealWebcamEyeTracker Instance { get; private set; }
+    // 캐시된 값들
+    private int cachedWebcamWidth;
+    private int cachedWebcamHeight;
+    private int cachedScreenWidth;
+    private int cachedScreenHeight;
+    private Vector2 cachedGazeCalibrationOffset;
+    private Vector2 cachedGazeScale;
+    #endregion
 
+    #region Unity 생명주기 메서드들
     void Awake()
     {
         if (Instance == null)
@@ -139,17 +175,112 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
     void Start()
     {
-#if OPENCV_FOR_UNITY
         Debug.Log("🎯 실제 웹캠 눈 추적 시스템 초기화 시작");
         StartCoroutine(InitializeSystem());
-#else
-        Debug.LogError("❌ OpenCV for Unity가 필요합니다! Asset Store에서 다운로드하세요.");
-        Debug.LogError("🔗 https://assetstore.unity.com/packages/tools/integration/opencv-for-unity-21088");
-        enabled = false;
-#endif
     }
 
-#if OPENCV_FOR_UNITY
+    void Update()
+    {
+        if (webCamTexture == null || !webCamTexture.isPlaying) return;
+
+        HandleInput();
+
+        frameCounter++;
+
+        // 보정 중 샘플 수집 처리
+        if (isCollectingSamples && isCalibrating)
+        {
+            UpdateSampleCollection();
+        }
+
+        // 캐시된 값들 업데이트
+        if (frameCounter % (processEveryNthFrame * 10) == 0)
+        {
+            UpdateCachedValues();
+        }
+
+        // N프레임마다 한 번씩 처리
+        if (frameCounter % processEveryNthFrame == 0)
+        {
+            if (useThreading)
+            {
+                ProcessFrameThreaded();
+            }
+            else
+            {
+                ProcessFrame();
+            }
+        }
+
+        // 스무딩 적용
+        if (enableGazeSmoothing && isGazeValid)
+        {
+            smoothedGazePoint = Vector2.Lerp(smoothedGazePoint, currentGazePoint, gazeSmoothing * Time.deltaTime);
+        }
+        else
+        {
+            smoothedGazePoint = currentGazePoint;
+        }
+
+        UpdateDebugUI();
+    }
+
+    void OnGUI()
+    {
+        if (!showCalibrationUI) return;
+
+        // 보정 모드 UI
+        if (isCalibrating && calibrationIndex < calibrationTargets.Count)
+        {
+            DrawCalibrationUI();
+        }
+
+        // 시선 커서 표시
+        if (isGazeValid)
+        {
+            DrawGazeCursor();
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 스레드 정리
+        if (processingThread != null && processingThread.IsAlive)
+        {
+            try
+            {
+                processingThread.Join(1000);
+                if (processingThread.IsAlive)
+                {
+                    processingThread.Abort();
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning($"스레드 종료 중 오류: {e.Message}");
+            }
+        }
+
+        // Unity 리소스 정리
+        if (webCamTexture != null)
+        {
+            webCamTexture.Stop();
+            Destroy(webCamTexture);
+        }
+
+        // OpenCV Mat 정리
+        if (rgbaMat != null) rgbaMat.Dispose();
+        if (grayMat != null) grayMat.Dispose();
+        if (threadRgbaMat != null) threadRgbaMat.Dispose();
+        if (threadGrayMat != null) threadGrayMat.Dispose();
+        if (faceMat != null) faceMat.Dispose();
+        if (outputTexture != null) Destroy(outputTexture);
+        if (faceCascade != null) faceCascade.Dispose();
+        if (eyeCascade != null) eyeCascade.Dispose();
+    }
+    #endregion
+
+    #region 초기화 메서드들
     IEnumerator InitializeSystem()
     {
         // 웹캠 초기화
@@ -204,6 +335,7 @@ public class RealWebcamEyeTracker : MonoBehaviour
             webcamDisplay.texture = webCamTexture;
         }
     }
+
     IEnumerator InitializeOpenCV()
     {
         // Mat 초기화
@@ -225,23 +357,10 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
         Debug.Log("✅ OpenCV 초기화 완료");
     }
-    void UpdateCachedValues()
-    {
-        if (webCamTexture != null)
-        {
-            cachedWebcamWidth = webCamTexture.width;
-            cachedWebcamHeight = webCamTexture.height;
-        }
-
-        cachedScreenWidth = Screen.width;
-        cachedScreenHeight = Screen.height;
-        cachedGazeCalibrationOffset = gazeCalibrationOffset;
-        cachedGazeScale = gazeScale;
-    }
 
     IEnumerator LoadHaarCascades()
     {
-        // 얼굴 감지 모델 로드 - 여러 경로 시도
+        // 얼굴 감지 모델 로드
         string faceCascadePath = GetHaarCascadePath("haarcascade_frontalface_alt.xml");
         if (string.IsNullOrEmpty(faceCascadePath))
         {
@@ -251,13 +370,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
         if (string.IsNullOrEmpty(faceCascadePath))
         {
             Debug.LogError("❌ 얼굴 감지 모델을 찾을 수 없습니다!");
-            Debug.LogError("💡 해결 방법:");
-            Debug.LogError("1. OpenCV for Unity가 올바르게 설치되었는지 확인");
-            Debug.LogError("2. Tools → OpenCV for Unity → Move StreamingAssets Files 실행");
-            Debug.LogError("3. Assets/StreamingAssets/opencvforunity/ 폴더에 .xml 파일들이 있는지 확인");
-
-            // 폴백: 얼굴 중심 기반 추적으로 전환
-            Debug.LogWarning("🔄 폴백 모드: 얼굴 감지 없이 화면 중앙 기반으로 동작합니다.");
             yield break;
         }
 
@@ -270,21 +382,12 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
         // 눈 감지 모델 로드
         string eyeCascadePath = GetHaarCascadePath("haarcascade_eye.xml");
-        if (string.IsNullOrEmpty(eyeCascadePath))
-        {
-            Debug.LogWarning("⚠️ 눈 감지 모델을 찾을 수 없습니다. 얼굴 중심을 사용합니다.");
-        }
-        else
+        if (!string.IsNullOrEmpty(eyeCascadePath))
         {
             eyeCascade = new CascadeClassifier(eyeCascadePath);
             if (eyeCascade.empty())
             {
-                Debug.LogWarning("⚠️ 눈 감지 모델 로드 실패. 얼굴 중심을 사용합니다.");
                 eyeCascade = null;
-            }
-            else
-            {
-                Debug.Log("✅ 눈 감지 모델 로드 성공");
             }
         }
 
@@ -292,104 +395,14 @@ public class RealWebcamEyeTracker : MonoBehaviour
         yield return null;
     }
 
-    string GetHaarCascadePath(string fileName)
-    {
-        // 1. OpenCV for Unity의 기본 방법
-        string path = Utils.getFilePath(fileName);
-        if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
-        {
-            Debug.Log($"✅ Haar Cascade 파일 찾음 (기본 방법): {path}");
-            return path;
-        }
-
-        // 2. StreamingAssets 직접 경로
-        string streamingPath = System.IO.Path.Combine(Application.streamingAssetsPath, "opencvforunity", fileName);
-        if (System.IO.File.Exists(streamingPath))
-        {
-            Debug.Log($"✅ Haar Cascade 파일 찾음 (StreamingAssets): {streamingPath}");
-            return streamingPath;
-        }
-
-        // 3. 다른 가능한 경로들
-        string[] possiblePaths = {
-            System.IO.Path.Combine(Application.streamingAssetsPath, fileName),
-            System.IO.Path.Combine(Application.dataPath, "StreamingAssets", "opencvforunity", fileName),
-            System.IO.Path.Combine(Application.dataPath, "StreamingAssets", fileName),
-#if UNITY_EDITOR
-            System.IO.Path.Combine(Application.dataPath, "OpenCV+Unity", "Assets", "StreamingAssets", "opencvforunity", fileName),
-#endif
-        };
-
-        foreach (string possiblePath in possiblePaths)
-        {
-            if (System.IO.File.Exists(possiblePath))
-            {
-                Debug.Log($"✅ Haar Cascade 파일 찾음 (대체 경로): {possiblePath}");
-                return possiblePath;
-            }
-        }
-
-        Debug.LogWarning($"⚠️ Haar Cascade 파일을 찾을 수 없습니다: {fileName}");
-        Debug.LogWarning($"다음 경로들을 확인했습니다:");
-        Debug.LogWarning($"- {Utils.getFilePath(fileName)}");
-        Debug.LogWarning($"- {streamingPath}");
-
-        return null;
-    }
-
-    // 디버그용 - 사용 가능한 모든 파일 확인
-    [ContextMenu("Debug Haar Cascade Files")]
-    void DebugHaarCascadeFiles()
-    {
-        Debug.Log("=== Haar Cascade 파일 디버깅 ===");
-
-        string[] fileNames = {
-            "haarcascade_frontalface_alt.xml",
-            "haarcascade_frontalface_default.xml",
-            "haarcascade_eye.xml"
-        };
-
-        foreach (string fileName in fileNames)
-        {
-            Debug.Log($"\n--- {fileName} ---");
-            string path = GetHaarCascadePath(fileName);
-            if (!string.IsNullOrEmpty(path))
-            {
-                Debug.Log($"✅ 파일 발견: {path}");
-                Debug.Log($"파일 크기: {new System.IO.FileInfo(path).Length} bytes");
-            }
-            else
-            {
-                Debug.LogError($"❌ 파일 없음: {fileName}");
-            }
-        }
-
-        // StreamingAssets 폴더 구조 확인
-        string streamingAssetsPath = Application.streamingAssetsPath;
-        Debug.Log($"\nStreamingAssets 경로: {streamingAssetsPath}");
-
-        if (System.IO.Directory.Exists(streamingAssetsPath))
-        {
-            Debug.Log("StreamingAssets 폴더 내용:");
-            string[] files = System.IO.Directory.GetFiles(streamingAssetsPath, "*.xml", System.IO.SearchOption.AllDirectories);
-            foreach (string file in files)
-            {
-                Debug.Log($"  - {file}");
-            }
-        }
-        else
-        {
-            Debug.LogError("StreamingAssets 폴더가 존재하지 않습니다!");
-        }
-    }
-
     void SetupCalibration()
     {
         calibrationTargets.Clear();
-        float margin = 150f; // 기존 100f에서 150f로 변경
+        float margin = 150f;
         float w = Screen.width;
         float h = Screen.height;
 
+        // 9점 보정
         calibrationTargets.Add(new Vector2(margin, margin));
         calibrationTargets.Add(new Vector2(w * 0.5f, margin));
         calibrationTargets.Add(new Vector2(w - margin, margin));
@@ -402,51 +415,9 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
         Debug.Log($"보정 좌표 설정 완료 - 여백: {margin}px, 화면 크기: {w}x{h}");
     }
+    #endregion
 
-    void Update()
-    {
-        if (webCamTexture == null || !webCamTexture.isPlaying) return;
-
-        HandleInput();
-
-        frameCounter++;
-        // 보정 중 샘플 수집 처리
-        if (isCollectingSamples && isCalibrating)
-        {
-            UpdateSampleCollection();
-        }
-        // 캐시된 값들 업데이트 (메인 스레드에서)
-        if (frameCounter % (processEveryNthFrame * 10) == 0) // 가끔씩만 업데이트
-        {
-            UpdateCachedValues();
-        }
-
-        // N프레임마다 한 번씩 처리
-        if (frameCounter % processEveryNthFrame == 0)
-        {
-            if (useThreading)
-            {
-                ProcessFrameThreaded();
-            }
-            else
-            {
-                ProcessFrame();
-            }
-        }
-
-        // 스무딩 적용
-        if (enableGazeSmoothing && isGazeValid)
-        {
-            smoothedGazePoint = Vector2.Lerp(smoothedGazePoint, currentGazePoint, gazeSmoothing * Time.deltaTime);
-        }
-        else
-        {
-            smoothedGazePoint = currentGazePoint;
-        }
-
-        UpdateDebugUI();
-    }
-
+    #region 입력 처리
     void HandleInput()
     {
         if (Input.GetKeyDown(KeyCode.C))
@@ -459,42 +430,51 @@ public class RealWebcamEyeTracker : MonoBehaviour
             ResetCalibration();
         }
 
-        if (isCalibrating)
+        if (Input.GetKeyDown(KeyCode.Space) && isCalibrating)
         {
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (useAdvancedCalibration)
             {
-                if (useAdvancedCalibration)
-                {
-                    StartSampleCollection();
-                }
-                else
-                {
-                    ProcessCalibrationPoint();
-                }
+                StartSampleCollection();
             }
+            else
+            {
+                ProcessCalibrationPoint();
+            }
+        }
 
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                CancelCalibration();
-            }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            CancelCalibration();
         }
 
         if (Input.GetKeyDown(KeyCode.V))
         {
             enableDebugVisualization = !enableDebugVisualization;
+            Debug.Log($"🎨 시각화: {(enableDebugVisualization ? "ON" : "OFF")}");
         }
 
-        if (Input.GetKeyDown(KeyCode.Q) && isCalibrated)
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            TestCalibrationQuality();
+            ToggleEyeTrackingMode();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            ToggleHorizontalFlip();
+        }
+
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            StartCoroutine(GazeDirectionTest());
         }
     }
+    #endregion
 
+    #region 프레임 처리 메서드들
     void ProcessFrameThreaded()
     {
         if (isProcessing) return;
 
-        // 멀티스레딩에서 문제가 발생하면 메인 스레드로 폴백
         try
         {
             // 메인 스레드에서 웹캠 데이터 복사
@@ -516,7 +496,7 @@ public class RealWebcamEyeTracker : MonoBehaviour
         {
             Debug.LogWarning($"⚠️ 멀티스레딩 오류 발생, 메인 스레드로 폴백: {e.Message}");
             useThreading = false;
-            ProcessFrame(); // 메인 스레드에서 처리
+            ProcessFrame();
         }
     }
 
@@ -529,7 +509,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
         {
             bool frameAvailable = false;
 
-            // 새 프레임 데이터 확인
             lock (frameDataLock)
             {
                 frameAvailable = hasNewFrame;
@@ -548,20 +527,15 @@ public class RealWebcamEyeTracker : MonoBehaviour
             // 스레드에서 안전한 OpenCV 처리
             lock (frameDataLock)
             {
-                // RGB로 변환
                 Imgproc.cvtColor(threadRgbaMat, threadGrayMat, Imgproc.COLOR_RGBA2GRAY);
-
-                // 얼굴 감지 (스레드 안전)
                 DetectFaceInThread();
 
                 if (tempFaceDetected)
                 {
-                    // 눈 감지 (스레드 안전)
                     DetectEyesInThread();
 
                     if (tempEyesDetected)
                     {
-                        // 시선 추정 (스레드 안전)
                         EstimateGazeInThread();
                     }
                 }
@@ -575,6 +549,32 @@ public class RealWebcamEyeTracker : MonoBehaviour
         isProcessing = false;
     }
 
+    void ProcessFrame()
+    {
+        // 메인 스레드에서 직접 처리
+        Utils.webCamTextureToMat(webCamTexture, rgbaMat);
+        Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
+
+        DetectFace();
+
+        if (isFaceDetected)
+        {
+            DetectEyes();
+
+            if (areEyesDetected)
+            {
+                EstimateGaze();
+            }
+        }
+
+        if (enableDebugVisualization)
+        {
+            DrawDebugVisualization();
+        }
+    }
+    #endregion
+
+    #region 얼굴/눈 감지 메서드들
     void DetectFaceInThread()
     {
         if (faceCascade == null)
@@ -602,7 +602,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
             if (tempFaceDetected)
             {
-                // 메인 스레드에서 사용할 데이터 저장
                 lock (lockObject)
                 {
                     faces = detectedFaces;
@@ -633,6 +632,42 @@ public class RealWebcamEyeTracker : MonoBehaviour
         }
     }
 
+    void DetectFace()
+    {
+        if (faceCascade == null) return;
+
+        MatOfRect faceDetections = new MatOfRect();
+
+        faceCascade.detectMultiScale(
+            grayMat,
+            faceDetections,
+            faceDetectionScale,
+            minNeighbors,
+            0,
+            new Size(minFaceSize, minFaceSize),
+            new Size()
+        );
+
+        faces = faceDetections.toArray();
+        isFaceDetected = faces.Length > 0;
+
+        if (isFaceDetected)
+        {
+            // 가장 큰 얼굴 선택
+            OpenCVForUnity.CoreModule.Rect largestFace = faces[0];
+            for (int i = 1; i < faces.Length; i++)
+            {
+                if (faces[i].area() > largestFace.area())
+                {
+                    largestFace = faces[i];
+                }
+            }
+            faces = new OpenCVForUnity.CoreModule.Rect[] { largestFace };
+        }
+
+        faceDetections.Dispose();
+    }
+
     void DetectEyesInThread()
     {
         if (!tempFaceDetected)
@@ -656,7 +691,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
             if (eyeCascade != null)
             {
-                // 얼굴 영역에서 눈 감지
                 Mat faceROI = new Mat(threadGrayMat, face);
                 MatOfRect eyeDetections = new MatOfRect();
 
@@ -680,11 +714,9 @@ public class RealWebcamEyeTracker : MonoBehaviour
                         eyes = detectedEyes;
                         areEyesDetected = tempEyesDetected;
 
-                        // 두 눈의 중심점 계산
                         var eye1 = eyes[0];
                         var eye2 = eyes[1];
 
-                        // 얼굴 좌표계에서 전체 이미지 좌표계로 변환
                         leftEyeCenter = new Vector2(
                             face.x + eye1.x + eye1.width * 0.5f,
                             face.y + eye1.y + eye1.height * 0.5f
@@ -695,7 +727,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
                             face.y + eye2.y + eye2.height * 0.5f
                         );
 
-                        // 왼쪽/오른쪽 눈 정렬
                         if (leftEyeCenter.x > rightEyeCenter.x)
                         {
                             Vector2 temp = leftEyeCenter;
@@ -710,7 +741,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
             }
             else
             {
-                // 눈 감지 모델이 없으면 얼굴 중심 사용
                 Vector2 faceCenter = new Vector2(
                     face.x + face.width * 0.5f,
                     face.y + face.height * 0.3f
@@ -731,6 +761,90 @@ public class RealWebcamEyeTracker : MonoBehaviour
             tempEyesDetected = false;
         }
     }
+
+    void DetectEyes()
+    {
+        if (!isFaceDetected || faces.Length == 0)
+        {
+            areEyesDetected = false;
+            return;
+        }
+
+        OpenCVForUnity.CoreModule.Rect face = faces[0];
+
+        if (eyeCascade != null && !eyeCascade.empty())
+        {
+            int eyeRegionHeight = (int)(face.height * eyeRegionMultiplier);
+            OpenCVForUnity.CoreModule.Rect eyeRegion = new OpenCVForUnity.CoreModule.Rect(
+                face.x,
+                face.y,
+                face.width,
+                eyeRegionHeight
+            );
+
+            Mat eyeROI = new Mat(grayMat, eyeRegion);
+            MatOfRect eyeDetections = new MatOfRect();
+
+            eyeCascade.detectMultiScale(
+                eyeROI,
+                eyeDetections,
+                1.05,
+                3,
+                0,
+                new Size(15, 15),
+                new Size(face.width / 3, face.height / 4)
+            );
+
+            eyes = eyeDetections.toArray();
+            areEyesDetected = eyes.Length >= 2;
+
+            if (areEyesDetected)
+            {
+                if (eyes.Length > 2)
+                {
+                    System.Array.Sort(eyes, (a, b) => (b.width * b.height).CompareTo(a.width * a.height));
+                }
+
+                var eye1 = eyes[0];
+                var eye2 = eyes[1];
+
+                leftEyeCenter = new Vector2(
+                    eyeRegion.x + eye1.x + eye1.width * 0.5f,
+                    eyeRegion.y + eye1.y + eye1.height * 0.5f
+                );
+
+                rightEyeCenter = new Vector2(
+                    eyeRegion.x + eye2.x + eye2.width * 0.5f,
+                    eyeRegion.y + eye2.y + eye2.height * 0.5f
+                );
+
+                if (leftEyeCenter.x > rightEyeCenter.x)
+                {
+                    Vector2 temp = leftEyeCenter;
+                    leftEyeCenter = rightEyeCenter;
+                    rightEyeCenter = temp;
+                }
+            }
+
+            eyeROI.Dispose();
+            eyeDetections.Dispose();
+        }
+
+        if (!areEyesDetected && useFaceCenterFallback)
+        {
+            Vector2 faceCenter = new Vector2(
+                face.x + face.width * 0.5f,
+                face.y + face.height * 0.3f
+            );
+
+            leftEyeCenter = faceCenter + new Vector2(-face.width * 0.2f, 0);
+            rightEyeCenter = faceCenter + new Vector2(face.width * 0.2f, 0);
+            areEyesDetected = true;
+        }
+    }
+    #endregion
+
+    #region 시선 추정 메서드들
     void EstimateGazeInThread()
     {
         if (!tempEyesDetected)
@@ -781,145 +895,55 @@ public class RealWebcamEyeTracker : MonoBehaviour
             tempGazeValid = false;
         }
     }
-
-    void ProcessFrame()
-    {
-        // 메인 스레드에서 직접 처리
-        Utils.webCamTextureToMat(webCamTexture, rgbaMat);
-        Imgproc.cvtColor(rgbaMat, grayMat, Imgproc.COLOR_RGBA2GRAY);
-
-        DetectFace();
-
-        if (isFaceDetected)
-        {
-            DetectEyes();
-
-            if (areEyesDetected)
-            {
-                EstimateGaze();
-            }
-        }
-
-        if (enableDebugVisualization)
-        {
-            DrawDebugVisualization();
-        }
-    }
-
-    void DetectFace()
-    {
-        if (faceCascade == null) return;
-
-        MatOfRect faceDetections = new MatOfRect();
-
-        faceCascade.detectMultiScale(
-            grayMat,
-            faceDetections,
-            faceDetectionScale,
-            minNeighbors,
-            0,
-            new Size(minFaceSize, minFaceSize),
-            new Size()
-        );
-
-        faces = faceDetections.toArray();
-        isFaceDetected = faces.Length > 0;
-
-        if (isFaceDetected)
-        {
-            // 가장 큰 얼굴 선택
-            OpenCVForUnity.CoreModule.Rect largestFace = faces[0];
-            for (int i = 1; i < faces.Length; i++)
-            {
-                if (faces[i].area() > largestFace.area())
-                {
-                    largestFace = faces[i];
-                }
-            }
-            faces = new OpenCVForUnity.CoreModule.Rect[] { largestFace };
-        }
-
-        faceDetections.Dispose();
-    }
-
-    void DetectEyes()
-    {
-        if (!isFaceDetected || faces.Length == 0) return;
-
-        OpenCVForUnity.CoreModule.Rect face = faces[0];
-
-        if (eyeCascade != null)
-        {
-            // 얼굴 영역에서 눈 감지
-            Mat faceROI = new Mat(grayMat, face);
-            MatOfRect eyeDetections = new MatOfRect();
-
-            eyeCascade.detectMultiScale(
-                faceROI,
-                eyeDetections,
-                1.1,
-                5,
-                0,
-                new Size(20, 20),
-                new Size()
-            );
-
-            eyes = eyeDetections.toArray();
-            areEyesDetected = eyes.Length >= 2;
-
-            if (areEyesDetected)
-            {
-                // 두 눈의 중심점 계산
-                var eye1 = eyes[0];
-                var eye2 = eyes[1];
-
-                // 얼굴 좌표계에서 전체 이미지 좌표계로 변환
-                leftEyeCenter = new Vector2(
-                    face.x + eye1.x + eye1.width * 0.5f,
-                    face.y + eye1.y + eye1.height * 0.5f
-                );
-
-                rightEyeCenter = new Vector2(
-                    face.x + eye2.x + eye2.width * 0.5f,
-                    face.y + eye2.y + eye2.height * 0.5f
-                );
-
-                // 왼쪽/오른쪽 눈 정렬
-                if (leftEyeCenter.x > rightEyeCenter.x)
-                {
-                    Vector2 temp = leftEyeCenter;
-                    leftEyeCenter = rightEyeCenter;
-                    rightEyeCenter = temp;
-                }
-            }
-
-            faceROI.Dispose();
-            eyeDetections.Dispose();
-        }
-        else
-        {
-            // 눈 감지 모델이 없으면 얼굴 중심 사용
-            Vector2 faceCenter = new Vector2(
-                face.x + face.width * 0.5f,
-                face.y + face.height * 0.3f  // 눈 위치는 얼굴 상단 30% 지점
-            );
-
-            leftEyeCenter = faceCenter + new Vector2(-face.width * 0.2f, 0);
-            rightEyeCenter = faceCenter + new Vector2(face.width * 0.2f, 0);
-            areEyesDetected = true;
-        }
-    }
-
     void EstimateGaze()
     {
-        if (!areEyesDetected) return;
+        // 👁️ 먼저 눈동자 기반 추적 시도
+        TrackPupilBasedGaze();
 
-        // 두 눈의 중심점 계산
-        Vector2 eyesCenter = (leftEyeCenter + rightEyeCenter) * 0.5f;
+        // 눈동자 감지 실패시 기존 방법 사용
+        if (!isGazeValid)
+        {
+            // 기존 코드 (얼굴 중심 기반)
+            if (!areEyesDetected && !isFaceDetected)
+            {
+                isGazeValid = false;
+                return;
+            }
 
-        // 이미지 좌표를 화면 좌표로 변환
-        float normalizedX = eyesCenter.x / webCamTexture.width;
-        float normalizedY = 1f - (eyesCenter.y / webCamTexture.height); // Y축 뒤집기
+            Vector2 gazePoint;
+
+            if (areEyesDetected && useEyeTracking)
+            {
+                gazePoint = (leftEyeCenter + rightEyeCenter) * 0.5f;
+            }
+            else if (isFaceDetected && useFaceCenterFallback)
+            {
+                OpenCVForUnity.CoreModule.Rect face = faces[0];
+                Vector2 faceCenter = new Vector2(
+                    face.x + face.width * 0.5f,
+                    face.y + face.height * (0.3f + eyePositionOffset.y)
+                );
+                gazePoint = faceCenter;
+            }
+            else
+            {
+                isGazeValid = false;
+                return;
+            }
+
+            currentGazePoint = gazePoint;
+            isGazeValid = true;
+        }
+
+        // 🔄 좌우 반전 처리 (핵심 수정!)
+        if (flipHorizontal)
+        {
+            currentGazePoint.x = webCamTexture.width - currentGazePoint.x;
+        }
+
+        // 웹캠 좌표를 화면 좌표로 변환
+        float normalizedX = currentGazePoint.x / webCamTexture.width;
+        float normalizedY = 1f - (currentGazePoint.y / webCamTexture.height);
 
         // 보정 적용
         normalizedX = (normalizedX + gazeCalibrationOffset.x) * gazeScale.x;
@@ -938,69 +962,140 @@ public class RealWebcamEyeTracker : MonoBehaviour
         isGazeValid = true;
     }
 
-    void DrawDebugVisualization()
+    #endregion
+    #region 눈동자 중심 감지 (새로 추가)
+    Vector2 DetectPupilInEye(OpenCVForUnity.CoreModule.Rect eyeRect)
     {
-        if (!enableDebugVisualization) return;
+        if (eyeRect.width <= 0 || eyeRect.height <= 0) return Vector2.zero;
 
-        // 얼굴 영역 표시
-        if (isFaceDetected && faces.Length > 0)
+        try
         {
-            OpenCVForUnity.CoreModule.Rect face = faces[0];
-            Imgproc.rectangle(rgbaMat, new Point(face.x, face.y),
-                new Point(face.x + face.width, face.y + face.height),
-                new Scalar(0, 255, 0, 255), 2);
+            Mat eyeROI = new Mat(grayMat, eyeRect);
+
+            // 가우시안 블러 적용
+            Imgproc.GaussianBlur(eyeROI, eyeROI, new Size(5, 5), 0);
+
+            // 임계값 처리로 어두운 부분(눈동자) 추출
+            Mat threshold = new Mat();
+            Imgproc.threshold(eyeROI, threshold, 30f, 255, Imgproc.THRESH_BINARY_INV);
+
+            // 컨투어 찾기
+            List<MatOfPoint> contours = new List<MatOfPoint>();
+            Mat hierarchy = new Mat();
+            Imgproc.findContours(threshold, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+            Vector2 bestPupilCenter = Vector2.zero;
+            float bestScore = 0f;
+
+            foreach (var contour in contours)
+            {
+                double area = Imgproc.contourArea(contour);
+
+                // 크기 필터링 (Inspector에서 설정 가능하도록)
+                if (area < 5 || area > 50) continue;
+
+                // 원형도 계산
+                double perimeter = Imgproc.arcLength(new MatOfPoint2f(contour.toArray()), true);
+                double circularity = 4 * Mathf.PI * area / (perimeter * perimeter);
+
+                if (circularity < 0.7f) continue;
+
+                // 중심점 계산
+                Moments moments = Imgproc.moments(contour);
+                if (moments.m00 == 0) continue;
+
+                float cx = (float)(moments.m10 / moments.m00);
+                float cy = (float)(moments.m01 / moments.m00);
+
+                // 점수 계산 (크기와 원형도 조합)
+                float score = (float)(area * circularity);
+
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestPupilCenter = new Vector2(eyeRect.x + cx, eyeRect.y + cy);
+                }
+            }
+
+            eyeROI.Dispose();
+            threshold.Dispose();
+            hierarchy.Dispose();
+            foreach (var contour in contours) contour.Dispose();
+
+            return bestPupilCenter;
         }
-
-        // 눈 위치 표시
-        if (areEyesDetected)
+        catch (System.Exception e)
         {
-            Imgproc.circle(rgbaMat, new Point(leftEyeCenter.x, leftEyeCenter.y), 5, new Scalar(255, 0, 0, 255), -1);
-            Imgproc.circle(rgbaMat, new Point(rightEyeCenter.x, rightEyeCenter.y), 5, new Scalar(0, 0, 255, 255), -1);
-        }
-
-        // 화면에 표시
-        Utils.matToTexture2D(rgbaMat, outputTexture);
-        if (webcamDisplay != null)
-        {
-            webcamDisplay.texture = outputTexture;
+            Debug.LogError($"눈동자 감지 오류: {e.Message}");
+            return Vector2.zero;
         }
     }
 
-    void UpdateDebugUI()
+    // 눈동자 기반 시선 추적 메서드
+    void TrackPupilBasedGaze()
     {
-        if (debugText == null) return;
-
-        string status = "=== 실제 웹캠 눈 추적 ===\n";
-        status += $"웹캠: {(webCamTexture != null && webCamTexture.isPlaying ? "✅" : "❌")}\n";
-        status += $"얼굴 감지: {(isFaceDetected ? "✅" : "❌")}\n";
-        status += $"눈 감지: {(areEyesDetected ? "✅" : "❌")}\n";
-        status += $"시선 추적: {(isGazeValid ? "✅" : "❌")}\n";
-        status += $"보정 완료: {(isCalibrated ? "✅" : "❌")}\n";
-
-        if (isGazeValid)
+        if (faces.Length == 0 || eyes.Length < 2)
         {
-            status += $"시선 위치: ({smoothedGazePoint.x:F0}, {smoothedGazePoint.y:F0})\n";
+            isGazeValid = false;
+            return;
         }
 
-        status += "\n⌨️ 단축키:\n";
-        status += "C: 보정 시작\n";
-        status += "R: 보정 리셋\n";
-        status += "Space: 보정 점 기록\n";
-        status += "V: 시각화 토글";
+        var face = faces[0];
 
-        debugText.text = status;
+        // 왼쪽 눈과 오른쪽 눈 영역 설정
+        var leftEyeRect = new OpenCVForUnity.CoreModule.Rect(
+            face.x + eyes[0].x, face.y + eyes[0].y, eyes[0].width, eyes[0].height);
+        var rightEyeRect = new OpenCVForUnity.CoreModule.Rect(
+            face.x + eyes[1].x, face.y + eyes[1].y, eyes[1].width, eyes[1].height);
+
+        // 눈 순서 확인 (왼쪽 눈이 더 왼쪽에 있어야 함)
+        if (leftEyeRect.x > rightEyeRect.x)
+        {
+            var temp = leftEyeRect;
+            leftEyeRect = rightEyeRect;
+            rightEyeRect = temp;
+        }
+
+        Vector2 leftPupil = DetectPupilInEye(leftEyeRect);
+        Vector2 rightPupil = DetectPupilInEye(rightEyeRect);
+
+        bool leftValid = leftPupil != Vector2.zero;
+        bool rightValid = rightPupil != Vector2.zero;
+
+        if (leftValid && rightValid)
+        {
+            // 양쪽 눈동자 모두 감지됨 - 평균 사용
+            currentGazePoint = (leftPupil + rightPupil) * 0.5f;
+            isGazeValid = true;
+
+            Debug.Log($"👁️ 양쪽 눈동자 감지: L{leftPupil}, R{rightPupil}");
+        }
+        else if (leftValid || rightValid)
+        {
+            // 한쪽 눈동자만 감지됨
+            currentGazePoint = leftValid ? leftPupil : rightPupil;
+            isGazeValid = true;
+
+            Debug.Log($"👁️ 한쪽 눈동자 감지: {currentGazePoint}");
+        }
+        else
+        {
+            // 눈동자 감지 실패 - 기존 방법으로 폴백
+            isGazeValid = false;
+            Debug.LogWarning("⚠️ 눈동자 감지 실패 - 기존 방법 사용");
+        }
     }
-
+    #endregion
+    #region 보정 관련 메서드들
     void StartCalibration()
     {
         isCalibrating = true;
         calibrationIndex = 0;
         calibrationGazes.Clear();
 
-        // 보정 시작 시 캐시 업데이트
         UpdateCachedValues();
 
-        // 보정 중 click-through 비활성화 (중요!)
+        // 보정 중 click-through 비활성화
         if (CompatibilityWindowManager.Instance != null)
         {
             CompatibilityWindowManager.Instance.DisableClickThrough();
@@ -1021,57 +1116,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
         Debug.Log("👀 얼굴이 웹캠에 잘 보이는지 확인하세요.");
     }
 
-    void CompleteCalibration()
-    {
-        isCalibrating = false;
-
-        if (calibrationGazes.Count == calibrationTargets.Count)
-        {
-            CalculateCalibration();
-            isCalibrated = true;
-            Debug.Log($"✅ 웹캠 보정 완료! 오프셋: {gazeCalibrationOffset}, 스케일: {gazeScale}");
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ 보정 데이터가 부족합니다.");
-        }
-
-        // 보정 완료 후 click-through 상태 복원
-        RestoreClickThroughStateAfterCalibration();
-    }
-
-
-    void RestoreClickThroughStateAfterCalibration()
-    {
-        if (CompatibilityWindowManager.Instance == null) return;
-
-        // 현재 마우스 위치 확인하여 적절한 click-through 상태 설정
-        Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
-        Camera mainCamera = Camera.main;
-
-        if (mainCamera != null)
-        {
-            Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
-
-            // 상호작용 가능한 오브젝트 확인
-            Collider2D catCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 8);
-            Collider2D towerCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 9);
-
-            bool isOverInteractableObject = (catCollider != null || towerCollider != null);
-
-            if (isOverInteractableObject)
-            {
-                CompatibilityWindowManager.Instance.DisableClickThrough();
-                Debug.Log("🔓 보정 완료 - 상호작용 오브젝트 위에 있어서 click-through 비활성화 유지");
-            }
-            else
-            {
-                CompatibilityWindowManager.Instance.EnableClickThrough();
-                Debug.Log("🔓 보정 완료 - 빈 공간에 있어서 click-through 활성화");
-            }
-        }
-    }
-
     void ResetCalibration()
     {
         isCalibrated = false;
@@ -1081,7 +1125,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
         calibrationGazes.Clear();
         calibrationIndex = 0;
 
-        // 고급 보정 관련 리셋
         if (useAdvancedCalibration)
         {
             calibrationSamplesPerTarget.Clear();
@@ -1090,10 +1133,7 @@ public class RealWebcamEyeTracker : MonoBehaviour
             calibrationPointTimer = 0f;
         }
 
-        // 보정 리셋 후 캐시 업데이트
         UpdateCachedValues();
-
-        // click-through 상태 복원
         RestoreClickThroughStateAfterCalibration();
 
         Debug.Log("🔄 웹캠 보정 리셋 완료");
@@ -1107,14 +1147,11 @@ public class RealWebcamEyeTracker : MonoBehaviour
         calibrationGazes.Clear();
         calibrationSamplesPerTarget.Clear();
 
-        // 보정 취소 후 click-through 상태 복원
         RestoreClickThroughStateAfterCalibration();
 
         Debug.Log("❌ 웹캠 보정이 취소되었습니다.");
     }
 
-
-    // 보정 품질 개선을 위한 추가 메서드
     void ProcessCalibrationPoint()
     {
         if (!isCalibrating || !isGazeValid)
@@ -1123,7 +1160,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
             return;
         }
 
-        // 현재 시선 위치와 타겟 위치의 차이 확인
         Vector2 target = calibrationTargets[calibrationIndex];
         float distance = Vector2.Distance(currentGazePoint, target);
 
@@ -1143,48 +1179,112 @@ public class RealWebcamEyeTracker : MonoBehaviour
         }
     }
 
-
-    void ProcessAdvancedCalibrationPoint()
+    void StartSampleCollection()
     {
-        if (!isCalibrating) return;
-
-        isCollectingSamples = false;
-
-        // 수집된 샘플들의 평균 계산
-        List<Vector2> samples = calibrationSamplesPerTarget[calibrationIndex];
-        Vector2 averageGaze = Vector2.zero;
-
-        foreach (Vector2 sample in samples)
+        if (!isCalibrating || !isGazeValid)
         {
-            averageGaze += sample;
-        }
-        averageGaze /= samples.Count;
-
-        // 샘플의 분산 계산 (정확도 체크)
-        float variance = 0f;
-        foreach (Vector2 sample in samples)
-        {
-            variance += Vector2.Distance(sample, averageGaze);
-        }
-        variance /= samples.Count;
-
-        calibrationGazes.Add(averageGaze);
-        calibrationIndex++;
-
-        Debug.Log($"✅ 보정 점 {calibrationIndex}/9 완료");
-        Debug.Log($"📊 평균 시선: {averageGaze}, 분산: {variance:F1}px");
-
-        if (variance > 50f)
-        {
-            Debug.LogWarning("⚠️ 이 점의 정확도가 낮습니다. 다음 점에서는 더 정확히 바라보세요.");
+            Debug.LogWarning("⚠️ 시선이 감지되지 않습니다. 얼굴이 웹캠에 잘 보이는지 확인하세요.");
+            return;
         }
 
-        if (calibrationIndex >= calibrationTargets.Count)
+        isCollectingSamples = true;
+        isWaitingForStability = true;
+        currentSampleCount = 0;
+        calibrationPointTimer = 0f;
+        currentCalibrationSamples.Clear();
+
+        Debug.Log($"📍 보정 점 {calibrationIndex + 1}/9 - 안정화 대기 중...");
+        Debug.Log($"💡 점을 정확히 바라보고 머리를 고정하세요.");
+    }
+
+    void UpdateSampleCollection()
+    {
+        if (!isCollectingSamples || !isCalibrating) return;
+
+        calibrationPointTimer += Time.deltaTime;
+
+        // 1단계: 안정화 대기
+        if (isWaitingForStability)
         {
-            CompleteAdvancedCalibration();
+            if (IsGazeStableForCalibration())
+            {
+                isWaitingForStability = false;
+                currentCalibrationSamples.Clear();
+                calibrationPointStartTime = Time.time;
+                Debug.Log($"✅ 시선 안정화 완료 - 샘플 수집 시작");
+            }
+            else if (calibrationPointTimer > 10f)
+            {
+                Debug.LogWarning("⚠️ 시선 안정화 타임아웃 - 강제 진행");
+                isWaitingForStability = false;
+                currentCalibrationSamples.Clear();
+                calibrationPointStartTime = Time.time;
+            }
+            return;
+        }
+
+        // 2단계: 안정된 샘플 수집
+        if (isGazeValid && IsGazeStableForCalibration())
+        {
+            float sampleInterval = calibrationWaitTime / calibrationSamplesRequired;
+
+            if (Time.time - calibrationPointStartTime > currentCalibrationSamples.Count * sampleInterval)
+            {
+                Vector2 currentGaze = GetStabilizedGazePosition();
+
+                if (currentCalibrationSamples.Count == 0 || IsConsistentWithPreviousSamples(currentGaze))
+                {
+                    currentCalibrationSamples.Add(currentGaze);
+                    currentSampleCount = currentCalibrationSamples.Count;
+
+                    Debug.Log($"📍 안정 샘플 {currentSampleCount}/{calibrationSamplesRequired} 수집됨 - 시선: {currentGaze}");
+
+                    if (currentSampleCount >= calibrationSamplesRequired)
+                    {
+                        ProcessImprovedCalibrationPoint();
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("⚠️ 시선이 불안정합니다. 점을 정확히 바라보세요.");
+                }
+            }
+        }
+        else
+        {
+            if (calibrationPointTimer > 15f)
+            {
+                Debug.LogWarning("⚠️ 보정 점 타임아웃 - 수집된 샘플로 진행");
+                if (currentCalibrationSamples.Count >= 5)
+                {
+                    ProcessImprovedCalibrationPoint();
+                }
+                else
+                {
+                    Debug.LogError("❌ 충분한 샘플을 수집하지 못했습니다. 다음 점으로 건너뜁니다.");
+                    SkipCalibrationPoint();
+                }
+            }
         }
     }
 
+    void CompleteCalibration()
+    {
+        isCalibrating = false;
+
+        if (calibrationGazes.Count == calibrationTargets.Count)
+        {
+            CalculateCalibration();
+            isCalibrated = true;
+            Debug.Log($"✅ 웹캠 보정 완료! 오프셋: {gazeCalibrationOffset}, 스케일: {gazeScale}");
+        }
+        else
+        {
+            Debug.LogWarning("⚠️ 보정 데이터가 부족합니다.");
+        }
+
+        RestoreClickThroughStateAfterCalibration();
+    }
 
     void CompleteAdvancedCalibration()
     {
@@ -1198,7 +1298,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
             Debug.Log($"📊 오프셋: {gazeCalibrationOffset}");
             Debug.Log($"📊 스케일: {gazeScale}");
 
-            // 보정 품질 자동 테스트
             TestCalibrationQuality();
         }
         else
@@ -1207,7 +1306,27 @@ public class RealWebcamEyeTracker : MonoBehaviour
         }
     }
 
-    // 개선된 보정 계산
+    void CalculateCalibration()
+    {
+        Vector2 totalOffset = Vector2.zero;
+
+        for (int i = 0; i < calibrationTargets.Count && i < calibrationGazes.Count; i++)
+        {
+            Vector2 target = calibrationTargets[i];
+            Vector2 gaze = calibrationGazes[i];
+
+            Vector2 offset = target - gaze;
+            totalOffset += offset;
+        }
+
+        if (calibrationGazes.Count > 0)
+        {
+            gazeCalibrationOffset = totalOffset / (calibrationGazes.Count * Screen.width);
+            gazeScale = new Vector2(1.2f, 1.2f);
+            UpdateCachedValues();
+        }
+    }
+
     void CalculateAdvancedCalibration()
     {
         Vector2 totalOffset = Vector2.zero;
@@ -1219,15 +1338,12 @@ public class RealWebcamEyeTracker : MonoBehaviour
             Vector2 target = calibrationTargets[i];
             Vector2 gaze = calibrationGazes[i];
 
-            // 정규화된 좌표로 변환
             Vector2 normalizedTarget = new Vector2(target.x / Screen.width, target.y / Screen.height);
             Vector2 normalizedGaze = new Vector2(gaze.x / Screen.width, gaze.y / Screen.height);
 
-            // 오프셋 계산
             Vector2 offset = normalizedTarget - normalizedGaze;
             totalOffset += offset;
 
-            // 스케일 계산
             if (normalizedGaze.x != 0 && normalizedGaze.y != 0)
             {
                 Vector2 scale = new Vector2(
@@ -1244,19 +1360,418 @@ public class RealWebcamEyeTracker : MonoBehaviour
             gazeCalibrationOffset = totalOffset / calibrationGazes.Count;
             gazeScale = totalScale / validPoints;
 
-            // 스케일 범위 제한 (너무 극단적인 값 방지)
             gazeScale.x = Mathf.Clamp(gazeScale.x, 0.5f, 2.5f);
             gazeScale.y = Mathf.Clamp(gazeScale.y, 0.5f, 2.5f);
 
-            // 보정 완료 후 캐시 업데이트
             UpdateCachedValues();
-
-            // 보정 품질 평가
             EvaluateCalibrationQuality();
         }
         else
         {
             Debug.LogError("❌ 유효한 보정 데이터가 없습니다!");
+        }
+    }
+    #endregion
+
+    #region 시선 안정화 메서드들
+    bool IsGazeStableForCalibration()
+    {
+        if (!isGazeValid) return false;
+
+        Vector2 currentGaze = smoothedGazePoint;
+
+        gazeHistory.Enqueue(currentGaze);
+        if (gazeHistory.Count > 30)
+        {
+            gazeHistory.Dequeue();
+        }
+
+        if (gazeHistory.Count < minStableSamples) return false;
+
+        Vector2 average = Vector2.zero;
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            average += gaze;
+        }
+        average /= gazeHistory.Count;
+
+        float variance = 0f;
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            variance += Vector2.Distance(gaze, average);
+        }
+        variance /= gazeHistory.Count;
+
+        bool isStable = variance < gazeStabilityThreshold;
+
+        if (isStable && !isGazeStable)
+        {
+            lastStableTime = Time.time;
+            isGazeStable = true;
+        }
+        else if (!isStable)
+        {
+            isGazeStable = false;
+        }
+
+        return isStable && (Time.time - lastStableTime > 0.5f);
+    }
+
+    Vector2 GetStabilizedGazePosition()
+    {
+        if (gazeHistory.Count == 0) return currentGazePoint;
+
+        List<Vector2> validSamples = new List<Vector2>();
+        Vector2 roughAverage = Vector2.zero;
+
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            roughAverage += gaze;
+        }
+        roughAverage /= gazeHistory.Count;
+
+        foreach (Vector2 gaze in gazeHistory)
+        {
+            if (Vector2.Distance(gaze, roughAverage) < outlierThreshold)
+            {
+                validSamples.Add(gaze);
+            }
+        }
+
+        if (validSamples.Count == 0) return currentGazePoint;
+
+        Vector2 stableAverage = Vector2.zero;
+        foreach (Vector2 sample in validSamples)
+        {
+            stableAverage += sample;
+        }
+        stableAverage /= validSamples.Count;
+
+        return stableAverage;
+    }
+
+    bool IsConsistentWithPreviousSamples(Vector2 newSample)
+    {
+        if (currentCalibrationSamples.Count == 0) return true;
+
+        Vector2 average = Vector2.zero;
+        foreach (Vector2 sample in currentCalibrationSamples)
+        {
+            average += sample;
+        }
+        average /= currentCalibrationSamples.Count;
+
+        float distance = Vector2.Distance(newSample, average);
+        return distance < gazeStabilityThreshold * 1.5f;
+    }
+
+    void ProcessImprovedCalibrationPoint()
+    {
+        if (!isCalibrating) return;
+
+        isCollectingSamples = false;
+
+        Vector2 finalGaze = CalculateRobustAverage(currentCalibrationSamples);
+
+        float variance = 0f;
+        foreach (Vector2 sample in currentCalibrationSamples)
+        {
+            variance += Vector2.Distance(sample, finalGaze);
+        }
+        variance /= currentCalibrationSamples.Count;
+
+        calibrationGazes.Add(finalGaze);
+        calibrationIndex++;
+
+        Debug.Log($"✅ 개선된 보정 점 {calibrationIndex}/9 완료");
+        Debug.Log($"📊 최종 시선: {finalGaze}, 분산: {variance:F1}px ({currentCalibrationSamples.Count}개 샘플)");
+
+        if (variance < 20f)
+        {
+            Debug.Log($"🏆 우수한 품질의 보정 점!");
+        }
+        else if (variance < maxCalibrationVariance)
+        {
+            Debug.Log($"✅ 양호한 품질의 보정 점");
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ 품질이 낮은 보정 점 (분산: {variance:F1}px > {maxCalibrationVariance}px)");
+        }
+
+        if (calibrationIndex >= calibrationTargets.Count)
+        {
+            CompleteAdvancedCalibration();
+        }
+        else
+        {
+            isWaitingForStability = true;
+            calibrationPointTimer = 0f;
+            currentCalibrationSamples.Clear();
+        }
+    }
+
+    Vector2 CalculateRobustAverage(List<Vector2> samples)
+    {
+        if (samples.Count <= 3)
+        {
+            Vector2 simpleAverage = Vector2.zero;
+            foreach (Vector2 sample in samples)
+            {
+                simpleAverage += sample;
+            }
+            return simpleAverage / samples.Count;
+        }
+
+        Vector2 roughAverage = Vector2.zero;
+        foreach (Vector2 sample in samples)
+        {
+            roughAverage += sample;
+        }
+        roughAverage /= samples.Count;
+
+        List<Vector2> sortedSamples = new List<Vector2>(samples);
+        sortedSamples.Sort((a, b) => Vector2.Distance(a, roughAverage).CompareTo(Vector2.Distance(b, roughAverage)));
+
+        int validCount = Mathf.Max(3, (int)(sortedSamples.Count * 0.7f));
+
+        Vector2 robustAverage = Vector2.zero;
+        for (int i = 0; i < validCount; i++)
+        {
+            robustAverage += sortedSamples[i];
+        }
+        robustAverage /= validCount;
+
+        return robustAverage;
+    }
+
+    void SkipCalibrationPoint()
+    {
+        Vector2 fallbackGaze = gazeHistory.Count > 0 ? GetStabilizedGazePosition() : currentGazePoint;
+
+        calibrationGazes.Add(fallbackGaze);
+        calibrationIndex++;
+
+        Debug.LogWarning($"⚠️ 보정 점 {calibrationIndex}/9 건너뜀 (대체값 사용: {fallbackGaze})");
+
+        if (calibrationIndex >= calibrationTargets.Count)
+        {
+            CompleteAdvancedCalibration();
+        }
+        else
+        {
+            isWaitingForStability = true;
+            calibrationPointTimer = 0f;
+            currentCalibrationSamples.Clear();
+        }
+    }
+    #endregion
+
+    #region UI 및 시각화 메서드들
+    void UpdateDebugUI()
+    {
+        if (debugText == null) return;
+
+        string status = "=== 웹캠 눈 추적 상태 ===\n";
+        status += $"📹 웹캠: {(webCamTexture != null && webCamTexture.isPlaying ? "✅" : "❌")}\n";
+        status += $"😊 얼굴 감지: {(isFaceDetected ? "✅" : "❌")}\n";
+        status += $"👁️ 눈 감지: {(areEyesDetected ? (useEyeTracking ? "✅ 실제" : "🤖 추정") : "❌")}\n";
+        status += $"🎯 시선 추적: {(isGazeValid ? "✅" : "❌")}\n";
+        status += $"🔧 보정 완료: {(isCalibrated ? "✅" : "❌")}\n";
+        status += $"🔄 좌우 반전: {(flipHorizontal ? "ON" : "OFF")}\n";
+
+        if (isGazeValid)
+        {
+            status += $"📍 시선 위치: ({smoothedGazePoint.x:F0}, {smoothedGazePoint.y:F0})\n";
+        }
+
+        if (isFaceDetected && faces.Length > 0)
+        {
+            var face = faces[0];
+            status += $"📏 얼굴 크기: {face.width}x{face.height}\n";
+        }
+
+        status += "\n⌨️ 단축키:\n";
+        status += "C: 보정 시작 | R: 보정 리셋\n";
+        status += "V: 시각화 토글 | T: 눈 추적 모드\n";
+        status += "F: 좌우 반전 토글\n";
+
+        debugText.text = status;
+    }
+
+    void DrawCalibrationUI()
+    {
+        Vector2 target = calibrationTargets[calibrationIndex];
+
+        // 보정 점 표시
+        if (calibrationPointTexture != null)
+        {
+            float imageSize = 64f;
+            UnityEngine.Rect imageRect = new UnityEngine.Rect(target.x - imageSize * 0.5f, target.y - imageSize * 0.5f, imageSize, imageSize);
+            GUI.DrawTexture(imageRect, calibrationPointTexture);
+        }
+        else
+        {
+            GUI.color = Color.red;
+            GUI.Box(new UnityEngine.Rect(target.x - 25, target.y - 25, 50, 50), "");
+            GUI.color = Color.white;
+        }
+
+        // 숫자 표시
+        GUIStyle numberStyle = new GUIStyle(GUI.skin.label);
+        numberStyle.normal.textColor = Color.white;
+        numberStyle.fontSize = 20;
+        numberStyle.fontStyle = FontStyle.Bold;
+        numberStyle.alignment = TextAnchor.MiddleCenter;
+
+        GUI.Label(new UnityEngine.Rect(target.x - 15, target.y - 10, 30, 20), $"{calibrationIndex + 1}", numberStyle);
+
+        // 안내 메시지
+        GUI.Box(new UnityEngine.Rect(Screen.width * 0.5f - 200, Screen.height - 80, 400, 50), "");
+
+        GUIStyle messageStyle = new GUIStyle(GUI.skin.label);
+        messageStyle.normal.textColor = Color.yellow;
+        messageStyle.fontSize = 18;
+        messageStyle.fontStyle = FontStyle.Bold;
+        messageStyle.alignment = TextAnchor.MiddleCenter;
+
+        GUI.Label(new UnityEngine.Rect(Screen.width * 0.5f - 200, Screen.height - 75, 400, 40),
+            $"보정 점 {calibrationIndex + 1}/9를 바라보고 스페이스 키를 누르세요", messageStyle);
+    }
+
+    void DrawGazeCursor()
+    {
+        Vector2 gazePos = enableGazeSmoothing ? smoothedGazePoint : currentGazePoint;
+
+        GUI.color = Color.cyan;
+        GUI.Box(new UnityEngine.Rect(gazePos.x - 10, gazePos.y - 1, 20, 2), "");
+        GUI.Box(new UnityEngine.Rect(gazePos.x - 1, gazePos.y - 10, 2, 20), "");
+        GUI.color = Color.white;
+    }
+
+    void DrawDebugVisualization()
+    {
+        if (!enableDebugVisualization) return;
+
+        // 얼굴 영역 표시
+        if (isFaceDetected && faces.Length > 0)
+        {
+            OpenCVForUnity.CoreModule.Rect face = faces[0];
+            Imgproc.rectangle(rgbaMat,
+                new Point(face.x, face.y),
+                new Point(face.x + face.width, face.y + face.height),
+                new Scalar(0, 255, 0, 255), 3);
+
+            Vector2 faceCenter = new Vector2(face.x + face.width * 0.5f, face.y + face.height * 0.5f);
+            Imgproc.circle(rgbaMat, new Point(faceCenter.x, faceCenter.y), 5, new Scalar(0, 255, 255, 255), -1);
+        }
+
+        // 눈 위치 표시
+        if (areEyesDetected)
+        {
+            if (useEyeTracking && eyes != null && eyes.Length >= 2)
+            {
+                Imgproc.circle(rgbaMat, new Point(leftEyeCenter.x, leftEyeCenter.y), 8, new Scalar(255, 0, 0, 255), -1);
+                Imgproc.circle(rgbaMat, new Point(rightEyeCenter.x, rightEyeCenter.y), 8, new Scalar(0, 0, 255, 255), -1);
+            }
+            else
+            {
+                Imgproc.circle(rgbaMat, new Point(leftEyeCenter.x, leftEyeCenter.y), 6, new Scalar(255, 0, 255, 255), -1);
+                Imgproc.circle(rgbaMat, new Point(rightEyeCenter.x, rightEyeCenter.y), 6, new Scalar(255, 0, 255, 255), -1);
+            }
+
+            Vector2 gazeCenter = (leftEyeCenter + rightEyeCenter) * 0.5f;
+
+            if (flipHorizontal)
+            {
+                gazeCenter.x = webCamTexture.width - gazeCenter.x;
+            }
+
+            Imgproc.circle(rgbaMat, new Point(gazeCenter.x, gazeCenter.y), 10, new Scalar(0, 255, 0, 255), 3);
+        }
+
+        // 화면에 표시
+        Utils.matToTexture2D(rgbaMat, outputTexture);
+        if (webcamDisplay != null)
+        {
+            webcamDisplay.texture = outputTexture;
+        }
+    }
+    #endregion
+
+    #region 유틸리티 메서드들
+    void UpdateCachedValues()
+    {
+        if (webCamTexture != null)
+        {
+            cachedWebcamWidth = webCamTexture.width;
+            cachedWebcamHeight = webCamTexture.height;
+        }
+
+        cachedScreenWidth = Screen.width;
+        cachedScreenHeight = Screen.height;
+        cachedGazeCalibrationOffset = gazeCalibrationOffset;
+        cachedGazeScale = gazeScale;
+    }
+
+    string GetHaarCascadePath(string fileName)
+    {
+        // 1. OpenCV for Unity의 기본 방법
+        string path = Utils.getFilePath(fileName);
+        if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+        {
+            return path;
+        }
+
+        // 2. StreamingAssets 직접 경로
+        string streamingPath = System.IO.Path.Combine(Application.streamingAssetsPath, "opencvforunity", fileName);
+        if (System.IO.File.Exists(streamingPath))
+        {
+            return streamingPath;
+        }
+
+        // 3. 다른 가능한 경로들
+        string[] possiblePaths = {
+            System.IO.Path.Combine(Application.streamingAssetsPath, fileName),
+            System.IO.Path.Combine(Application.dataPath, "StreamingAssets", "opencvforunity", fileName),
+            System.IO.Path.Combine(Application.dataPath, "StreamingAssets", fileName),
+        };
+
+        foreach (string possiblePath in possiblePaths)
+        {
+            if (System.IO.File.Exists(possiblePath))
+            {
+                return possiblePath;
+            }
+        }
+
+        return null;
+    }
+
+    void RestoreClickThroughStateAfterCalibration()
+    {
+        if (CompatibilityWindowManager.Instance == null) return;
+
+        Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
+        Camera mainCamera = Camera.main;
+
+        if (mainCamera != null)
+        {
+            Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
+
+            Collider2D catCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 8);
+            Collider2D towerCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 9);
+
+            bool isOverInteractableObject = (catCollider != null || towerCollider != null);
+
+            if (isOverInteractableObject)
+            {
+                CompatibilityWindowManager.Instance.DisableClickThrough();
+            }
+            else
+            {
+                CompatibilityWindowManager.Instance.EnableClickThrough();
+            }
         }
     }
 
@@ -1295,38 +1810,10 @@ public class RealWebcamEyeTracker : MonoBehaviour
         else if (avgError < 150f && accuracy > 60f)
         {
             Debug.Log("⚠️ 웹캠 보정 품질 보통");
-            Debug.Log("💡 개선 팁: 조명을 밝게 하고, 웹캠과 30-50cm 거리 유지");
         }
         else
         {
             Debug.Log("❌ 웹캠 보정 품질 불량 - 재보정 권장");
-            Debug.Log("💡 개선 방법:");
-            Debug.Log("   1. 조명 환경 개선 (얼굴이 잘 보이도록)");
-            Debug.Log("   2. 웹캠 해상도 및 프레임레이트 확인");
-            Debug.Log("   3. 머리를 최대한 고정하고 눈만 움직이기");
-            Debug.Log("   4. 각 보정점을 정확히 바라보기");
-        }
-    }
-    void CalculateCalibration()
-    {
-        Vector2 totalOffset = Vector2.zero;
-
-        for (int i = 0; i < calibrationTargets.Count && i < calibrationGazes.Count; i++)
-        {
-            Vector2 target = calibrationTargets[i];
-            Vector2 gaze = calibrationGazes[i];
-
-            Vector2 offset = target - gaze;
-            totalOffset += offset;
-        }
-
-        if (calibrationGazes.Count > 0)
-        {
-            gazeCalibrationOffset = totalOffset / (calibrationGazes.Count * Screen.width);
-            gazeScale = new Vector2(1.2f, 1.2f);
-
-            // 보정 완료 후 캐시 업데이트
-            UpdateCachedValues();
         }
     }
 
@@ -1339,8 +1826,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
         }
 
         Debug.Log("🧪 보정 품질 테스트 시작");
-        Debug.Log("👁️ 화면 중앙을 5초간 바라보세요...");
-
         StartCoroutine(CalibrationQualityTest());
     }
 
@@ -1365,7 +1850,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
         if (testSamples.Count > 0)
         {
-            // 평균 위치 계산
             Vector2 averageGaze = Vector2.zero;
             foreach (Vector2 sample in testSamples)
             {
@@ -1373,10 +1857,8 @@ public class RealWebcamEyeTracker : MonoBehaviour
             }
             averageGaze /= testSamples.Count;
 
-            // 중앙에서의 오차 계산
             float error = Vector2.Distance(averageGaze, centerTarget);
 
-            // 분산 계산
             float variance = 0f;
             foreach (Vector2 sample in testSamples)
             {
@@ -1399,10 +1881,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
             else
             {
                 Debug.Log("❌ 보정 품질 불량 - 재보정 필요");
-                Debug.Log("💡 개선 방법:");
-                Debug.Log("   1. 조명 환경 개선");
-                Debug.Log("   2. 웹캠과의 거리 조정 (30-50cm)");
-                Debug.Log("   3. 머리를 최대한 고정하고 눈만 움직이기");
             }
         }
         else
@@ -1410,472 +1888,124 @@ public class RealWebcamEyeTracker : MonoBehaviour
             Debug.LogError("❌ 테스트 중 시선이 감지되지 않았습니다.");
         }
     }
-
-    // RealWebcamEyeTracker.cs에 추가/수정할 코드
-
-    #region 개선된 시선 추적 안정화 시스템
-
-    [Header("시선 안정화 설정")]
-    public float gazeStabilityThreshold = 30f;     // 안정성 임계값 (픽셀)
-    public int minStableSamples = 10;              // 최소 안정 샘플 수
-    public float outlierThreshold = 100f;          // 이상치 제거 임계값
-    public bool useAdvancedFiltering = true;       // 고급 필터링 사용
-
-    [Header("보정 개선 설정")]
-    public float calibrationStabilityWait = 1f;    // 보정 점별 안정화 대기 시간
-    public int calibrationSamplesRequired = 15;    // 보정에 필요한 샘플 수 (기존 5에서 증가)
-    public float maxCalibrationVariance = 40f;     // 허용 가능한 최대 분산
-
-    // 시선 안정화를 위한 변수들
-    private Queue<Vector2> gazeHistory = new Queue<Vector2>();
-    private Vector2 filteredGazePosition;
-    private float lastStableTime;
-    private bool isGazeStable = false;
-
-    // 보정 개선을 위한 변수들
-    private List<Vector2> currentCalibrationSamples = new List<Vector2>();
-    private float calibrationPointStartTime;
-    private bool isWaitingForStability = false;
-
-    // 기존 UpdateSampleCollection 메서드를 개선된 버전으로 교체
-    void UpdateSampleCollection()
-    {
-        if (!isCollectingSamples || !isCalibrating) return;
-
-        calibrationPointTimer += Time.deltaTime;
-
-        // 1단계: 안정화 대기
-        if (isWaitingForStability)
-        {
-            if (IsGazeStableForCalibration())
-            {
-                isWaitingForStability = false;
-                currentCalibrationSamples.Clear();
-                calibrationPointStartTime = Time.time;
-                Debug.Log($"✅ 시선 안정화 완료 - 샘플 수집 시작");
-            }
-            else if (calibrationPointTimer > 10f) // 10초 후에도 안정화 안되면 강제 진행
-            {
-                Debug.LogWarning("⚠️ 시선 안정화 타임아웃 - 강제 진행");
-                isWaitingForStability = false;
-                currentCalibrationSamples.Clear();
-                calibrationPointStartTime = Time.time;
-            }
-            return;
-        }
-
-        // 2단계: 안정된 샘플 수집
-        if (isGazeValid && IsGazeStableForCalibration())
-        {
-            float sampleInterval = calibrationWaitTime / calibrationSamplesRequired;
-
-            if (Time.time - calibrationPointStartTime > currentCalibrationSamples.Count * sampleInterval)
-            {
-                // 현재 시선이 충분히 안정적인지 확인
-                Vector2 currentGaze = GetStabilizedGazePosition();
-
-                // 이전 샘플들과의 일관성 체크
-                if (currentCalibrationSamples.Count == 0 || IsConsistentWithPreviousSamples(currentGaze))
-                {
-                    currentCalibrationSamples.Add(currentGaze);
-                    currentSampleCount = currentCalibrationSamples.Count;
-
-                    Debug.Log($"📍 안정 샘플 {currentSampleCount}/{calibrationSamplesRequired} 수집됨 - 시선: {currentGaze}");
-
-                    if (currentSampleCount >= calibrationSamplesRequired)
-                    {
-                        ProcessImprovedCalibrationPoint();
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("⚠️ 시선이 불안정합니다. 점을 정확히 바라보세요.");
-                }
-            }
-        }
-        else
-        {
-            if (calibrationPointTimer > 15f) // 15초 후에도 충분한 샘플이 없으면 포기
-            {
-                Debug.LogWarning("⚠️ 보정 점 타임아웃 - 수집된 샘플로 진행");
-                if (currentCalibrationSamples.Count >= 5) // 최소 5개는 있어야 함
-                {
-                    ProcessImprovedCalibrationPoint();
-                }
-                else
-                {
-                    Debug.LogError("❌ 충분한 샘플을 수집하지 못했습니다. 다음 점으로 건너뜁니다.");
-                    SkipCalibrationPoint();
-                }
-            }
-        }
-    }
-
-    // 개선된 시선 안정성 체크
-    bool IsGazeStableForCalibration()
-    {
-        if (!isGazeValid) return false;
-
-        Vector2 currentGaze = smoothedGazePoint;
-
-        // 최근 시선 히스토리 업데이트
-        gazeHistory.Enqueue(currentGaze);
-        if (gazeHistory.Count > 30) // 최근 30프레임만 유지
-        {
-            gazeHistory.Dequeue();
-        }
-
-        if (gazeHistory.Count < minStableSamples) return false;
-
-        // 분산 계산
-        Vector2 average = Vector2.zero;
-        foreach (Vector2 gaze in gazeHistory)
-        {
-            average += gaze;
-        }
-        average /= gazeHistory.Count;
-
-        float variance = 0f;
-        foreach (Vector2 gaze in gazeHistory)
-        {
-            variance += Vector2.Distance(gaze, average);
-        }
-        variance /= gazeHistory.Count;
-
-        bool isStable = variance < gazeStabilityThreshold;
-
-        if (isStable && !isGazeStable)
-        {
-            lastStableTime = Time.time;
-            isGazeStable = true;
-        }
-        else if (!isStable)
-        {
-            isGazeStable = false;
-        }
-
-        // 최소 0.5초 이상 안정적이어야 함
-        return isStable && (Time.time - lastStableTime > 0.5f);
-    }
-
-    // 안정화된 시선 위치 반환
-    Vector2 GetStabilizedGazePosition()
-    {
-        if (gazeHistory.Count == 0) return currentGazePoint;
-
-        // 이상치 제거 후 평균 계산
-        List<Vector2> validSamples = new List<Vector2>();
-        Vector2 roughAverage = Vector2.zero;
-
-        foreach (Vector2 gaze in gazeHistory)
-        {
-            roughAverage += gaze;
-        }
-        roughAverage /= gazeHistory.Count;
-
-        // 이상치 제거
-        foreach (Vector2 gaze in gazeHistory)
-        {
-            if (Vector2.Distance(gaze, roughAverage) < outlierThreshold)
-            {
-                validSamples.Add(gaze);
-            }
-        }
-
-        if (validSamples.Count == 0) return currentGazePoint;
-
-        Vector2 stableAverage = Vector2.zero;
-        foreach (Vector2 sample in validSamples)
-        {
-            stableAverage += sample;
-        }
-        stableAverage /= validSamples.Count;
-
-        return stableAverage;
-    }
-
-    // 이전 샘플들과의 일관성 체크
-    bool IsConsistentWithPreviousSamples(Vector2 newSample)
-    {
-        if (currentCalibrationSamples.Count == 0) return true;
-
-        Vector2 average = Vector2.zero;
-        foreach (Vector2 sample in currentCalibrationSamples)
-        {
-            average += sample;
-        }
-        average /= currentCalibrationSamples.Count;
-
-        float distance = Vector2.Distance(newSample, average);
-        return distance < gazeStabilityThreshold * 1.5f; // 안정성 임계값의 1.5배까지 허용
-    }
-
-    // 개선된 보정 점 처리
-    void ProcessImprovedCalibrationPoint()
-    {
-        if (!isCalibrating) return;
-
-        isCollectingSamples = false;
-
-        // 고급 이상치 제거 및 평균 계산
-        Vector2 finalGaze = CalculateRobustAverage(currentCalibrationSamples);
-
-        // 분산 계산
-        float variance = 0f;
-        foreach (Vector2 sample in currentCalibrationSamples)
-        {
-            variance += Vector2.Distance(sample, finalGaze);
-        }
-        variance /= currentCalibrationSamples.Count;
-
-        calibrationGazes.Add(finalGaze);
-        calibrationIndex++;
-
-        Debug.Log($"✅ 개선된 보정 점 {calibrationIndex}/9 완료");
-        Debug.Log($"📊 최종 시선: {finalGaze}, 분산: {variance:F1}px ({currentCalibrationSamples.Count}개 샘플)");
-
-        // 품질 평가
-        if (variance < 20f)
-        {
-            Debug.Log($"🏆 우수한 품질의 보정 점!");
-        }
-        else if (variance < maxCalibrationVariance)
-        {
-            Debug.Log($"✅ 양호한 품질의 보정 점");
-        }
-        else
-        {
-            Debug.LogWarning($"⚠️ 품질이 낮은 보정 점 (분산: {variance:F1}px > {maxCalibrationVariance}px)");
-            Debug.LogWarning("💡 다음 점에서는 머리를 더 고정하고 정확히 바라보세요.");
-        }
-
-        if (calibrationIndex >= calibrationTargets.Count)
-        {
-            CompleteAdvancedCalibration();
-        }
-        else
-        {
-            // 다음 점 준비
-            isWaitingForStability = true;
-            calibrationPointTimer = 0f;
-            currentCalibrationSamples.Clear();
-        }
-    }
-
-    // 강건한 평균 계산 (이상치 제거)
-    Vector2 CalculateRobustAverage(List<Vector2> samples)
-    {
-        if (samples.Count <= 3)
-        {
-            // 샘플이 적으면 단순 평균
-            Vector2 simpleAverage = Vector2.zero;
-            foreach (Vector2 sample in samples)
-            {
-                simpleAverage += sample;
-            }
-            return simpleAverage / samples.Count;
-        }
-
-        // 1차 평균 계산
-        Vector2 roughAverage = Vector2.zero;
-        foreach (Vector2 sample in samples)
-        {
-            roughAverage += sample;
-        }
-        roughAverage /= samples.Count;
-
-        // 거리별로 정렬
-        List<Vector2> sortedSamples = new List<Vector2>(samples);
-        sortedSamples.Sort((a, b) => Vector2.Distance(a, roughAverage).CompareTo(Vector2.Distance(b, roughAverage)));
-
-        // 상위 70%만 사용 (이상치 제거)
-        int validCount = Mathf.Max(3, (int)(sortedSamples.Count * 0.7f));
-
-        Vector2 robustAverage = Vector2.zero;
-        for (int i = 0; i < validCount; i++)
-        {
-            robustAverage += sortedSamples[i];
-        }
-        robustAverage /= validCount;
-
-        Debug.Log($"🔧 강건한 평균: {validCount}/{samples.Count} 샘플 사용");
-        return robustAverage;
-    }
-
-    // 보정 점 건너뛰기
-    void SkipCalibrationPoint()
-    {
-        // 마지막으로 안정적이었던 시선 위치 사용
-        Vector2 fallbackGaze = gazeHistory.Count > 0 ? GetStabilizedGazePosition() : currentGazePoint;
-
-        calibrationGazes.Add(fallbackGaze);
-        calibrationIndex++;
-
-        Debug.LogWarning($"⚠️ 보정 점 {calibrationIndex}/9 건너뜀 (대체값 사용: {fallbackGaze})");
-
-        if (calibrationIndex >= calibrationTargets.Count)
-        {
-            CompleteAdvancedCalibration();
-        }
-        else
-        {
-            isWaitingForStability = true;
-            calibrationPointTimer = 0f;
-            currentCalibrationSamples.Clear();
-        }
-    }
-
-    // 개선된 보정 시작
-    void StartSampleCollection()
-    {
-        if (!isCalibrating || !isGazeValid)
-        {
-            Debug.LogWarning("⚠️ 시선이 감지되지 않습니다. 얼굴이 웹캠에 잘 보이는지 확인하세요.");
-            return;
-        }
-
-        isCollectingSamples = true;
-        isWaitingForStability = true;  // 먼저 안정화 대기
-        currentSampleCount = 0;
-        calibrationPointTimer = 0f;
-        currentCalibrationSamples.Clear();
-
-        Debug.Log($"📍 보정 점 {calibrationIndex + 1}/9 - 안정화 대기 중...");
-        Debug.Log($"💡 점을 정확히 바라보고 머리를 고정하세요.");
-    }
-
     #endregion
 
-    #region 실시간 진단 및 자동 조정 시스템
-
-    [ContextMenu("Real-time Calibration Diagnostics")]
-    public void StartRealtimeDiagnostics()
+    #region 설정 토글 메서드들
+    public void ToggleEyeTrackingMode()
     {
-        StartCoroutine(RealtimeCalibrationDiagnostics());
+        useEyeTracking = !useEyeTracking;
+        Debug.Log($"👁️ 눈 추적 모드: {(useEyeTracking ? "실제 눈 감지" : "얼굴 중심 추정")}");
     }
 
-    System.Collections.IEnumerator RealtimeCalibrationDiagnostics()
+    public void ToggleHorizontalFlip()
     {
-        Debug.Log("🔍 실시간 보정 진단 시작");
-
-        while (isCalibrating)
-        {
-            // 현재 상태 진단
-            DiagnoseCurrentCalibrationState();
-
-            yield return new WaitForSeconds(2f); // 2초마다 진단
-        }
+        flipHorizontal = !flipHorizontal;
+        Debug.Log($"🔄 좌우 반전: {(flipHorizontal ? "활성화" : "비활성화")}");
     }
 
-    void DiagnoseCurrentCalibrationState()
+    System.Collections.IEnumerator GazeDirectionTest()
     {
-        if (!isGazeValid)
+        Debug.Log("🧪 시선 방향 테스트 시작");
+        Debug.Log("📍 화면 왼쪽을 바라보세요...");
+
+        yield return new WaitForSeconds(3f);
+
+        Vector2 leftGaze = Vector2.zero;
+        if (isGazeValid)
         {
-            Debug.LogWarning("❌ 시선 감지 실패 - 얼굴을 웹캠 정면으로 향하세요");
-            return;
+            leftGaze = currentGazePoint;
+            Debug.Log($"👈 왼쪽 시선: {leftGaze}");
         }
 
-        // 현재 시선의 안정성 체크
-        bool stable = IsGazeStableForCalibration();
-        Vector2 currentGaze = GetStabilizedGazePosition();
+        Debug.Log("📍 화면 오른쪽을 바라보세요...");
 
-        if (isCollectingSamples && calibrationIndex < calibrationTargets.Count)
+        yield return new WaitForSeconds(3f);
+
+        if (isGazeValid)
         {
-            Vector2 target = calibrationTargets[calibrationIndex];
-            float distance = Vector2.Distance(currentGaze, target);
+            Vector2 rightGaze = currentGazePoint;
+            Debug.Log($"👉 오른쪽 시선: {rightGaze}");
 
-            Debug.Log($"📊 진단 - 점 {calibrationIndex + 1}/9:");
-            Debug.Log($"   타겟: {target}");
-            Debug.Log($"   현재 시선: {currentGaze}");
-            Debug.Log($"   거리: {distance:F1}px");
-            Debug.Log($"   안정성: {(stable ? "✅" : "❌")}");
-
-            if (distance > 200f)
+            if (rightGaze.x > leftGaze.x)
             {
-                Debug.LogWarning("⚠️ 시선이 타겟에서 너무 멀리 있습니다!");
+                Debug.Log("✅ 시선 방향이 올바릅니다!");
             }
-            else if (distance > 100f)
+            else
             {
-                Debug.LogWarning("💡 시선을 타겟에 더 가깝게 맞추세요.");
-            }
-
-            if (!stable)
-            {
-                Debug.LogWarning("💡 머리를 고정하고 눈만 움직여 타겟을 바라보세요.");
+                Debug.LogWarning("⚠️ 시선 방향이 반전되어 있습니다!");
+                Debug.Log("💡 'Toggle Horizontal Flip'을 실행해보세요.");
             }
         }
     }
+    #endregion
 
-    // 자동 환경 최적화
-    [ContextMenu("Auto Optimize Environment")]
-    public void AutoOptimizeEnvironment()
+    #region 진단 및 자동 최적화 메서드들
+    public void AutoDiagnoseEyeTracking()
     {
-        StartCoroutine(AutoOptimizeCalibrationEnvironment());
+        StartCoroutine(AutoDiagnoseEyeTrackingCoroutine());
     }
 
-    System.Collections.IEnumerator AutoOptimizeCalibrationEnvironment()
+    System.Collections.IEnumerator AutoDiagnoseEyeTrackingCoroutine()
     {
-        Debug.Log("🔧 자동 환경 최적화 시작");
+        Debug.Log("🔍 자동 눈 추적 진단 시작");
 
-        // 1. 현재 설정 백업
-        float originalSmoothing = gazeSmoothing;
-        int originalProcessingRate = processEveryNthFrame;
+        bool webcamOK = webCamTexture != null && webCamTexture.isPlaying;
+        bool faceOK = isFaceDetected;
+        bool eyesOK = areEyesDetected;
 
-        // 2. 보정용 최적 설정 적용
-        gazeSmoothing = 12f; // 더 강한 스무딩
-        processEveryNthFrame = 2; // 더 자주 처리
+        Debug.Log($"📊 현재 상태: 웹캠({(webcamOK ? "✅" : "❌")}) 얼굴({(faceOK ? "✅" : "❌")}) 눈({(eyesOK ? "✅" : "❌")})");
 
-        Debug.Log("📈 보정용 설정 적용 - 더 안정적인 시선 추적");
-
-        yield return new WaitForSeconds(2f);
-
-        // 3. 성능 테스트
+        // 5초간 안정성 테스트
+        int totalFrames = 0;
+        int faceDetectedFrames = 0;
+        int eyesDetectedFrames = 0;
         float testDuration = 5f;
         float elapsed = 0f;
-        List<float> stabilityScores = new List<float>();
-
-        Debug.Log("📊 5초간 성능 테스트 중...");
 
         while (elapsed < testDuration)
         {
-            if (isGazeValid)
-            {
-                bool stable = IsGazeStableForCalibration();
-                stabilityScores.Add(stable ? 1f : 0f);
-            }
+            if (isFaceDetected) faceDetectedFrames++;
+            if (areEyesDetected) eyesDetectedFrames++;
+            totalFrames++;
 
             elapsed += Time.deltaTime;
             yield return new WaitForSeconds(0.1f);
         }
 
-        float stabilityRate = stabilityScores.Count > 0 ? stabilityScores.Average() : 0f;
+        float faceRate = (float)faceDetectedFrames / totalFrames;
+        float eyeRate = (float)eyesDetectedFrames / totalFrames;
 
-        Debug.Log($"📊 안정성 테스트 결과: {stabilityRate * 100:F1}%");
+        Debug.Log($"📊 결과: 얼굴 감지율 {faceRate * 100:F1}%, 눈 감지율 {eyeRate * 100:F1}%");
 
-        if (stabilityRate > 0.7f)
+        if (faceRate < 0.7f)
         {
-            Debug.Log("✅ 현재 설정으로 보정 진행 권장");
+            Debug.LogWarning("❌ 얼굴 감지 불량");
+            Debug.Log("💡 해결책: 조명 개선, 카메라 정면 응시, 배경 단순화");
+        }
+        else if (eyeRate < 0.5f)
+        {
+            Debug.LogWarning("❌ 눈 감지 불량");
+            Debug.Log("💡 자동 해결 시도: 얼굴 중심 기반 추정 모드로 전환");
+
+            useEyeTracking = false;
+            useFaceCenterFallback = true;
+
+            Debug.Log("🔧 얼굴 중심 기반 시선 추정 모드 활성화");
         }
         else
         {
-            Debug.Log("⚠️ 환경 개선 필요:");
-            Debug.Log("   1. 조명을 더 밝게");
-            Debug.Log("   2. 웹캠과 30-50cm 거리");
-            Debug.Log("   3. 배경을 단순하게");
-            Debug.Log("   4. 다른 사람 얼굴이 화면에 없도록");
-
-            // 더 극단적인 설정 시도
-            gazeSmoothing = 15f;
-            processEveryNthFrame = 1;
-            Debug.Log("🔧 극한 안정화 설정 적용");
+            Debug.Log("✅ 눈 추적 상태 양호");
         }
+
+        if (faceRate > 0.7f)
+        {
+            Debug.Log("🧪 좌우 반전 테스트를 시작합니다...");
+            yield return StartCoroutine(GazeDirectionTest());
+        }
+
+        Debug.Log("🎯 진단 완료! 이제 C키로 보정을 시작하세요.");
     }
 
-    #endregion
-
-    #region 향상된 사용자 가이드 시스템
-
-    [ContextMenu("Interactive Calibration Guide")]
     public void StartInteractiveCalibrationGuide()
     {
         StartCoroutine(InteractiveCalibrationGuide());
@@ -1885,7 +2015,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
     {
         Debug.Log("🎯 대화형 보정 가이드 시작");
 
-        // 1. 준비 단계
         Debug.Log("📋 보정 준비 체크리스트:");
         Debug.Log("   □ 조명이 충분히 밝은가요?");
         Debug.Log("   □ 웹캠과 30-50cm 거리인가요?");
@@ -1894,7 +2023,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
         yield return new WaitForSeconds(5f);
 
-        // 2. 얼굴 감지 확인
         Debug.Log("🔍 얼굴 감지 상태 확인 중...");
 
         float checkTime = 3f;
@@ -1923,7 +2051,6 @@ public class RealWebcamEyeTracker : MonoBehaviour
             yield break;
         }
 
-        // 3. 보정 시작 안내
         Debug.Log("🎯 보정 시작 안내:");
         Debug.Log("   1. 각 점을 차례로 정확히 바라보세요");
         Debug.Log("   2. 머리는 움직이지 말고 눈만 움직이세요");
@@ -1934,29 +2061,34 @@ public class RealWebcamEyeTracker : MonoBehaviour
 
         Debug.Log("🚀 이제 C키를 눌러 보정을 시작하세요!");
     }
-
     #endregion
 
-    // 런타임 설정 변경
-    [ContextMenu("Quick Calibration")]
-    public void QuickCalibration()
+    #region 컨텍스트 메뉴 메서드들 (디버그용)
+    [ContextMenu("Quick Perfect Calibration")]
+    public void QuickPerfectCalibration()
     {
-        // 화면 중앙 기준으로 빠른 보정
-        Vector2 centerPoint = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
         gazeCalibrationOffset = Vector2.zero;
         gazeScale = Vector2.one;
         isCalibrated = true;
-        Debug.Log("⚡ 빠른 보정 완료 (화면 중앙 기준)");
+        UpdateCachedValues();
+        Debug.Log("⚡ 완벽한 보정 설정 (테스트용)");
     }
 
-    [ContextMenu("Reset Settings")]
-    public void ResetSettings()
+    [ContextMenu("Reset All Settings")]
+    public void ResetAllSettings()
     {
+        isCalibrated = false;
+        isCalibrating = false;
+        isCollectingSamples = false;
         gazeCalibrationOffset = Vector2.zero;
-        gazeScale = new Vector2(1.2f, 1.2f);
+        gazeScale = Vector2.one;
         gazeSmoothing = 8f;
         processEveryNthFrame = 3;
-        Debug.Log("🔄 설정 초기화 완료");
+        calibrationGazes.Clear();
+        calibrationSamplesPerTarget.Clear();
+        calibrationIndex = 0;
+        UpdateCachedValues();
+        Debug.Log("🔄 모든 설정 초기화 완료");
     }
 
     [ContextMenu("Toggle Threading")]
@@ -1973,165 +2105,56 @@ public class RealWebcamEyeTracker : MonoBehaviour
         Debug.Log($"디버그 시각화: {(enableDebugVisualization ? "ON" : "OFF")}");
     }
 
-
-
-
-    // 런타임 디버그용 메서드들
-    [ContextMenu("Force Disable Click Through")]
-    public void ForceDisableClickThrough()
+    [ContextMenu("Test All Systems")]
+    public void TestAllSystems()
     {
-        if (CompatibilityWindowManager.Instance != null)
+        Debug.Log("=== 모든 시스템 테스트 ===");
+        Debug.Log($"웹캠 상태: {(webCamTexture != null && webCamTexture.isPlaying ? "✅" : "❌")}");
+        Debug.Log($"얼굴 감지: {(faceCascade != null && !faceCascade.empty() ? "✅" : "❌")}");
+        Debug.Log($"눈 감지: {(eyeCascade != null && !eyeCascade.empty() ? "✅" : "❌")}");
+        Debug.Log($"시선 추적: {(isGazeValid ? "✅" : "❌")}");
+        Debug.Log($"보정 상태: {(isCalibrated ? "✅" : "❌")}");
+
+        if (webCamTexture != null)
         {
-            CompatibilityWindowManager.Instance.DisableClickThrough();
-            Debug.Log("🔒 Click-through 강제 비활성화");
+            Debug.Log($"웹캠 해상도: {webCamTexture.width}x{webCamTexture.height}");
+        }
+
+        if (isGazeValid)
+        {
+            Debug.Log($"현재 시선: ({smoothedGazePoint.x:F0}, {smoothedGazePoint.y:F0})");
         }
     }
 
-    [ContextMenu("Force Enable Click Through")]
-    public void ForceEnableClickThrough()
+    [ContextMenu("Debug Haar Cascade Files")]
+    public void DebugHaarCascadeFiles()
     {
-        if (CompatibilityWindowManager.Instance != null)
-        {
-            CompatibilityWindowManager.Instance.EnableClickThrough();
-            Debug.Log("🔓 Click-through 강제 활성화");
-        }
-    }
+        Debug.Log("=== Haar Cascade 파일 디버깅 ===");
 
-    [ContextMenu("Debug Click Through State")]
-    public void DebugClickThroughState()
-    {
-        if (CompatibilityWindowManager.Instance != null)
-        {
-            bool isClickThrough = CompatibilityWindowManager.Instance.IsClickThrough;
-            Debug.Log($"현재 Click-through 상태: {(isClickThrough ? "활성화" : "비활성화")}");
-        }
-        else
-        {
-            Debug.Log("CompatibilityWindowManager가 없습니다.");
-        }
-    }
-    // 런타임 설정 변경
-    [ContextMenu("Quick Perfect Calibration")]
-    public void QuickPerfectCalibration()
-    {
-        // 화면 중앙 기준으로 완벽한 보정 (테스트용)
-        gazeCalibrationOffset = Vector2.zero;
-        gazeScale = Vector2.one;
-        isCalibrated = true;
-        UpdateCachedValues();
-        Debug.Log("⚡ 완벽한 보정 설정 (테스트용)");
-    }
+        string[] fileNames = {
+            "haarcascade_frontalface_alt.xml",
+            "haarcascade_frontalface_default.xml",
+            "haarcascade_eye.xml"
+        };
 
-    [ContextMenu("Reset All Calibration")]
-    public void ResetAllCalibration()
-    {
-        isCalibrated = false;
-        isCalibrating = false;
-        isCollectingSamples = false;
-        gazeCalibrationOffset = Vector2.zero;
-        gazeScale = Vector2.one;
-        calibrationGazes.Clear();
-        calibrationSamplesPerTarget.Clear();
-        calibrationIndex = 0;
-        UpdateCachedValues();
-        Debug.Log("🔄 모든 보정 데이터 초기화 완료");
-    }
-    void OnGUI()
-    {
-        if (!showCalibrationUI) return;
-
-        // 보정 모드 UI
-        if (isCalibrating && calibrationIndex < calibrationTargets.Count)
+        foreach (string fileName in fileNames)
         {
-            Vector2 target = calibrationTargets[calibrationIndex];
-
-            // 보정 점 표시
-            if (calibrationPointTexture != null)
+            Debug.Log($"\n--- {fileName} ---");
+            string path = GetHaarCascadePath(fileName);
+            if (!string.IsNullOrEmpty(path))
             {
-                float imageSize = 64f;
-                UnityEngine.Rect imageRect = new UnityEngine.Rect(target.x - imageSize * 0.5f, target.y - imageSize * 0.5f, imageSize, imageSize);
-                GUI.DrawTexture(imageRect, calibrationPointTexture);
+                Debug.Log($"✅ 파일 발견: {path}");
+                Debug.Log($"파일 크기: {new System.IO.FileInfo(path).Length} bytes");
             }
             else
             {
-                // 기본 점 표시
-                GUI.color = Color.red;
-                GUI.Box(new UnityEngine.Rect(target.x - 25, target.y - 25, 50, 50), "");
-                GUI.color = Color.white;
+                Debug.LogError($"❌ 파일 없음: {fileName}");
             }
-
-            // 숫자 표시
-            GUIStyle numberStyle = new GUIStyle(GUI.skin.label);
-            numberStyle.normal.textColor = Color.white;
-            numberStyle.fontSize = 20;
-            numberStyle.fontStyle = FontStyle.Bold;
-            numberStyle.alignment = TextAnchor.MiddleCenter;
-
-            GUI.Label(new UnityEngine.Rect(target.x - 15, target.y - 10, 30, 20), $"{calibrationIndex + 1}", numberStyle);
-
-            // 안내 메시지
-            GUI.Box(new UnityEngine.Rect(Screen.width * 0.5f - 200, Screen.height - 80, 400, 50), "");
-
-            GUIStyle messageStyle = new GUIStyle(GUI.skin.label);
-            messageStyle.normal.textColor = Color.yellow;
-            messageStyle.fontSize = 18;
-            messageStyle.fontStyle = FontStyle.Bold;
-            messageStyle.alignment = TextAnchor.MiddleCenter;
-
-            GUI.Label(new UnityEngine.Rect(Screen.width * 0.5f - 200, Screen.height - 75, 400, 40),
-                $"보정 점 {calibrationIndex + 1}/9를 바라보고 스페이스 키를 누르세요", messageStyle);
-        }
-
-        // 시선 커서 표시
-        if (isGazeValid)
-        {
-            Vector2 gazePos = enableGazeSmoothing ? smoothedGazePoint : currentGazePoint;
-
-            GUI.color = Color.cyan;
-            GUI.Box(new UnityEngine.Rect(gazePos.x - 10, gazePos.y - 1, 20, 2), "");
-            GUI.Box(new UnityEngine.Rect(gazePos.x - 1, gazePos.y - 10, 2, 20), "");
-            GUI.color = Color.white;
         }
     }
+    #endregion
 
-    void OnDestroy()
-    {
-        // 스레드 정리
-        if (processingThread != null && processingThread.IsAlive)
-        {
-            try
-            {
-                processingThread.Join(1000); // 1초 대기
-                if (processingThread.IsAlive)
-                {
-                    processingThread.Abort();
-                }
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogWarning($"스레드 종료 중 오류: {e.Message}");
-            }
-        }
-
-        // Unity 리소스 정리
-        if (webCamTexture != null)
-        {
-            webCamTexture.Stop();
-            Destroy(webCamTexture);
-        }
-
-        // OpenCV Mat 정리
-        if (rgbaMat != null) rgbaMat.Dispose();
-        if (grayMat != null) grayMat.Dispose();
-        if (threadRgbaMat != null) threadRgbaMat.Dispose();
-        if (threadGrayMat != null) threadGrayMat.Dispose();
-        if (faceMat != null) faceMat.Dispose();
-        if (outputTexture != null) Destroy(outputTexture);
-        if (faceCascade != null) faceCascade.Dispose();
-        if (eyeCascade != null) eyeCascade.Dispose();
-    }
-
-    // EyesTrackingManager 호환 메서드들
+    #region EyesTrackingManager 호환 메서드들 (외부 접근용)
     public Vector3 GetGazeWorldPosition(Camera camera)
     {
         if (!isGazeValid) return Vector3.zero;
@@ -2156,16 +2179,401 @@ public class RealWebcamEyeTracker : MonoBehaviour
     {
         return GetGazeScreenPosition();
     }
+    #endregion
 
-    // 프로퍼티들
+    #region 프로퍼티들 (외부 접근용)
     public bool IsGazeValid => isGazeValid;
     public Vector2 GazePosition => GetGazeScreenPosition();
     public bool IsFaceDetected => isFaceDetected;
     public bool AreEyesDetected => areEyesDetected;
     public bool IsCalibrated => isCalibrated;
+    public bool IsCalibrating => isCalibrating;
+    public float CalibrationProgress => isCalibrating ? (float)calibrationIndex / calibrationTargets.Count : 0f;
+    public string CurrentTrackingMode => useEyeTracking ? "실제 눈 추적" : "얼굴 중심 추정";
+    public string SystemStatus
+    {
+        get
+        {
+            if (!isGazeValid) return "시선 감지 실패";
+            if (!isCalibrated) return "보정 필요";
+            return "정상 작동";
+        }
+    }
+    #endregion
+    // RealWebcamEyeTracker.cs에 추가할 진단 및 해결 메서드
+
+    #region 웹캠 눈 추적 문제 진단
+
+    [ContextMenu("Diagnose Eye Tracking Issues")]
+    public void DiagnoseEyeTrackingIssues()
+    {
+        Debug.Log("=== 🔍 웹캠 눈 추적 문제 진단 ===");
+
+        // 1. 기본 하드웨어 체크
+        CheckWebcamHardware();
+
+        // 2. OpenCV 모델 상태 체크
+        CheckOpenCVModels();
+
+        // 3. 실제 얼굴/눈 감지 상태 체크
+        CheckDetectionQuality();
+
+        // 4. 좌표 변환 문제 체크
+        CheckCoordinateMapping();
+
+        // 5. 해결책 제시
+        SuggestSolutions();
+    }
+
+    void CheckWebcamHardware()
+    {
+        Debug.Log("📹 웹캠 하드웨어 상태:");
+
+        if (webCamTexture == null)
+        {
+            Debug.LogError("❌ WebCamTexture가 null입니다!");
+            return;
+        }
+
+        Debug.Log($"  웹캠 상태: {(webCamTexture.isPlaying ? "✅ 작동중" : "❌ 정지")}");
+        Debug.Log($"  해상도: {webCamTexture.width}x{webCamTexture.height}");
+        Debug.Log($"  설정 FPS: {webcamFPS}");
+        Debug.Log($"  실제 FPS: {webCamTexture.requestedFPS}");
+
+        // 웹캠 품질 체크
+        if (webCamTexture.width < 640 || webCamTexture.height < 480)
+        {
+            Debug.LogWarning("⚠️ 웹캠 해상도가 너무 낮습니다! (최소 640x480 권장)");
+        }
+    }
+
+    void CheckOpenCVModels()
+    {
+        Debug.Log("🤖 OpenCV 모델 상태:");
+
+        if (faceCascade == null || faceCascade.empty())
+        {
+            Debug.LogError("❌ 얼굴 감지 모델이 로드되지 않았습니다!");
+            Debug.LogError("💡 해결책: OpenCV for Unity > Tools > Move StreamingAssets Files 실행");
+            return;
+        }
+
+        Debug.Log("✅ 얼굴 감지 모델 정상");
+
+        if (eyeCascade == null || eyeCascade.empty())
+        {
+            Debug.LogWarning("⚠️ 눈 감지 모델이 로드되지 않았습니다!");
+            Debug.LogWarning("💡 얼굴 중심 기반 추정으로 전환 권장");
+
+            // 자동으로 얼굴 중심 모드로 전환
+            useEyeTracking = false;
+            useFaceCenterFallback = true;
+            Debug.Log("🔧 자동으로 얼굴 중심 모드로 전환했습니다.");
+        }
+        else
+        {
+            Debug.Log("✅ 눈 감지 모델 정상");
+        }
+    }
+
+    void CheckDetectionQuality()
+    {
+        Debug.Log("👁️ 실시간 감지 품질:");
+
+        Debug.Log($"  얼굴 감지: {(isFaceDetected ? "✅" : "❌")}");
+        Debug.Log($"  눈 감지: {(areEyesDetected ? "✅" : "❌")}");
+        Debug.Log($"  시선 유효성: {(isGazeValid ? "✅" : "❌")}");
+
+        if (isFaceDetected && faces.Length > 0)
+        {
+            var face = faces[0];
+            Debug.Log($"  얼굴 크기: {face.width}x{face.height}px");
+            Debug.Log($"  얼굴 위치: ({face.x}, {face.y})");
+
+            // 얼굴 크기가 너무 작은지 체크
+            if (face.width < 80 || face.height < 80)
+            {
+                Debug.LogWarning("⚠️ 얼굴이 너무 작게 감지됩니다!");
+                Debug.LogWarning("💡 웹캠에 더 가까이 앉으세요.");
+            }
+
+            // 얼굴이 화면 중앙에 있는지 체크
+            float centerX = webCamTexture.width * 0.5f;
+            float centerY = webCamTexture.height * 0.5f;
+            float faceX = face.x + face.width * 0.5f;
+            float faceY = face.y + face.height * 0.5f;
+
+            float distanceFromCenter = Vector2.Distance(new Vector2(faceX, faceY), new Vector2(centerX, centerY));
+
+            if (distanceFromCenter > Mathf.Min(webCamTexture.width, webCamTexture.height) * 0.3f)
+            {
+                Debug.LogWarning("⚠️ 얼굴이 화면 중앙에서 벗어나 있습니다!");
+                Debug.LogWarning("💡 웹캠 정면으로 앉으세요.");
+            }
+        }
+
+        if (areEyesDetected)
+        {
+            Debug.Log($"  왼쪽 눈: ({leftEyeCenter.x:F0}, {leftEyeCenter.y:F0})");
+            Debug.Log($"  오른쪽 눈: ({rightEyeCenter.x:F0}, {rightEyeCenter.y:F0})");
+
+            float eyeDistance = Vector2.Distance(leftEyeCenter, rightEyeCenter);
+            Debug.Log($"  눈 간격: {eyeDistance:F1}px");
+
+            if (eyeDistance < 20)
+            {
+                Debug.LogWarning("⚠️ 감지된 눈 간격이 너무 좁습니다!");
+                Debug.LogWarning("💡 눈 감지 품질이 낮을 수 있습니다.");
+            }
+        }
+    }
+
+    void CheckCoordinateMapping()
+    {
+        Debug.Log("🗺️ 좌표 변환 체크:");
+
+        if (!isGazeValid)
+        {
+            Debug.LogError("❌ 시선이 감지되지 않아 좌표 변환을 체크할 수 없습니다!");
+            return;
+        }
+
+        Vector2 currentGaze = smoothedGazePoint;
+        Debug.Log($"  현재 시선 (화면좌표): ({currentGaze.x:F0}, {currentGaze.y:F0})");
+        Debug.Log($"  화면 크기: {Screen.width}x{Screen.height}");
+
+        // 시선이 화면 범위를 벗어나는지 체크
+        bool outOfBounds = currentGaze.x < 0 || currentGaze.x > Screen.width ||
+                          currentGaze.y < 0 || currentGaze.y > Screen.height;
+
+        if (outOfBounds)
+        {
+            Debug.LogWarning("⚠️ 시선이 화면 범위를 벗어납니다!");
+            Debug.LogWarning("💡 좌표 변환에 문제가 있을 수 있습니다.");
+        }
+
+        // 시선이 특정 영역에만 몰리는지 체크
+        float normalizedX = currentGaze.x / Screen.width;
+        float normalizedY = currentGaze.y / Screen.height;
+
+        Debug.Log($"  정규화된 시선: ({normalizedX:F2}, {normalizedY:F2})");
+
+        if (normalizedX > 0.7f || normalizedX < 0.3f)
+        {
+            Debug.LogWarning("⚠️ 시선이 화면 한쪽으로 치우쳐 있습니다!");
+            Debug.LogWarning("💡 좌우 반전 설정을 확인하세요.");
+        }
+
+        // 보정값 체크
+        Debug.Log($"  보정 오프셋: ({gazeCalibrationOffset.x:F3}, {gazeCalibrationOffset.y:F3})");
+        Debug.Log($"  보정 스케일: ({gazeScale.x:F2}, {gazeScale.y:F2})");
+
+        if (Mathf.Abs(gazeCalibrationOffset.x) > 0.5f || Mathf.Abs(gazeCalibrationOffset.y) > 0.5f)
+        {
+            Debug.LogWarning("⚠️ 보정 오프셋이 비정상적으로 큽니다!");
+        }
+
+        if (gazeScale.x < 0.5f || gazeScale.x > 2.0f || gazeScale.y < 0.5f || gazeScale.y > 2.0f)
+        {
+            Debug.LogWarning("⚠️ 보정 스케일이 비정상적입니다!");
+        }
+    }
+
+    void SuggestSolutions()
+    {
+        Debug.Log("💡 해결책 제안:");
+
+        if (!isFaceDetected)
+        {
+            Debug.Log("🔧 얼굴 감지 개선:");
+            Debug.Log("  1. 조명을 더 밝게 하세요");
+            Debug.Log("  2. 배경을 단순하게 하세요");
+            Debug.Log("  3. 웹캠을 정면으로 향하게 하세요");
+            Debug.Log("  4. 웹캠과 30-50cm 거리를 유지하세요");
+        }
+        else if (!areEyesDetected)
+        {
+            Debug.Log("🔧 눈 감지 개선:");
+            Debug.Log("  1. 안경 반사광을 제거하세요");
+            Debug.Log("  2. 눈을 크게 뜨세요");
+            Debug.Log("  3. 얼굴 중심 모드로 전환하세요 (T키)");
+            Debug.Log("  4. 웹캠 해상도를 높이세요");
+        }
+        else if (isGazeValid)
+        {
+            Debug.Log("🔧 시선 추적 정확도 개선:");
+            Debug.Log("  1. 좌우 반전을 토글해보세요 (F키)");
+            Debug.Log("  2. 보정을 다시 시도하세요 (R키 후 C키)");
+            Debug.Log("  3. 더 정확히 보정점을 바라보세요");
+            Debug.Log("  4. 머리를 최대한 고정하세요");
+        }
+
+        // 자동 해결 시도
+        Debug.Log("🤖 자동 해결 시도:");
+
+        if (!areEyesDetected && isFaceDetected)
+        {
+            useEyeTracking = false;
+            useFaceCenterFallback = true;
+            Debug.Log("✅ 얼굴 중심 모드로 자동 전환");
+        }
+
+        if (isGazeValid && !isCalibrated)
+        {
+            Debug.Log("💡 보정을 시작하려면 C키를 누르세요");
+        }
+    }
+
+    // 실시간 감지 품질 모니터링
+    [ContextMenu("Start Detection Quality Monitor")]
+    public void StartDetectionQualityMonitor()
+    {
+        StartCoroutine(DetectionQualityMonitor());
+    }
+
+    System.Collections.IEnumerator DetectionQualityMonitor()
+    {
+        Debug.Log("🔍 실시간 감지 품질 모니터링 시작 (10초)");
+
+        int totalFrames = 0;
+        int faceDetectedFrames = 0;
+        int eyesDetectedFrames = 0;
+        int gazeValidFrames = 0;
+
+        float monitorDuration = 10f;
+        float elapsed = 0f;
+
+        while (elapsed < monitorDuration)
+        {
+            if (isFaceDetected) faceDetectedFrames++;
+            if (areEyesDetected) eyesDetectedFrames++;
+            if (isGazeValid) gazeValidFrames++;
+            totalFrames++;
+
+            elapsed += Time.deltaTime;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        float faceRate = (float)faceDetectedFrames / totalFrames * 100f;
+        float eyeRate = (float)eyesDetectedFrames / totalFrames * 100f;
+        float gazeRate = (float)gazeValidFrames / totalFrames * 100f;
+
+        Debug.Log("📊 10초간 감지 품질 결과:");
+        Debug.Log($"  얼굴 감지율: {faceRate:F1}%");
+        Debug.Log($"  눈 감지율: {eyeRate:F1}%");
+        Debug.Log($"  시선 유효율: {gazeRate:F1}%");
+
+        // 품질 평가
+        if (faceRate < 70f)
+        {
+            Debug.LogError("❌ 얼굴 감지 품질 불량!");
+            Debug.LogError("💡 조명, 각도, 거리를 조정하세요.");
+        }
+        else if (eyeRate < 50f)
+        {
+            Debug.LogWarning("⚠️ 눈 감지 품질 불량!");
+            Debug.LogWarning("💡 얼굴 중심 모드 사용을 권장합니다.");
+
+            useEyeTracking = false;
+            useFaceCenterFallback = true;
+            Debug.Log("🔧 자동으로 얼굴 중심 모드로 전환했습니다.");
+        }
+        else if (gazeRate < 80f)
+        {
+            Debug.LogWarning("⚠️ 시선 추적 안정성 부족!");
+            Debug.LogWarning("💡 환경을 개선하고 재보정하세요.");
+        }
+        else
+        {
+            Debug.Log("✅ 감지 품질 양호!");
+        }
+    }
+
+    // 간단한 보정 테스트
+    [ContextMenu("Quick Calibration Test")]
+    public void QuickCalibrationTest()
+    {
+        if (!isGazeValid)
+        {
+            Debug.LogError("❌ 시선이 감지되지 않습니다. 먼저 감지 품질을 확인하세요.");
+            return;
+        }
+
+        Debug.Log("🎯 화면 중앙을 5초간 바라보세요...");
+        StartCoroutine(QuickCalibrationTestCoroutine());
+    }
+
+    System.Collections.IEnumerator QuickCalibrationTestCoroutine()
+    {
+        Vector2 screenCenter = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+        List<Vector2> gazeSamples = new List<Vector2>();
+
+        float testDuration = 5f;
+        float elapsed = 0f;
+
+        while (elapsed < testDuration)
+        {
+            if (isGazeValid)
+            {
+                gazeSamples.Add(smoothedGazePoint);
+            }
+
+            elapsed += Time.deltaTime;
+            yield return new WaitForSeconds(0.1f);
+        }
 
 
+
+        // 평균 시선 위치 계산
+        Vector2 averageGaze = Vector2.zero;
+        foreach (Vector2 sample in gazeSamples)
+        {
+            averageGaze += sample;
+        }
+        averageGaze /= gazeSamples.Count;
+
+        float errorDistance = Vector2.Distance(averageGaze, screenCenter);
+
+        Debug.Log($"📊 빠른 보정 테스트 결과:");
+        Debug.Log($"  화면 중앙: ({screenCenter.x:F0}, {screenCenter.y:F0})");
+        Debug.Log($"  평균 시선: ({averageGaze.x:F0}, {averageGaze.y:F0})");
+        Debug.Log($"  오차 거리: {errorDistance:F1}px");
+
+        if (errorDistance < 100f)
+        {
+            Debug.Log("✅ 시선 추적 정확도 양호!");
+        }
+        else if (errorDistance < 300f)
+        {
+            Debug.LogWarning("⚠️ 시선 추적 정확도 보통 - 보정 권장");
+        }
+        else
+        {
+            Debug.LogError("❌ 시선 추적 정확도 불량 - 환경 개선 및 재보정 필요");
+
+            // 자동 해결책 제시
+            Vector2 offset = screenCenter - averageGaze;
+            Debug.Log($"💡 권장 보정 오프셋: ({offset.x / Screen.width:F3}, {offset.y / Screen.height:F3})");
+        }
+    }
+
+    #endregion
+#else
+    // OpenCV가 없는 경우 더미 구현
+    void Start()
+    {
+        Debug.LogError("❌ OpenCV for Unity가 필요합니다!");
+        enabled = false;
+    }
+
+    public bool IsGazeValid => false;
+    public Vector2 GazePosition => Vector2.zero;
+    public bool IsFaceDetected => false;
+    public bool AreEyesDetected => false;
+    public bool IsCalibrated => false;
+    public Vector3 GetGazeWorldPosition(Camera camera) => Vector3.zero;
+    public Vector2 GetGazeScreenPosition() => Vector2.zero;
+    public bool IsEyeDetected() => false;
+    public Vector2 GetCurrentGazePoint() => Vector2.zero;
 #endif
-
-
 }
