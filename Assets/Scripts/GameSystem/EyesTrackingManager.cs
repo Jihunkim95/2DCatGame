@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 /// <summary>
-/// 시선 추적 미니게임 관리자
+/// 시선 추적 미니게임 관리자 - 실제 웹캠 눈 추적 호환 버전
 /// </summary>
 public class EyesTrackingManager : MonoBehaviour
 {
@@ -34,14 +34,20 @@ public class EyesTrackingManager : MonoBehaviour
     public TestCat targetCat;                   // 조작할 고양이
     public Camera mainCamera;                   // 메인 카메라
 
-    [Header("웹캠 설정")]
-    public bool useWebcam = true;               // 웹캠 사용 여부
-    public int webcamIndex = 0;                 // 웹캠 인덱스
-    public RawImage webcamDisplay;              // 웹캠 화면 표시용 (선택사항)
+    [Header("시선 추적 모드 선택")]
+    public EyeTrackingMode trackingMode = EyeTrackingMode.RealWebcam;
+    public float gazeFixationTime = 1.5f;       // 시선 고정 시간 (초)
+    public float gazeFixationRadius = 50f;      // 시선 고정 반경 (픽셀)
 
-    // 웹캠 관련
-    private WebCamTexture webCamTexture;
-    private bool isWebcamInitialized = false;
+    [Header("호환성 설정")]
+    public bool fallbackToMouse = true;         // 실패 시 마우스로 폴백
+
+    public enum EyeTrackingMode
+    {
+        RealWebcam,         // 실제 웹캠 눈 추적
+        SimplifiedMouse,    // 마우스 시뮬레이션
+        Mouse               // 순수 마우스 모드
+    }
 
     // 게임 상태
     private bool isGameActive = false;
@@ -54,6 +60,14 @@ public class EyesTrackingManager : MonoBehaviour
     private bool catIsMovingToTarget = false;
     private List<GameObject> churuObjects = new List<GameObject>(); // 생성된 츄르들
     private float churuSpawnTimer = 0f;         // 츄르 생성 타이머
+
+    // 시선 고정 감지용 변수들
+    private Vector2 lastGazePos = Vector2.zero;
+    private float fixationTimer = 0f;
+    private bool fixationInitialized = false;
+
+    // 현재 사용 중인 추적 모드
+    private EyeTrackingMode activeTrackingMode;
 
     // 싱글톤
     public static EyesTrackingManager Instance { get; private set; }
@@ -75,14 +89,75 @@ public class EyesTrackingManager : MonoBehaviour
         InitializeComponents();
         LoadDungGeunMoFont();
         SetupUI();
-
-        if (useWebcam)
-        {
-            InitializeWebcam();
-        }
+        DetermineTrackingMode();
 
         Debug.Log("EyesTracking 미니게임 시스템 초기화 완료");
-        DebugLogger.LogToFile("EyesTracking 미니게임 시스템 초기화 완료");
+        Debug.Log($"👁️ 시선 추적 모드: {activeTrackingMode}");
+        DebugLogger.LogToFile($"EyesTracking 미니게임 시스템 초기화 완료 - 모드: {activeTrackingMode}");
+    }
+
+    void DetermineTrackingMode()
+    {
+        activeTrackingMode = trackingMode;
+
+        // 실제 웹캠 모드 확인
+        if (trackingMode == EyeTrackingMode.RealWebcam)
+        {
+#if OPENCV_FOR_UNITY
+            if (RealWebcamEyeTracker.Instance != null)
+            {
+                Debug.Log("✅ 실제 웹캠 눈 추적 시스템 감지");
+                activeTrackingMode = EyeTrackingMode.RealWebcam;
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ RealWebcamEyeTracker를 찾을 수 없습니다.");
+                HandleTrackingModeFallback();
+            }
+#else
+            Debug.LogWarning("⚠️ OpenCV for Unity가 설치되지 않았습니다.");
+            HandleTrackingModeFallback();
+#endif
+        }
+        // SimplifiedMouse 모드 확인
+        else if (trackingMode == EyeTrackingMode.SimplifiedMouse)
+        {
+            if (SimplifiedEyeTracker.Instance != null)
+            {
+                Debug.Log("✅ SimplifiedEyeTracker 시스템 감지");
+                activeTrackingMode = EyeTrackingMode.SimplifiedMouse;
+            }
+            else
+            {
+                Debug.LogWarning("⚠️ SimplifiedEyeTracker를 찾을 수 없습니다.");
+                HandleTrackingModeFallback();
+            }
+        }
+        // 순수 마우스 모드
+        else
+        {
+            Debug.Log("🖱️ 순수 마우스 모드 사용");
+            activeTrackingMode = EyeTrackingMode.Mouse;
+        }
+    }
+
+    void HandleTrackingModeFallback()
+    {
+        if (fallbackToMouse)
+        {
+            Debug.Log("🔄 마우스 모드로 폴백");
+            activeTrackingMode = EyeTrackingMode.Mouse;
+        }
+        else if (SimplifiedEyeTracker.Instance != null)
+        {
+            Debug.Log("🔄 SimplifiedEyeTracker로 폴백");
+            activeTrackingMode = EyeTrackingMode.SimplifiedMouse;
+        }
+        else
+        {
+            Debug.Log("🔄 순수 마우스 모드로 폴백");
+            activeTrackingMode = EyeTrackingMode.Mouse;
+        }
     }
 
     void InitializeComponents()
@@ -95,6 +170,21 @@ public class EyesTrackingManager : MonoBehaviour
             targetCat = FindObjectOfType<TestCat>();
 
         // 스프라이트 로드 (Resources에서)
+        LoadSprites();
+
+        // MinigameBtn 자동 찾기
+        if (minigameBtn == null)
+        {
+            GameObject minigameBtnObj = GameObject.Find("Minigamebtn");
+            if (minigameBtnObj != null)
+            {
+                minigameBtn = minigameBtnObj.GetComponent<Button>();
+            }
+        }
+    }
+
+    void LoadSprites()
+    {
         if (catFootSprite == null)
         {
             catFootSprite = Resources.Load<Sprite>("Image/Minigame/cat_foot");
@@ -115,30 +205,17 @@ public class EyesTrackingManager : MonoBehaviour
             if (churuSprite == null)
                 Debug.LogWarning("churu 스프라이트를 찾을 수 없습니다!");
         }
-
-        // MinigameBtn 자동 찾기
-        if (minigameBtn == null)
-        {
-            GameObject minigameBtnObj = GameObject.Find("Minigamebtn");
-            if (minigameBtnObj != null)
-            {
-                minigameBtn = minigameBtnObj.GetComponent<Button>();
-            }
-        }
     }
 
     void LoadDungGeunMoFont()
     {
         if (dungGeunMoFont != null) return;
 
-        // UIPrefabFactory와 같은 방식으로 폰트 로드
         string[] resourcePaths = {
             "Font/DungGeunMo SDF",
             "Font/DungGeunMo",
             "DungGeunMo SDF",
-            "DungGeunMo",
-            "Fonts/DungGeunMo",
-            "UI/DungGeunMo"
+            "DungGeunMo"
         };
 
         foreach (string path in resourcePaths)
@@ -152,18 +229,13 @@ public class EyesTrackingManager : MonoBehaviour
             }
         }
 
-        // 폰트를 찾지 못한 경우 기본 폰트 사용
         dungGeunMoFont = Resources.GetBuiltinResource<Font>("Arial.ttf");
         Debug.LogWarning("DungGeunMo 폰트를 찾을 수 없어 Arial 폰트 사용");
     }
 
     Font GetSafeFont()
     {
-        if (dungGeunMoFont != null)
-        {
-            return dungGeunMoFont;
-        }
-        return Resources.GetBuiltinResource<Font>("Arial.ttf");
+        return dungGeunMoFont != null ? dungGeunMoFont : Resources.GetBuiltinResource<Font>("Arial.ttf");
     }
 
     void SetupUI()
@@ -174,30 +246,17 @@ public class EyesTrackingManager : MonoBehaviour
             minigameBtn.onClick.AddListener(StartEyesTrackingGame);
             Debug.Log("Minigamebtn 이벤트 연결 완료");
         }
-        else
-        {
-            Debug.LogError("Minigamebtn을 찾을 수 없습니다!");
-        }
 
         // UI 텍스트 자동 생성 (없는 경우)
-        if (timerText == null)
-        {
-            CreateTimerText();
-        }
-
-        if (scoreText == null)
-        {
-            CreateScoreText();
-        }
+        if (timerText == null) CreateTimerText();
+        if (scoreText == null) CreateScoreText();
     }
 
     void CreateTimerText()
     {
-        // Canvas 찾기
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null) return;
 
-        // 타이머 텍스트 생성
         GameObject timerObj = new GameObject("TimerText");
         timerObj.transform.SetParent(canvas.transform, false);
 
@@ -206,7 +265,7 @@ public class EyesTrackingManager : MonoBehaviour
         text.fontSize = 24;
         text.color = Color.yellow;
         text.alignment = TextAnchor.MiddleCenter;
-        text.font = GetSafeFont(); // 안전한 폰트 사용
+        text.font = GetSafeFont();
 
         RectTransform rect = timerObj.GetComponent<RectTransform>();
         rect.anchorMin = new Vector2(0.5f, 1f);
@@ -215,16 +274,14 @@ public class EyesTrackingManager : MonoBehaviour
         rect.sizeDelta = new Vector2(100, 40);
 
         timerText = text;
-        timerObj.SetActive(false); // 초기에는 숨김
+        timerObj.SetActive(false);
     }
 
     void CreateScoreText()
     {
-        // Canvas 찾기
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas == null) return;
 
-        // 점수 텍스트 생성
         GameObject scoreObj = new GameObject("ScoreText");
         scoreObj.transform.SetParent(canvas.transform, false);
 
@@ -233,87 +290,16 @@ public class EyesTrackingManager : MonoBehaviour
         text.fontSize = 20;
         text.color = Color.cyan;
         text.alignment = TextAnchor.MiddleLeft;
-        text.font = GetSafeFont(); // 안전한 폰트 사용
+        text.font = GetSafeFont();
 
         RectTransform rect = scoreObj.GetComponent<RectTransform>();
         rect.anchorMin = new Vector2(0f, 1f);
         rect.anchorMax = new Vector2(0f, 1f);
         rect.anchoredPosition = new Vector2(20, -20);
-        rect.sizeDelta = new Vector2(150, 30);
+        rect.sizeDelta = new Vector2(200, 30);
 
         scoreText = text;
-        scoreObj.SetActive(false); // 초기에는 숨김
-    }
-
-    void InitializeWebcam()
-    {
-        // 사용 가능한 웹캠 확인
-        WebCamDevice[] devices = WebCamTexture.devices;
-
-        if (devices.Length == 0)
-        {
-            Debug.LogWarning("웹캠을 찾을 수 없습니다! 마우스 모드로 전환합니다.");
-            useWebcam = false;
-            return;
-        }
-
-        // 웹캠 목록 출력
-        Debug.Log($"발견된 웹캠 수: {devices.Length}");
-        for (int i = 0; i < devices.Length; i++)
-        {
-            Debug.Log($"웹캠 {i}: {devices[i].name}");
-        }
-
-        // 웹캠 초기화
-        if (webcamIndex < devices.Length)
-        {
-            webCamTexture = new WebCamTexture(devices[webcamIndex].name, 640, 480, 30);
-
-            // 웹캠 디스플레이 설정 (선택사항)
-            if (webcamDisplay != null)
-            {
-                webcamDisplay.texture = webCamTexture;
-                webcamDisplay.gameObject.SetActive(false); // 초기에는 숨김
-            }
-
-            isWebcamInitialized = true;
-            Debug.Log($"웹캠 초기화 완료: {devices[webcamIndex].name}");
-        }
-        else
-        {
-            Debug.LogError($"잘못된 웹캠 인덱스: {webcamIndex}");
-            useWebcam = false;
-        }
-    }
-
-    void StartWebcam()
-    {
-        if (isWebcamInitialized && webCamTexture != null)
-        {
-            webCamTexture.Play();
-
-            if (webcamDisplay != null)
-            {
-                webcamDisplay.gameObject.SetActive(true);
-            }
-
-            Debug.Log("웹캠 시작됨");
-        }
-    }
-
-    void StopWebcam()
-    {
-        if (webCamTexture != null && webCamTexture.isPlaying)
-        {
-            webCamTexture.Stop();
-
-            if (webcamDisplay != null)
-            {
-                webcamDisplay.gameObject.SetActive(false);
-            }
-
-            Debug.Log("웹캠 중지됨");
-        }
+        scoreObj.SetActive(false);
     }
 
     void Update()
@@ -323,21 +309,19 @@ public class EyesTrackingManager : MonoBehaviour
         UpdateGameTimer();
         UpdateEyeTracking();
         UpdateCatMovement();
-        UpdateChuruSpawning();      // 츄르 생성 업데이트
-        CheckCatChuruCollision();   // 고양이와 츄르 충돌 체크
+        UpdateChuruSpawning();
+        CheckCatChuruCollision();
     }
 
     void UpdateGameTimer()
     {
         gameTimer -= Time.deltaTime;
 
-        // 타이머 UI 업데이트
         if (timerText != null)
         {
             timerText.text = Mathf.Ceil(gameTimer).ToString();
         }
 
-        // 게임 종료 체크
         if (gameTimer <= 0f)
         {
             EndEyesTrackingGame();
@@ -348,124 +332,139 @@ public class EyesTrackingManager : MonoBehaviour
     {
         if (pointObject == null) return;
 
-        Vector3 eyePosition;
+        Vector3 eyePosition = GetCurrentEyePosition();
 
-        if (useWebcam && isWebcamInitialized)
-        {
-            // 실제 Eye Tracking (웹캠 사용)
-            eyePosition = GetEyeTrackingPosition();
-        }
-        else
-        {
-            // 마우스로 시뮬레이션
-            eyePosition = GetMouseWorldPosition();
-        }
-
-        // point 스프라이트를 시선 위치로 이동
+        // point 스프라이트를 시선/마우스 위치로 이동
         pointObject.transform.position = Vector3.Lerp(
             pointObject.transform.position,
             eyePosition,
             pointFollowSpeed * Time.deltaTime
         );
 
-        // 클릭 시 고양이 목표 설정 (츄르와 상관없이 point 위치로)
-        if (Input.GetMouseButtonDown(0))
+        // 클릭 처리
+        bool shouldClick = GetClickInput();
+
+        if (shouldClick)
         {
             SetCatTarget(eyePosition);
         }
     }
 
-    Vector3 GetEyeTrackingPosition()
+    Vector3 GetCurrentEyePosition()
     {
-        // 간단한 Eye Tracking 구현
-        // 실제로는 OpenCV나 전용 라이브러리가 필요합니다
-
-        if (webCamTexture == null || !webCamTexture.isPlaying)
+        switch (activeTrackingMode)
         {
-            return GetMouseWorldPosition(); // 폴백
+            case EyeTrackingMode.RealWebcam:
+                return GetRealWebcamPosition();
+
+            case EyeTrackingMode.SimplifiedMouse:
+                return GetSimplifiedEyePosition();
+
+            case EyeTrackingMode.Mouse:
+            default:
+                return GetMouseWorldPosition();
+        }
+    }
+
+    Vector3 GetRealWebcamPosition()
+    {
+#if OPENCV_FOR_UNITY
+        if (RealWebcamEyeTracker.Instance != null && RealWebcamEyeTracker.Instance.IsGazeValid)
+        {
+            return RealWebcamEyeTracker.Instance.GetGazeWorldPosition(mainCamera);
+        }
+#endif
+        // 폴백
+        return GetMouseWorldPosition();
+    }
+
+    Vector3 GetSimplifiedEyePosition()
+    {
+        if (SimplifiedEyeTracker.Instance != null && SimplifiedEyeTracker.Instance.IsGazeValid)
+        {
+            return SimplifiedEyeTracker.Instance.GetGazeWorldPosition(mainCamera);
         }
 
-        // 화면 중앙을 기본값으로 (실제 구현에서는 얼굴/눈 인식 필요)
-        Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 10f);
-
-        // 웹캠에서 감지된 시선 방향에 따라 조정
-        // 이 부분은 실제 Eye Tracking 라이브러리로 대체해야 합니다
-        Vector3 eyeOffset = GetSimulatedEyeMovement();
-
-        Vector3 eyeScreenPos = screenCenter + eyeOffset;
-        return mainCamera.ScreenToWorldPoint(eyeScreenPos);
-    }
-
-    Vector3 GetSimulatedEyeMovement()
-    {
-        // 임시로 마우스 위치를 사용 (실제로는 Eye Tracking 데이터)
-        Vector3 mousePos = Input.mousePosition;
-        Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, 0);
-        return (mousePos - screenCenter) * 0.5f; // 50% 감도
-    }
-
-    bool IsEyeFixated(Vector3 position)
-    {
-        // 시선이 일정 시간 한 곳에 고정되었는지 확인
-        // 실제 구현에서는 시선 고정 시간을 측정해야 합니다
-        return false; // 임시로 false 반환
+        // 폴백
+        return GetMouseWorldPosition();
     }
 
     Vector3 GetMouseWorldPosition()
     {
         Vector3 mousePos = Input.mousePosition;
-        mousePos.z = 10f; // 카메라로부터의 거리
+        mousePos.z = 10f;
         return mainCamera.ScreenToWorldPoint(mousePos);
     }
 
-    void DisableCatAutoMovement()
+    bool GetClickInput()
     {
-        if (targetCat == null) return;
-
-        // CatMovementController 비활성화
-        if (targetCat.MovementController != null)
+        switch (activeTrackingMode)
         {
-            targetCat.MovementController.enabled = false;
-            Debug.Log("CatMovementController 비활성화 - 미니게임 모드");
+            case EyeTrackingMode.RealWebcam:
+                return GetRealWebcamClick();
+
+            case EyeTrackingMode.SimplifiedMouse:
+                return GetSimplifiedEyeClick();
+
+            case EyeTrackingMode.Mouse:
+            default:
+                return Input.GetMouseButtonDown(0);
         }
-
-        // CatPlayerAnimator도 비활성화하여 자동 업데이트 방지 (중요!)
-        if (targetCat.catAnimator != null)
-        {
-            targetCat.catAnimator.enabled = false;
-            Debug.Log("CatPlayerAnimator 비활성화 - 미니게임 모드");
-
-            // 비활성화 후 수동으로 초기 상태 설정
-            if (targetCat.catAnimator.animator != null)
-            {
-                targetCat.catAnimator.animator.SetBool("IsWalking", false);
-                targetCat.catAnimator.animator.SetBool("IsSleeping", false);
-                targetCat.catAnimator.animator.SetFloat("Speed", 0f);
-            }
-        }
-
-        Debug.Log("고양이 자동 움직임 및 애니메이터 비활성화 완료");
     }
 
-    void EnableCatAutoMovement()
+    bool GetRealWebcamClick()
     {
-        if (targetCat == null) return;
-
-        // CatMovementController 다시 활성화
-        if (targetCat.MovementController != null)
+#if OPENCV_FOR_UNITY
+        if (RealWebcamEyeTracker.Instance != null && RealWebcamEyeTracker.Instance.IsGazeValid)
         {
-            targetCat.MovementController.enabled = true;
-            Debug.Log("CatMovementController 다시 활성화");
+            return IsEyeFixated(RealWebcamEyeTracker.Instance.GazePosition);
+        }
+#endif
+        // 폴백
+        return Input.GetMouseButtonDown(0);
+    }
+
+    bool GetSimplifiedEyeClick()
+    {
+        if (SimplifiedEyeTracker.Instance != null && SimplifiedEyeTracker.Instance.IsGazeValid)
+        {
+            return IsEyeFixated(SimplifiedEyeTracker.Instance.GazePosition);
         }
 
-        // CatPlayerAnimator 다시 활성화
-        if (targetCat.catAnimator != null)
+        // 폴백
+        return Input.GetMouseButtonDown(0);
+    }
+
+    bool IsEyeFixated(Vector2 currentGaze)
+    {
+        if (!fixationInitialized)
         {
-            targetCat.catAnimator.enabled = true;
-            Debug.Log("CatPlayerAnimator 다시 활성화");
+            lastGazePos = currentGaze;
+            fixationTimer = 0f;
+            fixationInitialized = true;
+            return false;
         }
 
-        Debug.Log("고양이 자동 움직임 복원 완료");
+        float distance = Vector2.Distance(currentGaze, lastGazePos);
+
+        if (distance < gazeFixationRadius)
+        {
+            fixationTimer += Time.deltaTime;
+
+            if (fixationTimer >= gazeFixationTime)
+            {
+                fixationTimer = 0f; // 리셋하여 연속 클릭 방지
+                Debug.Log($"👁️ 시선 고정 클릭! 위치: {currentGaze}");
+                return true;
+            }
+        }
+        else
+        {
+            fixationTimer = 0f;
+            lastGazePos = currentGaze;
+        }
+
+        return false;
     }
 
     public void StartEyesTrackingGame()
@@ -476,28 +475,17 @@ public class EyesTrackingManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("EyesTracking 미니게임 시작!");
-        DebugLogger.LogToFile("EyesTracking 미니게임 시작!");
+        Debug.Log($"EyesTracking 미니게임 시작! 모드: {activeTrackingMode}");
+        DebugLogger.LogToFile($"EyesTracking 미니게임 시작! 모드: {activeTrackingMode}");
 
-        // 웹캠 시작
-        if (useWebcam)
-        {
-            StartWebcam();
-        }
-
-        // 게임 상태 초기화
         isGameActive = true;
         gameTimer = gameDuration;
         currentScore = 0;
         churuSpawnTimer = 0f;
 
-        // 기존 츄르들 정리
         ClearAllChuru();
-
-        // 고양이 자동 움직임 비활성화 (중요!)
         DisableCatAutoMovement();
 
-        // UI 활성화
         if (timerText != null) timerText.gameObject.SetActive(true);
         if (scoreText != null)
         {
@@ -505,34 +493,168 @@ public class EyesTrackingManager : MonoBehaviour
             UpdateScoreText();
         }
 
-        // point 스프라이트 생성
         CreatePointSprite();
 
-        // 고양이 상태 설정
         if (targetCat != null)
         {
-            // 고양이를 깨운 상태로 만들기
             targetCat.WakeCatUp();
         }
 
-        // click-through 비활성화 (게임 중에는 마우스 입력 필요)
+        // 미니게임 중에는 click-through 비활성화 (중요!)
         if (CompatibilityWindowManager.Instance != null)
         {
             CompatibilityWindowManager.Instance.DisableClickThrough();
+            Debug.Log("🔒 미니게임 중 click-through 비활성화");
+        }
+
+        CheckTrackingSystemStatus();
+    }
+
+    void CheckTrackingSystemStatus()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                if (RealWebcamEyeTracker.Instance != null)
+                {
+                    if (RealWebcamEyeTracker.Instance.IsCalibrated)
+                    {
+                        Debug.Log("👁️ 실제 웹캠 눈 추적 준비 완료 - 보정됨");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("⚠️ 웹캠 눈 추적이 보정되지 않았습니다.");
+                        Debug.LogWarning("💡 미니게임을 시작하기 전에 C키로 보정을 완료하세요.");
+                        Debug.LogWarning("💡 보정 없이는 정확한 눈 추적이 어렵습니다.");
+
+                        // 보정되지 않은 상태에서도 게임을 진행할 수 있도록 경고만 표시
+                    }
+
+                    if (!RealWebcamEyeTracker.Instance.IsGazeValid)
+                    {
+                        Debug.LogWarning("⚠️ 현재 시선이 감지되지 않습니다.");
+                        Debug.LogWarning("💡 얼굴이 웹캠에 잘 보이는지 확인하세요.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("⚠️ RealWebcamEyeTracker가 없습니다.");
+                    HandleTrackingModeFallback();
+                }
+#else
+                Debug.LogWarning("⚠️ OpenCV for Unity가 필요합니다.");
+                HandleTrackingModeFallback();
+#endif
+                break;
+
+            case EyeTrackingMode.SimplifiedMouse:
+                if (SimplifiedEyeTracker.Instance != null)
+                {
+                    if (SimplifiedEyeTracker.Instance.IsCalibrated)
+                    {
+                        Debug.Log("👁️ 시뮬레이션 눈 추적 준비 완료 - 보정됨");
+                    }
+                    else
+                    {
+                        Debug.LogWarning("⚠️ 시뮬레이션 눈 추적이 보정되지 않았습니다.");
+                        Debug.LogWarning("💡 미니게임을 시작하기 전에 C키로 보정을 완료하세요.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("⚠️ SimplifiedEyeTracker가 없습니다.");
+                    HandleTrackingModeFallback();
+                }
+                break;
+
+            case EyeTrackingMode.Mouse:
+                Debug.Log("🖱️ 마우스 모드로 미니게임 진행");
+                break;
         }
     }
 
+    // 추가: 보정 상태 확인 및 자동 보정 제안 메서드
+    public bool CheckCalibrationStatus()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                return RealWebcamEyeTracker.Instance != null && RealWebcamEyeTracker.Instance.IsCalibrated;
+#else
+                return false;
+#endif
+            case EyeTrackingMode.SimplifiedMouse:
+                return SimplifiedEyeTracker.Instance != null && SimplifiedEyeTracker.Instance.IsCalibrated;
+            case EyeTrackingMode.Mouse:
+                return true; // 마우스 모드는 항상 보정됨
+            default:
+                return false;
+        }
+    }
+
+    public void SuggestCalibration()
+    {
+        if (CheckCalibrationStatus()) return;
+
+        Debug.Log("💡 눈 추적 보정 제안:");
+        Debug.Log("   1. C키를 눌러 보정을 시작하세요");
+        Debug.Log("   2. 화면의 9개 점을 순서대로 바라보세요");
+        Debug.Log("   3. 각 점에서 스페이스키를 누르세요");
+        Debug.Log("   4. 보정 완료 후 미니게임을 시작하세요");
+    }
+
+    // 추가: 보정 품질 확인 메서드
+    public string GetCalibrationQualityInfo()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                if (RealWebcamEyeTracker.Instance != null)
+                {
+                    if (RealWebcamEyeTracker.Instance.IsCalibrated)
+                    {
+                        return "✅ 웹캠 보정 완료";
+                    }
+                    else if (RealWebcamEyeTracker.Instance.IsGazeValid)
+                    {
+                        return "⚠️ 웹캠 감지됨, 보정 필요";
+                    }
+                    else
+                    {
+                        return "❌ 웹캠 시선 감지 실패";
+                    }
+                }
+                return "❌ 웹캠 추적기 없음";
+#else
+                return "❌ OpenCV 필요";
+#endif
+
+            case EyeTrackingMode.SimplifiedMouse:
+                if (SimplifiedEyeTracker.Instance != null)
+                {
+                    return SimplifiedEyeTracker.Instance.IsCalibrated ? "✅ 시뮬레이션 보정 완료" : "⚠️ 시뮬레이션 보정 필요";
+                }
+                return "❌ 시뮬레이션 추적기 없음";
+
+            case EyeTrackingMode.Mouse:
+                return "✅ 마우스 모드 (보정 불필요)";
+
+            default:
+                return "❓ 알 수 없는 상태";
+        }
+    }
     void CreatePointSprite()
     {
-        // point 스프라이트 오브젝트 생성
         pointObject = new GameObject("PointSprite");
 
         SpriteRenderer renderer = pointObject.AddComponent<SpriteRenderer>();
         renderer.sprite = pointSprite;
-        renderer.sortingOrder = 10; // 다른 오브젝트들보다 위에 표시
+        renderer.sortingOrder = 10;
         renderer.color = Color.yellow;
 
-        // 초기 위치 설정 (화면 중앙)
         pointObject.transform.position = Vector3.zero;
 
         Debug.Log("Point 스프라이트 생성 완료");
@@ -545,7 +667,6 @@ public class EyesTrackingManager : MonoBehaviour
         targetPosition = worldPosition;
         catIsMovingToTarget = true;
 
-        // 고양이 방향 설정
         Vector3 direction = (targetPosition - targetCat.transform.position).normalized;
         if (direction.x > 0)
         {
@@ -556,24 +677,60 @@ public class EyesTrackingManager : MonoBehaviour
             targetCat.SetFacingDirection(CatPlayerAnimator.CatDirection.Left);
         }
 
-        // CatPlayerAnimator가 비활성화된 상태에서 직접 애니메이터 제어
         if (targetCat.catAnimator != null && targetCat.catAnimator.animator != null)
         {
             Animator animator = targetCat.catAnimator.animator;
 
-            // 걷기 애니메이션 설정 (CatPlayerAnimator 없이 직접 제어)
             animator.SetBool("IsWalking", true);
             animator.SetBool("IsSleeping", false);
             animator.SetFloat("Speed", 1.5f);
 
-            // 방향 설정
             bool facingRight = (direction.x > 0);
             animator.SetBool("IsFacingRight", facingRight);
-
-            Debug.Log($"애니메이터 직접 제어 - IsWalking: {animator.GetBool("IsWalking")}, Speed: {animator.GetFloat("Speed")}, FacingRight: {facingRight}");
         }
 
-        Debug.Log($"고양이 목표 설정: {worldPosition} - 걷기 애니메이션 활성화");
+        Debug.Log($"고양이 목표 설정: {worldPosition}");
+    }
+
+    void DisableCatAutoMovement()
+    {
+        if (targetCat == null) return;
+
+        if (targetCat.MovementController != null)
+        {
+            targetCat.MovementController.enabled = false;
+        }
+
+        if (targetCat.catAnimator != null)
+        {
+            targetCat.catAnimator.enabled = false;
+
+            if (targetCat.catAnimator.animator != null)
+            {
+                targetCat.catAnimator.animator.SetBool("IsWalking", false);
+                targetCat.catAnimator.animator.SetBool("IsSleeping", false);
+                targetCat.catAnimator.animator.SetFloat("Speed", 0f);
+            }
+        }
+
+        Debug.Log("고양이 자동 움직임 비활성화 완료");
+    }
+
+    void EnableCatAutoMovement()
+    {
+        if (targetCat == null) return;
+
+        if (targetCat.MovementController != null)
+        {
+            targetCat.MovementController.enabled = true;
+        }
+
+        if (targetCat.catAnimator != null)
+        {
+            targetCat.catAnimator.enabled = true;
+        }
+
+        Debug.Log("고양이 자동 움직임 복원 완료");
     }
 
     void UpdateChuruSpawning()
@@ -592,25 +749,20 @@ public class EyesTrackingManager : MonoBehaviour
 
     void SpawnChuru()
     {
-        // 화면 경계 내에서 랜덤 위치 생성
         Vector3 randomPosition = GetRandomScreenPosition();
 
-        // 츄르 오브젝트 생성
         GameObject churuObj = new GameObject("Churu");
         churuObj.transform.position = randomPosition;
 
-        // 스프라이트 렌더러 추가
         SpriteRenderer renderer = churuObj.AddComponent<SpriteRenderer>();
         renderer.sprite = churuSprite;
-        renderer.sortingOrder = 8; // point보다 아래, 고양이보다 위
+        renderer.sortingOrder = 8;
         renderer.color = Color.white;
 
-        // 충돌 감지용 콜라이더 추가
         CircleCollider2D collider = churuObj.AddComponent<CircleCollider2D>();
         collider.isTrigger = true;
         collider.radius = 0.3f;
 
-        // 리스트에 추가
         churuObjects.Add(churuObj);
 
         Debug.Log($"츄르 생성됨: {randomPosition}, 총 {churuObjects.Count}개");
@@ -618,16 +770,10 @@ public class EyesTrackingManager : MonoBehaviour
 
     Vector3 GetRandomScreenPosition()
     {
-        // 화면 경계 내에서 랜덤 위치 계산
-        float screenWidth = Screen.width;
-        float screenHeight = Screen.height;
-
-        // 가장자리에서 여백 두기
         float margin = 100f;
-        float randomX = Random.Range(margin, screenWidth - margin);
-        float randomY = Random.Range(margin, screenHeight - margin);
+        float randomX = Random.Range(margin, Screen.width - margin);
+        float randomY = Random.Range(margin, Screen.height - margin);
 
-        // 스크린 좌표를 월드 좌표로 변환
         Vector3 screenPos = new Vector3(randomX, randomY, 10f);
         return mainCamera.ScreenToWorldPoint(screenPos);
     }
@@ -638,7 +784,6 @@ public class EyesTrackingManager : MonoBehaviour
 
         Vector3 catPosition = targetCat.transform.position;
 
-        // 고양이와 모든 츄르 간의 거리 체크
         for (int i = churuObjects.Count - 1; i >= 0; i--)
         {
             if (churuObjects[i] == null) continue;
@@ -646,7 +791,6 @@ public class EyesTrackingManager : MonoBehaviour
             Vector3 churuPosition = churuObjects[i].transform.position;
             float distance = Vector3.Distance(catPosition, churuPosition);
 
-            // 충돌 감지 (거리 기반)
             if (distance < 0.4f)
             {
                 OnCatEatChuru(churuObjects[i], i);
@@ -660,47 +804,37 @@ public class EyesTrackingManager : MonoBehaviour
 
         Vector3 churuPosition = churuObj.transform.position;
 
-        // 츄르 제거
         Destroy(churuObj);
         churuObjects.RemoveAt(index);
 
-        // cat_foot 효과 생성
         StartCoroutine(ShowCatFootEffectAtPosition(churuPosition));
 
-        // 점수 증가
         currentScore++;
         AddChur(1);
 
-        // 고양이를 잠시 아이들 상태로 (먹는 모션)
         if (targetCat != null && targetCat.catAnimator != null && targetCat.catAnimator.animator != null)
         {
             Animator animator = targetCat.catAnimator.animator;
-
-            // 애니메이터 직접 제어로 아이들 상태 설정
             animator.SetBool("IsWalking", false);
             animator.SetBool("IsSleeping", false);
             animator.SetFloat("Speed", 0f);
         }
 
-        // 이동 중이었다면 중지
         catIsMovingToTarget = false;
 
-        Debug.Log($"고양이가 츄르를 먹었습니다! 점수: {currentScore}, 츄르 +1");
-        DebugLogger.LogToFile($"EyesTracking: 츄르 섭취, 점수: {currentScore}");
+        Debug.Log($"고양이가 츄르를 먹었습니다! 점수: {currentScore}");
     }
 
     IEnumerator ShowCatFootEffectAtPosition(Vector3 position)
     {
-        // cat_foot 스프라이트 오브젝트 생성
         GameObject footEffect = new GameObject("CatFootEffect");
         footEffect.transform.position = position;
 
         SpriteRenderer renderer = footEffect.AddComponent<SpriteRenderer>();
         renderer.sprite = catFootSprite;
-        renderer.sortingOrder = 9; // 가장 위에 표시
+        renderer.sortingOrder = 9;
         renderer.color = Color.white;
 
-        // 효과 애니메이션 (크기 변화)
         Vector3 originalScale = Vector3.one;
         Vector3 targetScale = Vector3.one * 1.5f;
 
@@ -710,11 +844,9 @@ public class EyesTrackingManager : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / footEffectDuration;
 
-            // 크기 애니메이션
             footEffect.transform.localScale = Vector3.Lerp(originalScale, targetScale,
                 Mathf.Sin(t * Mathf.PI));
 
-            // 투명도 애니메이션
             Color color = renderer.color;
             color.a = 1f - t;
             renderer.color = color;
@@ -722,29 +854,24 @@ public class EyesTrackingManager : MonoBehaviour
             yield return null;
         }
 
-        // 효과 오브젝트 제거
         Destroy(footEffect);
-        Debug.Log("cat_foot 효과 완료");
     }
 
     void UpdateCatMovement()
     {
         if (!catIsMovingToTarget || targetCat == null) return;
 
-        // 고양이를 목표 지점으로 직접 이동
         Vector3 currentPos = targetCat.transform.position;
         Vector3 direction = (targetPosition - currentPos).normalized;
 
-        // 이동 속도 (CatMovementController의 moveSpeed와 비슷하게)
         float moveSpeed = 1.5f;
         Vector3 newPosition = currentPos + direction * moveSpeed * Time.deltaTime;
 
         targetCat.transform.position = newPosition;
 
-        // 고양이와 목표 지점 사이의 거리 확인
         float distance = Vector3.Distance(currentPos, targetPosition);
 
-        if (distance < 0.5f) // 목표에 도달
+        if (distance < 0.5f)
         {
             OnCatReachedTarget();
         }
@@ -754,25 +881,19 @@ public class EyesTrackingManager : MonoBehaviour
     {
         catIsMovingToTarget = false;
 
-        // 걷기 애니메이션 중지 (목표 지점에 도달했을 때)
         if (targetCat != null && targetCat.catAnimator != null && targetCat.catAnimator.animator != null)
         {
             Animator animator = targetCat.catAnimator.animator;
-
-            // 애니메이터 직접 제어로 아이들 상태 설정
             animator.SetBool("IsWalking", false);
             animator.SetBool("IsSleeping", false);
             animator.SetFloat("Speed", 0f);
-
-            Debug.Log($"걷기 애니메이션 중지 - IsWalking: {animator.GetBool("IsWalking")}");
         }
 
-        Debug.Log($"고양이가 목표 지점에 도달했습니다.");
+        Debug.Log("고양이가 목표 지점에 도달했습니다.");
     }
 
     void ClearAllChuru()
     {
-        // 기존에 생성된 모든 츄르 제거
         foreach (GameObject churuObj in churuObjects)
         {
             if (churuObj != null)
@@ -812,48 +933,29 @@ public class EyesTrackingManager : MonoBehaviour
         isGameActive = false;
         catIsMovingToTarget = false;
 
-        // 고양이 자동 움직임 복원
         EnableCatAutoMovement();
-
-        // 모든 츄르 제거
         ClearAllChuru();
 
-        // 웹캠 중지
-        if (useWebcam)
-        {
-            StopWebcam();
-        }
-
-        // UI 숨기기
         if (timerText != null) timerText.gameObject.SetActive(false);
         if (scoreText != null) scoreText.gameObject.SetActive(false);
 
-        // point 스프라이트 제거
         if (pointObject != null)
         {
             Destroy(pointObject);
             pointObject = null;
         }
 
-        // 고양이를 자연스러운 상태로 복원 (이제 MovementController가 다시 제어함)
-        // MovementController가 활성화되면 자동으로 자연스러운 상태로 돌아감
-
-        // click-through 상태 복원
         RestoreClickThroughState();
-
-        // 결과 표시 (선택사항)
         ShowGameResult();
     }
 
     void RestoreClickThroughState()
     {
-        // 원래 click-through 로직으로 복원
         if (CompatibilityWindowManager.Instance != null && mainCamera != null)
         {
             Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
             Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
 
-            // 상호작용 가능한 오브젝트 확인
             Collider2D catCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 8);
             Collider2D towerCollider = Physics2D.OverlapPoint(mouseWorldPos, 1 << 9);
 
@@ -872,13 +974,11 @@ public class EyesTrackingManager : MonoBehaviour
 
     void ShowGameResult()
     {
-        // 간단한 결과 표시 (3초 후 사라짐)
         StartCoroutine(ShowResultCoroutine());
     }
 
     IEnumerator ShowResultCoroutine()
     {
-        // 결과 텍스트 생성
         GameObject resultObj = new GameObject("GameResult");
         Canvas canvas = FindObjectOfType<Canvas>();
         if (canvas != null)
@@ -890,7 +990,7 @@ public class EyesTrackingManager : MonoBehaviour
             resultText.fontSize = 28;
             resultText.color = Color.green;
             resultText.alignment = TextAnchor.MiddleCenter;
-            resultText.font = GetSafeFont(); // 안전한 폰트 사용
+            resultText.font = GetSafeFont();
 
             RectTransform rect = resultObj.GetComponent<RectTransform>();
             rect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -898,70 +998,407 @@ public class EyesTrackingManager : MonoBehaviour
             rect.anchoredPosition = Vector2.zero;
             rect.sizeDelta = new Vector2(300, 100);
 
-            // 3초 후 제거
             yield return new WaitForSeconds(3f);
             Destroy(resultObj);
         }
     }
 
-    void OnDestroy()
+    void OnGUI()
     {
-        // 웹캠 정리
-        if (webCamTexture != null)
+        if (isGameActive)
         {
-            if (webCamTexture.isPlaying)
-            {
-                webCamTexture.Stop();
-            }
-            Destroy(webCamTexture);
+            DrawEyeTrackingDebugInfo();
         }
+    }
+
+    void DrawEyeTrackingDebugInfo()
+    {
+        GUILayout.BeginArea(new Rect(10, 200, 500, 350));
+        GUILayout.Label("=== 눈 추적 미니게임 디버그 ===");
+        GUILayout.Label($"추적 모드: {GetTrackingModeString()}");
+
+        bool isTrackerReady = IsCurrentTrackerReady();
+        GUILayout.Label($"추적 시스템: {(isTrackerReady ? "✅ 준비됨" : "❌ 문제 있음")}");
+
+        // 보정 상태 정보 추가
+        string calibrationInfo = GetCalibrationQualityInfo();
+        GUILayout.Label($"보정 상태: {calibrationInfo}");
+
+        if (activeTrackingMode != EyeTrackingMode.Mouse)
+        {
+            Vector2 gazePos = GetCurrentGazePosition();
+            GUILayout.Label($"시선 위치: ({gazePos.x:F0}, {gazePos.y:F0})");
+
+            // CompatibilityWindowManager 상태 표시
+            if (CompatibilityWindowManager.Instance != null)
+            {
+                bool isClickThrough = CompatibilityWindowManager.Instance.IsClickThrough;
+                GUILayout.Label($"Click-through: {(isClickThrough ? "활성화" : "비활성화")}");
+            }
+        }
+
+        if (pointObject != null)
+        {
+            Vector3 pointPos = pointObject.transform.position;
+            GUILayout.Label($"Point 위치: ({pointPos.x:F2}, {pointPos.y:F2})");
+        }
+
+        GUILayout.Space(5);
+        string inputMethod = GetCurrentInputMethodString();
+        GUILayout.Label($"조작 방법: {inputMethod}");
+
+        if (activeTrackingMode != EyeTrackingMode.Mouse)
+        {
+            GUILayout.Label($"고정 진행: {fixationTimer:F1}s / {gazeFixationTime:F1}s");
+        }
+
+        GUILayout.Space(5);
+        GUILayout.Label("⌨️ 단축키:");
+        GUILayout.Label("ESC: 미니게임 종료");
+        GUILayout.Label("E: 추적 모드 전환");
+
+        if (!CheckCalibrationStatus())
+        {
+            GUILayout.Label("C: 보정 시작 (권장!)");
+        }
+
+        if (!isTrackerReady)
+        {
+            GUILayout.Space(5);
+            GUILayout.Label("⚠️ 추적 시스템 문제:");
+
+            switch (activeTrackingMode)
+            {
+                case EyeTrackingMode.RealWebcam:
+                    GUILayout.Label("- 웹캠이 연결되어 있는지 확인");
+                    GUILayout.Label("- 얼굴이 웹캠에 잘 보이는지 확인");
+                    GUILayout.Label("- 조명이 충분한지 확인");
+                    break;
+                case EyeTrackingMode.SimplifiedMouse:
+                    GUILayout.Label("- SimplifiedEyeTracker 활성화 확인");
+                    break;
+            }
+        }
+
+        if (!CheckCalibrationStatus() && activeTrackingMode != EyeTrackingMode.Mouse)
+        {
+            GUILayout.Space(5);
+            GUILayout.Label("💡 보정이 필요합니다!");
+            GUILayout.Label("C키를 눌러 보정을 시작하세요.");
+        }
+
+        GUILayout.EndArea();
+    }
+
+    string GetTrackingModeString()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+                return "📹 실제 웹캠 눈 추적";
+            case EyeTrackingMode.SimplifiedMouse:
+                return "🖱️ 마우스 시뮬레이션";
+            case EyeTrackingMode.Mouse:
+                return "🖱️ 순수 마우스";
+            default:
+                return "❓ 알 수 없음";
+        }
+    }
+
+    bool IsCurrentTrackerReady()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                return RealWebcamEyeTracker.Instance != null && RealWebcamEyeTracker.Instance.IsGazeValid;
+#else
+                return false;
+#endif
+            case EyeTrackingMode.SimplifiedMouse:
+                return SimplifiedEyeTracker.Instance != null && SimplifiedEyeTracker.Instance.IsGazeValid;
+            case EyeTrackingMode.Mouse:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    Vector2 GetCurrentGazePosition()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                if (RealWebcamEyeTracker.Instance != null)
+                    return RealWebcamEyeTracker.Instance.GazePosition;
+#endif
+                break;
+            case EyeTrackingMode.SimplifiedMouse:
+                if (SimplifiedEyeTracker.Instance != null)
+                    return SimplifiedEyeTracker.Instance.GazePosition;
+                break;
+        }
+        return Input.mousePosition;
+    }
+
+    bool IsCurrentTrackerCalibrated()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                return RealWebcamEyeTracker.Instance != null && RealWebcamEyeTracker.Instance.IsCalibrated;
+#else
+                return false;
+#endif
+            case EyeTrackingMode.SimplifiedMouse:
+                return SimplifiedEyeTracker.Instance != null && SimplifiedEyeTracker.Instance.IsCalibrated;
+            case EyeTrackingMode.Mouse:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    string GetCurrentInputMethodString()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+                return $"👁️ 실제 시선 고정 ({gazeFixationTime:F1}초)";
+            case EyeTrackingMode.SimplifiedMouse:
+                return $"👁️ 시뮬레이션 시선 고정 ({gazeFixationTime:F1}초)";
+            case EyeTrackingMode.Mouse:
+                return "🖱️ 마우스 클릭";
+            default:
+                return "❓ 알 수 없음";
+        }
+    }
+
+    void LateUpdate()
+    {
+        // ESC 키로 미니게임 강제 종료
+        if (Input.GetKeyDown(KeyCode.Escape) && isGameActive)
+        {
+            Debug.Log("ESC 키로 미니게임 강제 종료");
+            EndEyesTrackingGame();
+        }
+
+        // E 키로 추적 모드 전환
+        if (Input.GetKeyDown(KeyCode.E) && !isGameActive)
+        {
+            CycleTrackingMode();
+        }
+    }
+
+    void CycleTrackingMode()
+    {
+        switch (trackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+                trackingMode = EyeTrackingMode.SimplifiedMouse;
+                break;
+            case EyeTrackingMode.SimplifiedMouse:
+                trackingMode = EyeTrackingMode.Mouse;
+                break;
+            case EyeTrackingMode.Mouse:
+                trackingMode = EyeTrackingMode.RealWebcam;
+                break;
+        }
+
+        DetermineTrackingMode();
+        Debug.Log($"추적 모드 변경: {activeTrackingMode}");
     }
 
     // 외부에서 접근할 수 있는 프로퍼티들
     public bool IsGameActive => isGameActive;
     public float GameTimer => gameTimer;
     public int CurrentScore => currentScore;
-    public bool IsWebcamActive => webCamTexture != null && webCamTexture.isPlaying;
     public int ChuruCount => churuObjects.Count;
+    public EyeTrackingMode ActiveTrackingMode => activeTrackingMode;
 
-    // 웹캠 토글 (디버그용)
-    [ContextMenu("Toggle Webcam")]
-    public void ToggleWebcam()
+    public bool IsEyeTrackingWorking
     {
-        useWebcam = !useWebcam;
-
-        if (useWebcam && !isWebcamInitialized)
+        get
         {
-            InitializeWebcam();
-        }
-
-        Debug.Log($"웹캠 사용: {(useWebcam ? "ON" : "OFF (마우스 모드)")}");
-    }
-
-    // 게임 강제 종료 (디버그용)
-    [ContextMenu("Force End Game")]
-    public void ForceEndGame()
-    {
-        if (isGameActive)
-        {
-            EndEyesTrackingGame();
-        }
-    }
-
-    // 츄르 강제 생성 (디버그용)
-    [ContextMenu("Spawn Churu")]
-    public void ForceSpawnChuru()
-    {
-        if (isGameActive && churuObjects.Count < maxChuruCount)
-        {
-            SpawnChuru();
+            switch (activeTrackingMode)
+            {
+                case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                    return RealWebcamEyeTracker.Instance != null && RealWebcamEyeTracker.Instance.IsGazeValid;
+#else
+                    return false;
+#endif
+                case EyeTrackingMode.SimplifiedMouse:
+                    return SimplifiedEyeTracker.Instance != null && SimplifiedEyeTracker.Instance.IsGazeValid;
+                case EyeTrackingMode.Mouse:
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 
-    // 모든 츄르 제거 (디버그용)
-    [ContextMenu("Clear All Churu")]
-    public void ForceClearChuru()
+    // 디버그용 메서드들
+    [ContextMenu("Force Real Webcam Mode")]
+    public void ForceRealWebcamMode()
     {
-        ClearAllChuru();
+        trackingMode = EyeTrackingMode.RealWebcam;
+        DetermineTrackingMode();
+        Debug.Log("강제로 실제 웹캠 모드로 전환");
     }
+
+    [ContextMenu("Force Simplified Mode")]
+    public void ForceSimplifiedMode()
+    {
+        trackingMode = EyeTrackingMode.SimplifiedMouse;
+        DetermineTrackingMode();
+        Debug.Log("강제로 시뮬레이션 모드로 전환");
+    }
+
+    [ContextMenu("Force Mouse Mode")]
+    public void ForceMouseMode()
+    {
+        trackingMode = EyeTrackingMode.Mouse;
+        DetermineTrackingMode();
+        Debug.Log("강제로 마우스 모드로 전환");
+    }
+    // 디버그용 보정 테스트 메서드들
+    [ContextMenu("Test All Tracking Systems")]
+    public void TestAllTrackingSystems()
+    {
+        Debug.Log("=== 모든 추적 시스템 테스트 ===");
+
+        // 실제 웹캠 테스트
+#if OPENCV_FOR_UNITY
+        bool realWebcamAvailable = RealWebcamEyeTracker.Instance != null;
+        Debug.Log($"실제 웹캠 추적: {(realWebcamAvailable ? "✅ 사용 가능" : "❌ 불가능")}");
+
+        if (realWebcamAvailable)
+        {
+            var realTracker = RealWebcamEyeTracker.Instance;
+            Debug.Log($"  - 얼굴 감지: {realTracker.IsFaceDetected}");
+            Debug.Log($"  - 눈 감지: {realTracker.AreEyesDetected}");
+            Debug.Log($"  - 시선 유효: {realTracker.IsGazeValid}");
+            Debug.Log($"  - 보정 상태: {realTracker.IsCalibrated}");
+
+            if (realTracker.IsGazeValid)
+            {
+                Debug.Log($"  - 현재 시선: {realTracker.GazePosition}");
+            }
+        }
+#else
+        Debug.Log("실제 웹캠 추적: ❌ OpenCV for Unity 필요");
+#endif
+
+        // 시뮬레이션 추적 테스트
+        bool simplifiedAvailable = SimplifiedEyeTracker.Instance != null;
+        Debug.Log($"시뮬레이션 추적: {(simplifiedAvailable ? "✅ 사용 가능" : "❌ 불가능")}");
+
+        if (simplifiedAvailable)
+        {
+            var simTracker = SimplifiedEyeTracker.Instance;
+            Debug.Log($"  - 시선 유효: {simTracker.IsGazeValid}");
+            Debug.Log($"  - 보정 상태: {simTracker.IsCalibrated}");
+
+            if (simTracker.IsGazeValid)
+            {
+                Debug.Log($"  - 현재 시선: {simTracker.GazePosition}");
+            }
+        }
+
+        // CompatibilityWindowManager 테스트
+        bool compatibilityAvailable = CompatibilityWindowManager.Instance != null;
+        Debug.Log($"CompatibilityWindowManager: {(compatibilityAvailable ? "✅ 사용 가능" : "❌ 불가능")}");
+
+        if (compatibilityAvailable)
+        {
+            var compat = CompatibilityWindowManager.Instance;
+            Debug.Log($"  - Click-through 상태: {compat.IsClickThrough}");
+
+            Vector2 unityMouse = Input.mousePosition;
+            Vector2 compatMouse = compat.GetMousePositionInWindow();
+            float mouseDiff = Vector2.Distance(unityMouse, compatMouse);
+
+            Debug.Log($"  - Unity 마우스: {unityMouse}");
+            Debug.Log($"  - Compat 마우스: {compatMouse}");
+            Debug.Log($"  - 마우스 좌표 차이: {mouseDiff:F1}px");
+
+            if (mouseDiff > 10f)
+            {
+                Debug.LogWarning("⚠️ 마우스 좌표 차이가 큽니다. 보정에 영향을 줄 수 있습니다.");
+            }
+        }
+
+        Debug.Log("마우스 추적: ✅ 항상 사용 가능");
+
+        Debug.Log("\n=== 권장 사항 ===");
+        if (!CheckCalibrationStatus())
+        {
+            Debug.Log("💡 보정을 완료하면 더 정확한 눈 추적이 가능합니다.");
+        }
+
+        Debug.Log("💡 미니게임 중에는 ESC키로 언제든지 종료할 수 있습니다.");
+    }
+
+    [ContextMenu("Quick Calibration All")]
+    public void QuickCalibrationAll()
+    {
+        Debug.Log("⚡ 모든 추적 시스템 빠른 보정 시도...");
+
+        // SimplifiedEyeTracker 빠른 보정
+        if (SimplifiedEyeTracker.Instance != null)
+        {
+            SimplifiedEyeTracker.Instance.QuickCalibration();
+            Debug.Log("✅ SimplifiedEyeTracker 빠른 보정 완료");
+        }
+
+#if OPENCV_FOR_UNITY
+        // RealWebcamEyeTracker 빠른 보정
+        if (RealWebcamEyeTracker.Instance != null)
+        {
+            RealWebcamEyeTracker.Instance.QuickPerfectCalibration();
+            Debug.Log("✅ RealWebcamEyeTracker 빠른 보정 완료");
+        }
+#endif
+
+        Debug.Log("⚡ 모든 가능한 추적 시스템의 빠른 보정이 완료되었습니다!");
+    }
+
+    // 시선 추적 상태 정보
+    public string GetEyeTrackingStatus()
+    {
+        switch (activeTrackingMode)
+        {
+            case EyeTrackingMode.RealWebcam:
+#if OPENCV_FOR_UNITY
+                if (RealWebcamEyeTracker.Instance == null)
+                    return "❌ RealWebcamEyeTracker 없음";
+                if (!RealWebcamEyeTracker.Instance.IsGazeValid)
+                    return "❌ 실제 시선 추적 실패";
+                if (!RealWebcamEyeTracker.Instance.IsCalibrated)
+                    return "⚠️ 보정 필요";
+                return "👁️ 실제 웹캠 시선 추적 활성";
+#else
+                return "❌ OpenCV for Unity 필요";
+#endif
+
+            case EyeTrackingMode.SimplifiedMouse:
+                if (SimplifiedEyeTracker.Instance == null)
+                    return "❌ SimplifiedEyeTracker 없음";
+                if (!SimplifiedEyeTracker.Instance.IsGazeValid)
+                    return "❌ 시뮬레이션 시선 추적 실패";
+                if (!SimplifiedEyeTracker.Instance.IsCalibrated)
+                    return "⚠️ 보정 필요";
+                return "👁️ 시뮬레이션 시선 추적 활성";
+
+            case EyeTrackingMode.Mouse:
+                return "🖱️ 마우스 모드";
+
+            default:
+                return "❓ 알 수 없는 모드";
+        }
+    }
+
 }

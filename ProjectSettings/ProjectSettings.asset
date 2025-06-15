@@ -162,7 +162,7 @@ PlayerSettings:
   androidSupportedAspectRatio: 1
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
-    Standalone: com.DefaultCompany.2DCatGame
+    Standalone: com.DefaultCompany.CatsLoveChewy
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -777,7 +777,7 @@ PlayerSettings:
     PS4: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     QNX: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     Server: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
-    Standalone: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
+    Standalone: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI;OPENCV_FOR_UNITY
     VisionOS: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     WebGL: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
     Windows Store Apps: UNITY_VISUAL_SCRIPTING;ES3_TMPRO;ES3_UGUI
