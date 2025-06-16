@@ -2,295 +2,298 @@
 Unity 버전: 2022.3.55f1
 플랫폼: WindowsEditor
 해상도: 1920x1080
-[08:22:44.090] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[08:22:44.097] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[08:22:44.097] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[08:22:44.098] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[08:22:44.408] [Log] 마지막 저장: 2025-06-16 오전 8:22:36, 경과 시간: 0.1분
-마지막 저장: 2025-06-16 오전 8:22:36, 경과 시간: 0.1분
-[08:22:44.410] [Log] 오프라인 행복도 감소: -0.0% (현재: 100.0%)
+[10:35:40.970] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[10:35:40.976] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[10:35:40.976] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[10:35:40.978] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[10:35:41.342] [Log] 마지막 저장: 2025-06-16 오전 10:35:28, 경과 시간: 0.2분
+마지막 저장: 2025-06-16 오전 10:35:28, 경과 시간: 0.2분
+[10:35:41.343] [Log] 오프라인 행복도 감소: -0.0% (현재: 100.0%)
 오프라인 행복도 감소: -0.0% (현재: 100.0%)
-[08:22:44.412] [Log] 게임 데이터 로드 시작!
+[10:35:41.344] [Log] 게임 데이터 로드 시작!
 게임 데이터 로드 시작!
-[08:22:44.413] [Log] 세이브 시스템 초기화 완료
+[10:35:41.345] [Log] 세이브 시스템 초기화 완료
 세이브 시스템 초기화 완료 - Easy Save 사용
-[08:22:44.414] [Log] UI Layer 자동 설정: Layer 5
-[08:22:44.414] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
-[08:22:44.415] [Log] ClickDetector 초기화 완료 - UI 감지 포함
+[10:35:41.346] [Log] UI Layer 자동 설정: Layer 5
+[10:35:41.346] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
+[10:35:41.346] [Log] ClickDetector 초기화 완료 - UI 감지 포함
 ClickDetector 초기화 완료 - UI 감지 포함
-[08:22:44.416] [Log] Minigamebtn 이벤트 연결 완료
-[08:22:44.416] [Log] ✅ 실제 웹캠 눈 추적 시스템 감지
-[08:22:44.417] [Log] EyesTracking 미니게임 시스템 초기화 완료
-[08:22:44.417] [Log] 👁️ 시선 추적 모드: RealWebcam
-EyesTracking 미니게임 시스템 초기화 완료 - 모드: RealWebcam
-[08:22:44.418] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
-[08:22:44.433] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
+[10:35:41.347] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
+[10:35:41.364] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
-[08:22:44.434] [Log] 🎯 실제 웹캠 눈 추적 시스템 초기화 시작
-[08:22:44.440] [Log] 📹 발견된 웹캠: 3개
-[08:22:44.440] [Log]   0: USB 2.0 Camera
-[08:22:44.440] [Log]   1: Eyeware camera
-[08:22:44.442] [Log]   2: OBS Virtual Camera
-[08:22:46.175] [Log] ✅ 웹캠 초기화 완료: USB 2.0 Camera (1920x1080)
-[08:22:46.177] [Log] 카메라 설정 완료!
+[10:35:41.365] [Log] 카메라 설정 완료!
 카메라 Clear Flags: SolidColor
 카메라 Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
 검은색 강제 렌더링 모드 활성화!
-[08:22:46.178] [Log] 모자 스프라이트 할당 성공: 고양이 모자 1
-[08:22:46.179] [Log] 모자 스프라이트 할당 성공: 고양이 모자 2
-[08:22:46.180] [Log] 모자 스프라이트 할당 성공: 고양이 모자 3
-[08:22:46.180] [Log] 모자 아이템 3개 생성 완료
-[08:22:46.182] [Log] 아이템 데이터 로드 완료 - 소유: 2개, 착용: 고양이 모자 1
-[08:22:46.183] [Log] 아이템 매니저 초기화 완료 - 총 3개 아이템
+[10:35:41.368] [Log] 모자 스프라이트 할당 성공: 고양이 모자 1
+[10:35:41.368] [Log] 모자 스프라이트 할당 성공: 고양이 모자 2
+[10:35:41.369] [Log] 모자 스프라이트 할당 성공: 고양이 모자 3
+[10:35:41.369] [Log] 모자 아이템 3개 생성 완료
+[10:35:41.370] [Log] 아이템 데이터 로드 완료 - 소유: 2개, 착용: 고양이 모자 1
+[10:35:41.372] [Log] 아이템 매니저 초기화 완료 - 총 3개 아이템
 아이템 매니저 초기화 완료 - 총 3개 아이템
-[08:22:46.186] [Log] 타워 이미지 Resources에서 로드 성공
-[08:22:46.188] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[10:35:41.375] [Log] 타워 이미지 Resources에서 로드 성공
+[10:35:41.376] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[08:22:46.189] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
+[10:35:41.377] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
 캣타워 생성 완료 - 업그레이드 가능 빌드
-[08:22:46.192] [Log] 아이템 UI 초기화 완료 - 패널 상태: False
+[10:35:41.380] [Log] 아이템 UI 초기화 완료 - 패널 상태: False
 아이템 UI 초기화 완료 (우측하단 세로배치)
-[08:22:46.195] [Log] 게임 데이터 매니저 초기화
-게임 데이터 매니저 초기화 - 초기 행복도: 99.97784%
-[08:22:46.195] [Log] 🎮 F1키를 눌러 웹캠 눈동자 인식을 시작하세요!
-[08:22:46.206] [Log] ✅ 얼굴 감지 모델 로드 성공
-[08:22:46.210] [Log] ✅ 눈 감지 모델 로드 성공
-[08:22:46.212] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
-[08:22:46.213] [Log] 고양이 위치 설정: (4.97, -2.89, -0.01)
-[08:22:46.550] [Log] ✅ 얼굴 감지 모델 로드 성공
-[08:22:46.637] [Log] ✅ OpenCV 초기화 완료
-[08:22:46.639] [Log] 보정 좌표 설정 완료 - 여백: 150px, 화면 크기: 1920x1080
-[08:22:46.639] [Log] ✅ 실제 웹캠 눈 추적 시스템 초기화 완료!
-[08:22:46.640] [Log] 📹 웹캠 기반 실시간 얼굴/눈 감지
-[08:22:46.641] [Log] ⌨️ C키: 보정 시작, R키: 보정 리셋, Space: 보정 점 기록
-[08:22:47.290] [Log] 📹 웹캠 발견: USB 2.0 Camera
-[08:22:47.292] [Log] Can't add 'Image' to WebcamDisplay because a 'RawImage' is already added to the game object!
-A GameObject can only contain one 'Graphic' component.
-[08:22:47.292] [Error] ❌ UI 생성 실패: Object reference not set to an instance of an object
-StackTrace: UnityEngine.Debug:LogError (object)
-SimpleWebcamEyeViewer:CreateWebcamUI (SimpleWebcamEyeViewer) (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:434)
-SimpleWebcamEyeViewer:StartWebcam () (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:142)
-SimpleWebcamEyeViewer:Update () (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:66)
-
-[08:22:47.292] [Log] 📹 웹캠 시작 중...
-[08:22:47.293] [Log] 🎯 웹캠 눈동자 인식 시작! (ESC로 종료)
-[08:22:47.519] [Log] 타워 이미지 Resources에서 로드 성공
-[08:22:47.519] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[10:35:41.382] [Log] 게임 데이터 매니저 초기화
+게임 데이터 매니저 초기화 - 초기 행복도: 99.96467%
+[10:35:41.383] [Log] 🎮 정밀 웹캠 눈동자 인식 + 9점 보정 시스템
+[10:35:41.383] [Log] 📖 사용법:
+[10:35:41.383] [Log]    F1: 웹캠 시작/종료
+[10:35:41.384] [Log]    C: 보정 시작 (9점 보정)
+[10:35:41.384] [Log]    Space: 보정 점 기록
+[10:35:41.384] [Log]    R: 보정 리셋
+[10:35:41.385] [Log]    T: 시선 추적 테스트
+[10:35:41.385] [Log]    ESC: 종료
+[10:35:41.396] [Log] ✅ 얼굴 감지 모델 로드 성공
+[10:35:41.401] [Log] ✅ 눈 감지 모델 로드 성공
+[10:35:41.402] [Log] 🎯 정밀 9점 보정 타겟 설정 완료 (1920x1080 기준)
+[10:35:41.403] [Log]    점 1: (100, 100)
+[10:35:41.403] [Log]    점 2: (960, 100)
+[10:35:41.403] [Log]    점 3: (1820, 100)
+[10:35:41.404] [Log]    점 4: (100, 540)
+[10:35:41.404] [Log]    점 5: (960, 540)
+[10:35:41.405] [Log]    점 6: (1820, 540)
+[10:35:41.405] [Log]    점 7: (100, 980)
+[10:35:41.405] [Log]    점 8: (960, 980)
+[10:35:41.405] [Log]    점 9: (1820, 980)
+[10:35:41.407] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
+[10:35:41.407] [Log] 고양이 위치 설정: (-5.14, -4.19, -0.01)
+[10:35:42.088] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 0개
+캣타워 데이터 저장: 레벨 1, 츄르 0개
+[10:35:42.091] [Log] 게임 데이터 저장: 행복도 100.0%
+게임 데이터 저장: 행복도 100.0%
+[10:35:42.097] [Log] 고양이 위치 저장: (-5.14, -4.19)
+고양이 위치 저장: (-5.14, -4.19)
+[10:35:42.100] [Log] 게임 데이터 저장 완료!
+게임 데이터 저장 완료!
+[10:35:42.764] [Log] 타워 이미지 Resources에서 로드 성공
+[10:35:42.765] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[08:22:47.520] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 48개
-캣타워 데이터 로드: 레벨 1, 츄르 48개
-[08:22:47.521] [Log] 게임 데이터 로드: 행복도 99.9%
-게임 데이터 로드: 행복도 99.9%
-[08:22:47.522] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
+[10:35:42.766] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 0개
+캣타워 데이터 로드: 레벨 1, 츄르 0개
+[10:35:42.767] [Log] 게임 데이터 로드: 행복도 100.0%
+게임 데이터 로드: 행복도 100.0%
+[10:35:42.768] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
 에디터에서는 윈도우 설정이 비활성화됩니다.
-[08:22:47.585] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:48.175] [Log] 고양이 위치 로드: (3.03, -2.56)
-고양이 위치 로드: (3.03, -2.56)
-[08:22:48.927] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:49.926] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:50.108] [Log] 🛑 웹캠 눈동자 인식 종료
-[08:22:50.111] [Exception] NullReferenceException: Object reference not set to an instance of an object
-StackTrace: SimpleWebcamEyeViewer+<InitializeOpenCVMats>d__24.MoveNext () (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:191)
-UnityEngine.SetupCoroutine.InvokeMoveNext (System.Collections.IEnumerator enumerator, System.IntPtr returnValueAddress) (at <c648d86e9013479d818310c5918e31a4>:0)
+[10:35:42.862] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:35:43.084] [Log] 📹 웹캠 발견: USB 2.0 Camera
+[10:35:43.086] [Log] Can't add 'Image' to WebcamDisplay because a 'RawImage' is already added to the game object!
+A GameObject can only contain one 'Graphic' component.
+[10:35:43.086] [Error] ❌ UI 생성 실패: Object reference not set to an instance of an object
+StackTrace: UnityEngine.Debug:LogError (object)
+SimpleWebcamEyeViewer:CreateWebcamUI () (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:830)
+SimpleWebcamEyeViewer:StartWebcam () (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:635)
+SimpleWebcamEyeViewer:Update () (at Assets/Scripts/GameSystem/SimpleWebcamEyeViewer.cs:136)
 
-[08:22:50.928] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:51.491] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[08:22:51.553] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 48개
-캣타워 데이터 저장: 레벨 1, 츄르 48개
-[08:22:51.557] [Log] 게임 데이터 저장: 행복도 99.9%
+[10:35:44.724] [Log] 📹 웹캠 시작 중...
+[10:35:44.726] [Log] ✅ OpenCV Mat 초기화 완료: 1920x1080
+[10:35:44.726] [Log] ✅ 웹캠 텍스처 연결 완료
+[10:35:44.727] [Log] 🎯 정밀 웹캠 눈동자 인식 + 보정 시스템 시작!
+[10:35:44.750] [Log] 고양이 위치 로드: (-5.14, -4.19)
+고양이 위치 로드: (-5.14, -4.19)
+[10:35:45.124] [Warning] ⚠️ 웹캠이 실행 중이고 눈이 감지된 상태에서만 보정할 수 있습니다!
+[10:35:46.242] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:35:46.461] [Log] ✅ OpenCV 처리된 텍스처로 전환 완료
+[10:35:48.126] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
+[10:35:48.156] [Log] 🐱 고양이 방향 변경: X=0.048 → Right
+고양이 방향 변경: X=0.048 → Right
+[10:35:48.345] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.58
+[10:35:50.479] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
+[10:35:50.558] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:35:51.042] [Log] 🎯 정밀 9점 눈 추적 보정 시작!
+[10:35:51.043] [Log] 📍 각 빨간 점을 정확히 바라보고 Space키를 누르세요.
+[10:35:51.044] [Log]    점 1/9 - 위치: (100, 100)
+[10:35:52.994] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:35:53.806] [Log] 츄르 생산: +2 (총 2개)
+츄르 생산: +2 (총 2개)
+[10:35:54.605] [Log] ✅ 정밀 보정 점 1/9 기록
+[10:35:54.606] [Log]    🎯 타겟: (100, 100)
+[10:35:54.606] [Log]    👁️ 동공: (1118, 506)
+[10:35:54.606] [Log]    📊 오차: 1096.1px
+[10:35:54.607] [Log]    🔧 매핑: (1118,506) → (100,100)
+[10:35:54.607] [Log]    📈 정확도: 0.084
+[10:35:54.608] [Log] 📍 다음 점 2/9 - 위치: (960, 100)
+[10:35:55.247] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:35:57.160] [Log] ✅ 정밀 보정 점 2/9 기록
+[10:35:57.161] [Log]    🎯 타겟: (960, 100)
+[10:35:57.161] [Log]    👁️ 동공: (1073, 503)
+[10:35:57.162] [Log]    📊 오차: 418.4px
+[10:35:57.162] [Log]    🔧 매핑: (1073,503) → (960,100)
+[10:35:57.163] [Log]    📈 정확도: 0.193
+[10:35:57.163] [Log] 📍 다음 점 3/9 - 위치: (1820, 100)
+[10:35:57.561] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:35:57.596] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
+[10:35:59.601] [Log] ✅ 정밀 보정 점 3/9 기록
+[10:35:59.601] [Log]    🎯 타겟: (1820, 100)
+[10:35:59.602] [Log]    👁️ 동공: (1082, 514)
+[10:35:59.602] [Log]    📊 오차: 846.2px
+[10:35:59.602] [Log]    🔧 매핑: (1082,514) → (1820,100)
+[10:35:59.603] [Log]    📈 정확도: 0.106
+[10:35:59.603] [Log] 📍 다음 점 4/9 - 위치: (100, 540)
+[10:35:59.636] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
+[10:35:59.882] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:36:01.272] [Log] ✅ 정밀 보정 점 4/9 기록
+[10:36:01.273] [Log]    🎯 타겟: (100, 540)
+[10:36:01.273] [Log]    👁️ 동공: (1069, 508)
+[10:36:01.274] [Log]    📊 오차: 970.0px
+[10:36:01.274] [Log]    🔧 매핑: (1069,508) → (100,540)
+[10:36:01.275] [Log]    📈 정확도: 0.093
+[10:36:01.275] [Log] 📍 다음 점 5/9 - 위치: (960, 540)
+[10:36:02.126] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:36:03.840] [Log] 츄르 생산: +2 (총 4개)
+츄르 생산: +2 (총 4개)
+[10:36:04.597] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:36:04.674] [Log] ✅ 정밀 보정 점 5/9 기록
+[10:36:04.675] [Log]    🎯 타겟: (960, 540)
+[10:36:04.675] [Log]    👁️ 동공: (1071, 501)
+[10:36:04.676] [Log]    📊 오차: 117.8px
+[10:36:04.676] [Log]    🔧 매핑: (1071,501) → (960,540)
+[10:36:04.676] [Log]    📈 정확도: 0.459
+[10:36:04.677] [Log] 📍 다음 점 6/9 - 위치: (1820, 540)
+[10:36:06.364] [Log] ✅ 정밀 보정 점 6/9 기록
+[10:36:06.364] [Log]    🎯 타겟: (1820, 540)
+[10:36:06.365] [Log]    👁️ 동공: (1066, 521)
+[10:36:06.365] [Log]    📊 오차: 754.7px
+[10:36:06.365] [Log]    🔧 매핑: (1066,521) → (1820,540)
+[10:36:06.366] [Log]    📈 정확도: 0.117
+[10:36:06.366] [Log] 📍 다음 점 7/9 - 위치: (100, 980)
+[10:36:06.794] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:36:08.649] [Log] ✅ 정밀 보정 점 7/9 기록
+[10:36:08.650] [Log]    🎯 타겟: (100, 980)
+[10:36:08.650] [Log]    👁️ 동공: (1059, 511)
+[10:36:08.650] [Log]    📊 오차: 1067.2px
+[10:36:08.650] [Log]    🔧 매핑: (1059,511) → (100,980)
+[10:36:08.652] [Log]    📈 정확도: 0.086
+[10:36:08.652] [Log] 📍 다음 점 8/9 - 위치: (960, 980)
+[10:36:08.911] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:36:10.193] [Log] ✅ 정밀 보정 점 8/9 기록
+[10:36:10.194] [Log]    🎯 타겟: (960, 980)
+[10:36:10.194] [Log]    👁️ 동공: (1078, 514)
+[10:36:10.195] [Log]    📊 오차: 480.5px
+[10:36:10.195] [Log]    🔧 매핑: (1078,514) → (960,980)
+[10:36:10.195] [Log]    📈 정확도: 0.172
+[10:36:10.196] [Log] 📍 다음 점 9/9 - 위치: (1820, 980)
+[10:36:10.943] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:36:11.519] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
+[10:36:11.555] [Log] 🐱 고양이 방향 변경: X=-0.057 → Left
+고양이 방향 변경: X=-0.057 → Left
+[10:36:11.599] [Log] ✅ 정밀 보정 점 9/9 기록
+[10:36:11.600] [Log]    🎯 타겟: (1820, 980)
+[10:36:11.600] [Log]    👁️ 동공: (1057, 523)
+[10:36:11.600] [Log]    📊 오차: 889.6px
+[10:36:11.601] [Log]    🔧 매핑: (1057,523) → (1820,980)
+[10:36:11.601] [Log]    📈 정확도: 0.101
+[10:36:11.601] [Log] 🧮 정밀 보정 계산 시작 (고급 보간 알고리즘):
+[10:36:11.603] [Log] 📊 선형 변환 오프셋: (-0.0398, 0.0224)
+[10:36:11.603] [Log] 📊 선형 변환 스케일: (0.9309, 1.0438)
+[10:36:11.603] [Log] ✅ 정밀 9점 동공 기반 보정 완료!
+[10:36:11.604] [Log] 🧪 정밀 보정 정확도 테스트:
+[10:36:11.605] [Log]    점 1: 1096.1px → 0.0px (개선: 1096.1px)
+[10:36:11.605] [Log]    점 2: 418.4px → 0.0px (개선: 418.4px)
+[10:36:11.605] [Log]    점 3: 846.2px → 0.0px (개선: 846.2px)
+[10:36:11.606] [Log]    점 4: 970.0px → 966.0px (개선: 4.0px)
+[10:36:11.607] [Log]    점 5: 117.8px → 440.0px (개선: -322.2px)
+[10:36:11.607] [Log]    점 6: 754.7px → 0.0px (개선: 754.7px)
+[10:36:11.607] [Log]    점 7: 1067.2px → 0.0px (개선: 1067.2px)
+[10:36:11.608] [Log]    점 8: 480.5px → 1230.4px (개선: -750.0px)
+[10:36:11.608] [Log]    점 9: 889.6px → 440.0px (개선: 449.6px)
+[10:36:11.608] [Log] 📊 평균 원시 오차: 737.8px
+[10:36:11.608] [Log] 📊 평균 보정 오차: 341.8px
+[10:36:11.609] [Log] 📊 평균 개선: 396.0px (53.7%)
+[10:36:11.609] [Log] ✅ 정밀 보정이 정확도를 크게 향상시켰습니다!
+[10:36:11.609] [Log] 🎯 요구사항 테스트: (890,579) → (826,618), 목표(100,100)와의 오차: 892.3px
+[10:36:11.611] [Log] 🧪 요구사항 테스트: 동공(890,579) → 보정된 시선(826,618)
+[10:36:13.114] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 4개
+캣타워 데이터 저장: 레벨 1, 츄르 4개
+[10:36:13.117] [Log] 게임 데이터 저장: 행복도 99.9%
 게임 데이터 저장: 행복도 99.9%
-[08:22:51.563] [Log] 고양이 위치 저장: (2.99, -2.57)
-고양이 위치 저장: (2.99, -2.57)
-[08:22:51.566] [Log] 게임 데이터 저장 완료!
+[10:36:13.124] [Log] 고양이 위치 저장: (-0.95, -3.63)
+고양이 위치 저장: (-0.95, -3.63)
+[10:36:13.126] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
-[08:22:51.958] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.61
-[08:22:52.959] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.48
-[08:22:53.812] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[08:22:53.960] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:54.961] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:55.505] [Log] 츄르 생산: +2 (총 50개)
-츄르 생산: +2 (총 50개)
-[08:22:55.994] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:57.027] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:58.033] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:59.031] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:22:59.644] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
-[08:23:00.031] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:01.033] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:02.034] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:03.264] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:04.294] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:05.296] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:05.507] [Log] 츄르 생산: +2 (총 52개)
-츄르 생산: +2 (총 52개)
-[08:23:06.292] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:07.294] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:08.295] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:09.295] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:10.296] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:11.294] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:12.298] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:13.295] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:14.297] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:15.300] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:15.513] [Log] 츄르 생산: +2 (총 54개)
-츄르 생산: +2 (총 54개)
-[08:23:16.300] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:16.513] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 54개
-캣타워 데이터 저장: 레벨 1, 츄르 54개
-[08:23:16.518] [Log] 게임 데이터 저장: 행복도 100.0%
+[10:36:13.163] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.01
+[10:36:13.884] [Log] 츄르 생산: +2 (총 6개)
+츄르 생산: +2 (총 6개)
+[10:36:14.097] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
+[10:36:15.652] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:17.842] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:19.969] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:22.117] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:23.911] [Log] 츄르 생산: +2 (총 8개)
+츄르 생산: +2 (총 8개)
+[10:36:24.228] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:26.206] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
+[10:36:26.505] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:28.695] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:31.004] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:33.271] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:33.948] [Log] 츄르 생산: +2 (총 10개)
+츄르 생산: +2 (총 10개)
+[10:36:35.576] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:38.119] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:40.404] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:42.692] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:43.137] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 10개
+캣타워 데이터 저장: 레벨 1, 츄르 10개
+[10:36:43.142] [Log] 게임 데이터 저장: 행복도 100.0%
 게임 데이터 저장: 행복도 100.0%
-[08:23:16.525] [Log] 고양이 위치 저장: (-0.28, -3.59)
-고양이 위치 저장: (-0.28, -3.59)
-[08:23:16.528] [Log] 게임 데이터 저장 완료!
+[10:36:43.152] [Log] 고양이 위치 저장: (-2.45, -3.83)
+고양이 위치 저장: (-2.45, -3.83)
+[10:36:43.155] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
-[08:23:17.546] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:18.546] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:19.549] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:20.547] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:21.546] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:22.547] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:23.546] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:24.550] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:25.514] [Log] 츄르 생산: +2 (총 56개)
-츄르 생산: +2 (총 56개)
-[08:23:25.550] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:23:26.131] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Idle
-[08:23:26.553] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:23:27.551] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:23:28.550] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:23:29.551] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:23:30.551] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:23:31.775] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:23:32.226] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[08:23:32.239] [Log] 🐱 고양이 방향 변경: X=0.024 → Right
-고양이 방향 변경: X=0.024 → Right
-[08:23:32.775] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.47
-[08:23:33.779] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.43
-[08:23:34.777] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.48
-[08:23:34.878] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[08:23:35.527] [Log] 츄르 생산: +2 (총 58개)
-츄르 생산: +2 (총 58개)
-[08:23:35.776] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:36.777] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:37.776] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:38.777] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:39.779] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:40.783] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:41.782] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:42.782] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:43.782] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:44.782] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:45.539] [Log] 츄르 생산: +2 (총 60개)
-츄르 생산: +2 (총 60개)
-[08:23:45.992] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:46.519] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 60개
-캣타워 데이터 저장: 레벨 1, 츄르 60개
-[08:23:46.522] [Log] 게임 데이터 저장: 행복도 99.9%
-게임 데이터 저장: 행복도 99.9%
-[08:23:46.529] [Log] 고양이 위치 저장: (3.52, -2.59)
-고양이 위치 저장: (3.52, -2.59)
-[08:23:46.533] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[08:23:47.005] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:48.011] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:49.007] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:50.008] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:51.009] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:52.009] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:53.010] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:54.014] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:55.018] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:55.546] [Log] 츄르 생산: +2 (총 62개)
-츄르 생산: +2 (총 62개)
-[08:23:56.020] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:57.020] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:23:57.202] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[08:23:57.220] [Log] 🐱 고양이 방향 변경: X=-0.024 → Left
-고양이 방향 변경: X=-0.024 → Left
-[08:23:58.021] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.51
-[08:23:59.023] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.47
-[08:23:59.651] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[08:24:00.255] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:01.256] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:02.259] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:03.257] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:04.258] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:05.260] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:05.562] [Log] 츄르 생산: +2 (총 64개)
-츄르 생산: +2 (총 64개)
-[08:24:06.264] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:06.965] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
-[08:24:07.265] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:08.265] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:09.268] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:10.268] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:11.272] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:12.275] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:13.278] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:14.540] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:15.542] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:15.572] [Log] 츄르 생산: +2 (총 66개)
-츄르 생산: +2 (총 66개)
-[08:24:16.523] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 66개
-캣타워 데이터 저장: 레벨 1, 츄르 66개
-[08:24:16.528] [Log] 게임 데이터 저장: 행복도 100.0%
+[10:36:43.974] [Log] 츄르 생산: +2 (총 12개)
+츄르 생산: +2 (총 12개)
+[10:36:44.979] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:47.276] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:49.724] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
+[10:36:51.584] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Idle
+[10:36:52.004] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:54.006] [Log] 츄르 생산: +2 (총 14개)
+츄르 생산: +2 (총 14개)
+[10:36:54.230] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
+[10:36:55.716] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
+[10:36:55.755] [Log] 🐱 고양이 방향 변경: X=0.058 → Right
+고양이 방향 변경: X=0.058 → Right
+[10:36:56.464] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.34
+[10:36:58.586] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
+[10:36:58.702] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:37:01.150] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:37:03.318] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:37:04.034] [Log] 츄르 생산: +2 (총 16개)
+츄르 생산: +2 (총 16개)
+[10:37:05.290] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
+[10:37:05.383] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
+[10:37:07.259] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
+[10:37:09.335] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
+[10:37:11.607] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
+[10:37:13.139] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 16개
+캣타워 데이터 저장: 레벨 1, 츄르 16개
+[10:37:13.143] [Log] 게임 데이터 저장: 행복도 100.0%
 게임 데이터 저장: 행복도 100.0%
-[08:24:16.539] [Log] 고양이 위치 저장: (-0.04, -3.51)
-고양이 위치 저장: (-0.04, -3.51)
-[08:24:16.544] [Log] 게임 데이터 저장 완료!
+[10:37:13.149] [Log] 고양이 위치 저장: (1.82, -3.25)
+고양이 위치 저장: (1.82, -3.25)
+[10:37:13.152] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
-[08:24:16.572] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:17.568] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:18.569] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:19.571] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:20.573] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:21.577] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:22.578] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[08:24:23.079] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Idle
-[08:24:23.583] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:24.580] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:25.580] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:25.582] [Log] 츄르 생산: +2 (총 68개)
-츄르 생산: +2 (총 68개)
-[08:24:26.580] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:27.581] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:28.802] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:29.803] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:30.805] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:31.806] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:32.810] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:33.960] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:35.012] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[08:24:35.034] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 0.00
-[08:24:35.035] [Log] 🐱 고양이 방향 변경: X=0.024 → Right
-고양이 방향 변경: X=0.024 → Right
-[08:24:35.593] [Log] 츄르 생산: +2 (총 70개)
-츄르 생산: +2 (총 70개)
-[08:24:36.157] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.82
-[08:24:37.219] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.91
-[08:24:37.318] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[08:24:38.279] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:24:39.434] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:24:40.443] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 70개
-캣타워 데이터 저장: 레벨 1, 츄르 70개
-[08:24:40.448] [Log] 게임 데이터 저장: 행복도 99.9%
-게임 데이터 저장: 행복도 99.9%
-[08:24:40.457] [Log] 고양이 위치 저장: (3.31, -2.64)
-고양이 위치 저장: (3.31, -2.64)
-[08:24:40.459] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[08:24:40.527] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:24:41.675] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[08:24:42.436] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
-[08:24:42.759] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[08:24:44.586] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[08:24:45.320] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 70개
-캣타워 데이터 저장: 레벨 1, 츄르 70개
-[08:24:45.326] [Log] 게임 데이터 저장: 행복도 100.0%
+[10:37:13.789] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
+[10:37:13.878] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 16개
+캣타워 데이터 저장: 레벨 1, 츄르 16개
+[10:37:13.882] [Log] 게임 데이터 저장: 행복도 100.0%
 게임 데이터 저장: 행복도 100.0%
-[08:24:45.337] [Log] 고양이 위치 저장: (3.31, -2.64)
-고양이 위치 저장: (3.31, -2.64)
-[08:24:45.342] [Log] 게임 데이터 저장 완료!
+[10:37:13.889] [Log] 고양이 위치 저장: (1.82, -3.25)
+고양이 위치 저장: (1.82, -3.25)
+[10:37:13.892] [Log] 게임 데이터 저장 완료!
+게임 데이터 저장 완료!
+[10:37:13.995] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 16개
+캣타워 데이터 저장: 레벨 1, 츄르 16개
+[10:37:13.999] [Log] 게임 데이터 저장: 행복도 100.0%
+게임 데이터 저장: 행복도 100.0%
+[10:37:14.006] [Log] 고양이 위치 저장: (1.82, -3.25)
+고양이 위치 저장: (1.82, -3.25)
+[10:37:14.012] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
 === Debug Logger 종료 ===
