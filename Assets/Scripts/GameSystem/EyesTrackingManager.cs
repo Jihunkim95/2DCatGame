@@ -286,7 +286,7 @@ public class EyesTrackingManager : MonoBehaviour
         scoreObj.transform.SetParent(canvas.transform, false);
 
         Text text = scoreObj.AddComponent<Text>();
-        text.text = "Score: 0";
+        text.text = "츄르: 0";
         text.fontSize = 20;
         text.color = Color.cyan;
         text.alignment = TextAnchor.MiddleLeft;
@@ -921,7 +921,7 @@ public class EyesTrackingManager : MonoBehaviour
         if (scoreText != null)
         {
             int totalChur = CatTower.Instance != null ? CatTower.Instance.churCount : 0;
-            scoreText.text = $"Score: {currentScore} | Chur: {totalChur}";
+            scoreText.text = $"희득 츄르: {currentScore} \n현재 츄르: {totalChur}";
         }
     }
 
@@ -986,7 +986,7 @@ public class EyesTrackingManager : MonoBehaviour
             resultObj.transform.SetParent(canvas.transform, false);
 
             Text resultText = resultObj.AddComponent<Text>();
-            resultText.text = $"Game Over!\nScore: {currentScore}\nChur Earned: {currentScore}";
+            resultText.text = $"Game Over!\n{currentScore}개 츄르 냥냥";
             resultText.fontSize = 28;
             resultText.color = Color.green;
             resultText.alignment = TextAnchor.MiddleCenter;
