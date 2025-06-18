@@ -2,433 +2,320 @@
 Unity 버전: 2022.3.55f1
 플랫폼: WindowsEditor
 해상도: 2560x1440
-[10:38:09.577] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[10:38:09.583] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[10:38:09.584] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[10:38:09.585] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
-[10:38:09.821] [Log] 마지막 저장: 2025-06-18 오전 10:31:33, 경과 시간: 6.6분
-마지막 저장: 2025-06-18 오전 10:31:33, 경과 시간: 6.6분
-[10:38:09.822] [Log] 오프라인 행복도 감소: -1.1% (현재: 98.9%)
-오프라인 행복도 감소: -1.1% (현재: 98.9%)
-[10:38:09.823] [Log] 게임 데이터 로드 시작!
+[11:49:05.844] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[11:49:05.850] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[11:49:05.850] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[11:49:05.853] [Warning] DontDestroyOnLoad only works for root GameObjects or components on root GameObjects.
+[11:49:06.297] [Log] 마지막 저장: 2025-06-18 오전 11:46:00, 경과 시간: 3.1분
+마지막 저장: 2025-06-18 오전 11:46:00, 경과 시간: 3.1분
+[11:49:06.298] [Log] 오프라인 행복도 감소: -0.5% (현재: 99.5%)
+오프라인 행복도 감소: -0.5% (현재: 99.5%)
+[11:49:06.300] [Log] 게임 데이터 로드 시작!
 게임 데이터 로드 시작!
-[10:38:09.825] [Log] 세이브 시스템 초기화 완료
+[11:49:06.300] [Log] 세이브 시스템 초기화 완료
 세이브 시스템 초기화 완료 - Easy Save 사용
-[10:38:09.826] [Log] UI Layer 자동 설정: Layer 5
-[10:38:09.826] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
-[10:38:09.827] [Log] ClickDetector 초기화 완료 - UI 감지 포함
+[11:49:06.301] [Log] UI Layer 자동 설정: Layer 5
+[11:49:06.302] [Log] 레이어 마스크 설정 완료 - Interactable: 256, Tower: 512, UI: 32
+[11:49:06.303] [Log] ClickDetector 초기화 완료 - UI 감지 포함
 ClickDetector 초기화 완료 - UI 감지 포함
-[10:38:09.828] [Log] Minigamebtn 이벤트 연결 완료
-[10:38:09.829] [Warning] ⚠️ SimplifiedEyeTracker를 찾을 수 없습니다.
-[10:38:09.830] [Log] 🔄 마우스 모드로 폴백
-[10:38:09.831] [Log] EyesTracking 미니게임 시스템 초기화 완료
-[10:38:09.831] [Log] 👁️ 시선 추적 모드: Mouse
+[11:49:06.304] [Log] Minigamebtn 이벤트 연결 완료
+[11:49:06.304] [Warning] ⚠️ SimplifiedEyeTracker를 찾을 수 없습니다.
+[11:49:06.305] [Log] 🔄 마우스 모드로 폴백
+[11:49:06.305] [Log] EyesTracking 미니게임 시스템 초기화 완료
+[11:49:06.306] [Log] 👁️ 시선 추적 모드: Mouse
 EyesTracking 미니게임 시스템 초기화 완료 - 모드: Mouse
-[10:38:09.833] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
-[10:38:09.852] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
+[11:49:06.307] [Log] DungGeunMo 폰트 로드 성공: Font/DungGeunMo SDF
+[11:49:06.326] [Log] 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
 리팩터링된 컨텍스트 메뉴 시스템 초기화 완료
-[10:38:09.853] [Log] 🎯 실제 웹캠 눈 추적 시스템 초기화 시작
-[10:38:09.857] [Log] 📹 발견된 웹캠: 3개
-[10:38:09.858] [Log]   0: USB 2.0 Camera
-[10:38:09.858] [Log]   1: Eyeware camera
-[10:38:09.858] [Log]   2: OBS Virtual Camera
-[10:38:11.647] [Log] ✅ 웹캠 초기화 완료: USB 2.0 Camera (1920x1080)
-[10:38:11.648] [Log] 카메라 설정 완료!
+[11:49:06.327] [Log] 🎯 실제 웹캠 눈 추적 시스템 초기화 시작
+[11:49:06.333] [Log] 📹 발견된 웹캠: 3개
+[11:49:06.333] [Log]   0: USB 2.0 Camera
+[11:49:06.334] [Log]   1: Eyeware camera
+[11:49:06.334] [Log]   2: OBS Virtual Camera
+[11:49:08.215] [Log] ✅ 웹캠 초기화 완료: USB 2.0 Camera (1920x1080)
+[11:49:08.216] [Log] 카메라 설정 완료!
 카메라 Clear Flags: SolidColor
 카메라 Background Color: RGBA(0.000, 0.000, 0.000, 1.000)
 검은색 강제 렌더링 모드 활성화!
-[10:38:11.651] [Log] 모자 스프라이트 할당 성공: 고양이 모자 1
-[10:38:11.652] [Log] 모자 스프라이트 할당 성공: 고양이 모자 2
-[10:38:11.653] [Log] 모자 스프라이트 할당 성공: 고양이 모자 3
-[10:38:11.653] [Log] 모자 아이템 3개 생성 완료
-[10:38:11.656] [Log] 아이템 데이터 로드 완료 - 소유: 2개, 착용: 고양이 모자 1
-[10:38:11.656] [Log] 아이템 매니저 초기화 완료 - 총 3개 아이템
+[11:49:08.219] [Log] 모자 스프라이트 할당 성공: 고양이 모자 1
+[11:49:08.220] [Log] 모자 스프라이트 할당 성공: 고양이 모자 2
+[11:49:08.220] [Log] 모자 스프라이트 할당 성공: 고양이 모자 3
+[11:49:08.221] [Log] 모자 아이템 3개 생성 완료
+[11:49:08.225] [Log] 아이템 데이터 로드 완료 - 소유: 2개, 착용: 고양이 모자 2
+[11:49:08.225] [Log] 아이템 매니저 초기화 완료 - 총 3개 아이템
 아이템 매니저 초기화 완료 - 총 3개 아이템
-[10:38:11.660] [Log] 타워 이미지 Resources에서 로드 성공
-[10:38:11.662] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[11:49:08.228] [Log] 타워 이미지 Resources에서 로드 성공
+[11:49:08.230] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[10:38:11.663] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
+[11:49:08.231] [Log] 캣타워 생성 완료 - 업그레이드 가능 빌드
 캣타워 생성 완료 - 업그레이드 가능 빌드
-[10:38:11.666] [Log] 아이템 UI 초기화 완료 - 패널 상태: False
+[11:49:08.235] [Log] 아이템 UI 초기화 완료 - 패널 상태: False
 아이템 UI 초기화 완료 (우측하단 세로배치)
-[10:38:11.668] [Log] 게임 데이터 매니저 초기화
-게임 데이터 매니저 초기화 - 초기 행복도: 98.90014%
-[10:38:11.670] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
-[10:38:11.671] [Log] 고양이 위치 설정: (4.22, -3.71, -0.01)
-[10:38:12.141] [Log] ✅ 얼굴 감지 모델 로드 성공
-[10:38:12.263] [Log] ✅ OpenCV 초기화 완료
-[10:38:12.264] [Log] 보정 좌표 설정 완료 - 여백: 150px, 화면 크기: 2560x1440
-[10:38:12.265] [Log] ✅ 실제 웹캠 눈 추적 시스템 초기화 완료!
-[10:38:12.266] [Log] 📹 웹캠 기반 실시간 얼굴/눈 감지
-[10:38:12.267] [Log] ⌨️ C키: 보정 시작, R키: 보정 리셋, Space: 보정 점 기록
-[10:38:12.691] [Log] EyesTracking 미니게임 시작! 모드: Mouse
+[11:49:08.238] [Log] 게임 데이터 매니저 초기화
+게임 데이터 매니저 초기화 - 초기 행복도: 99.48429%
+[11:49:08.241] [Log] 움직임 영역 설정: X(-7.89 ~ 7.89), Y(-4.50 ~ -2.50)
+[11:49:08.241] [Log] 고양이 위치 설정: (-1.11, -2.73, -0.01)
+[11:49:08.700] [Log] ✅ 얼굴 감지 모델 로드 성공
+[11:49:08.763] [Log] ✅ OpenCV 초기화 완료
+[11:49:08.765] [Log] 보정 좌표 설정 완료 - 여백: 150px, 화면 크기: 2560x1440
+[11:49:08.765] [Log] ✅ 실제 웹캠 눈 추적 시스템 초기화 완료!
+[11:49:08.766] [Log] 📹 웹캠 기반 실시간 얼굴/눈 감지
+[11:49:08.766] [Log] ⌨️ C키: 보정 시작, R키: 보정 리셋, Space: 보정 점 기록
+[11:49:09.412] [Log] EyesTracking 미니게임 시작! 모드: Mouse
 EyesTracking 미니게임 시작! 모드: Mouse
-[10:38:12.693] [Log] 모든 츄르 정리 완료
-[10:38:12.693] [Log] 고양이 자동 움직임 비활성화 완료
-[10:38:12.694] [Log] Point 스프라이트 생성 완료
-[10:38:12.695] [Log] 🔒 미니게임 중 click-through 비활성화
-[10:38:12.695] [Log] 🖱️ 마우스 모드로 미니게임 진행
-[10:38:13.090] [Log] 타워 이미지 Resources에서 로드 성공
-[10:38:13.092] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
+[11:49:09.413] [Log] 모든 츄르 정리 완료
+[11:49:09.414] [Log] 고양이 자동 움직임 비활성화 완료
+[11:49:09.415] [Log] Point 스프라이트 생성 완료
+[11:49:09.416] [Log] 🔒 미니게임 중 click-through 비활성화
+[11:49:09.416] [Log] 🖱️ 마우스 모드로 미니게임 진행
+[11:49:09.417] [Log] 고양이 방향 강제 설정: Right
+[11:49:09.418] [Log] 고양이 목표 설정: (8.75, -3.75, 0.00)
+[11:49:09.666] [Log] 타워 이미지 Resources에서 로드 성공
+[11:49:09.668] [Log] 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
 타워 이미지 로드 성공 - 레벨 1 (크기: 213x256, PPU: 80)
-[10:38:13.092] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 11개
-캣타워 데이터 로드: 레벨 1, 츄르 11개
-[10:38:13.093] [Log] 게임 데이터 로드: 행복도 100.0%
-게임 데이터 로드: 행복도 100.0%
-[10:38:13.095] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
+[11:49:09.668] [Log] 캣타워 데이터 로드: 레벨 1, 츄르 16개
+캣타워 데이터 로드: 레벨 1, 츄르 16개
+[11:49:09.669] [Log] 게임 데이터 로드: 행복도 98.2%
+게임 데이터 로드: 행복도 98.2%
+[11:49:09.671] [Log] 에디터에서는 윈도우 설정이 비활성화됩니다.
 에디터에서는 윈도우 설정이 비활성화됩니다.
-[10:38:13.706] [Log] 고양이 위치 로드: (0.92, -3.57)
-고양이 위치 로드: (0.92, -3.57)
-[10:38:15.740] [Log] 츄르 생산: +2 (총 13개)
-츄르 생산: +2 (총 13개)
-[10:38:17.677] [Log] 츄르 생성됨: (-6.51, -1.52, 0.00), 총 1개
-[10:38:18.062] [Log] 고양이 방향 강제 설정: Right
-[10:38:18.064] [Log] 고양이 목표 설정: (8.63, -4.47, 0.00)
-[10:38:19.433] [Log] 고양이 목표 설정: (8.63, -4.35, 0.00)
-[10:38:22.680] [Log] 츄르 생성됨: (-8.02, 1.58, 0.00), 총 2개
-[10:38:22.900] [Log] 고양이가 목표 지점에 도달했습니다.
-[10:38:25.750] [Log] 츄르 생산: +2 (총 15개)
-츄르 생산: +2 (총 15개)
-[10:38:27.688] [Log] 츄르 생성됨: (-3.45, 4.06, 0.00), 총 3개
-[10:38:32.691] [Log] 츄르 생성됨: (-2.15, -3.50, 0.00), 총 4개
-[10:38:35.797] [Log] 츄르 생산: +2 (총 17개)
-츄르 생산: +2 (총 17개)
-[10:38:36.014] [Log] 고양이 방향 강제 설정: Left
-[10:38:36.016] [Log] 고양이 목표 설정: (-2.94, -3.67, 0.00)
-[10:38:38.066] [Log] 츄르 생성됨: (-4.41, -2.32, 0.00), 총 5개
-[10:38:38.200] [Log] 고양이 목표 설정: (-2.48, -3.45, 0.00)
-[10:38:39.490] [Log] 고양이 목표 설정: (-2.48, -3.45, 0.00)
-[10:38:40.355] [Log] 고양이 목표 설정: (-2.41, -3.46, 0.00)
-[10:38:41.299] [Log] 고양이 목표 설정: (-2.41, -3.46, 0.00)
-[10:38:42.443] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 17개
-캣타워 데이터 저장: 레벨 1, 츄르 17개
-[10:38:42.449] [Log] 게임 데이터 저장: 행복도 99.9%
-게임 데이터 저장: 행복도 99.9%
-[10:38:42.457] [Log] 고양이 위치 저장: (-0.88, -3.60)
-고양이 위치 저장: (-0.88, -3.60)
-[10:38:42.462] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:38:43.001] [Log] 고양이 목표 설정: (-2.51, -3.26, 0.00)
-[10:38:43.004] [Log] 츄르 +1 (총 18개)
-[10:38:43.004] [Log] 고양이가 츄르를 먹었습니다! 점수: 1
-[10:38:43.068] [Log] 츄르 생성됨: (1.95, -1.72, 0.00), 총 5개
-[10:38:43.422] [Log] 고양이 목표 설정: (-4.46, -2.46, 0.00)
-[10:38:43.804] [Log] 고양이 목표 설정: (-4.83, -2.12, 0.00)
-[10:38:45.005] [Log] 츄르 +1 (총 19개)
-[10:38:45.007] [Log] 고양이가 츄르를 먹었습니다! 점수: 2
-[10:38:45.220] [Log] 고양이 방향 강제 설정: Right
-[10:38:45.222] [Log] 고양이 목표 설정: (1.23, -1.94, 0.00)
-[10:38:45.820] [Log] 고양이 목표 설정: (2.40, -1.70, 0.00)
-[10:38:46.151] [Log] 고양이 목표 설정: (2.40, -1.70, 0.00)
-[10:38:46.168] [Log] 츄르 생산: +2 (총 21개)
+[11:49:10.091] [Log] 츄르 생산: +2 (총 18개)
+츄르 생산: +2 (총 18개)
+[11:49:10.172] [Log] 고양이 위치 로드: (5.99, 2.81)
+고양이 위치 로드: (5.99, 2.81)
+[11:49:11.368] [Log] 고양이 방향 강제 설정: Left
+[11:49:11.368] [Log] 고양이 목표 설정: (3.19, 0.19, 0.00)
+[11:49:13.449] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:14.260] [Log] 츄르 생성됨: (0.69, 3.46, 0.00), 총 1개
+[11:49:14.378] [Log] 고양이 목표 설정: (2.55, 2.05, 0.00)
+[11:49:14.972] [Log] 고양이 목표 설정: (0.43, 3.90, 0.00)
+[11:49:15.414] [Log] 고양이 목표 설정: (0.24, 3.59, 0.00)
+[11:49:15.963] [Log] 고양이 목표 설정: (0.24, 3.75, 0.00)
+[11:49:16.269] [Log] 고양이 목표 설정: (0.29, 3.82, 0.00)
+[11:49:16.736] [Log] 츄르 +1 (총 19개)
+[11:49:17.303] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:17.435] [Log] 고양이 목표 설정: (0.35, 1.39, 0.00)
+[11:49:18.196] [Log] 고양이 방향 강제 설정: Right
+[11:49:18.196] [Log] 고양이 목표 설정: (3.72, 1.28, 0.00)
+[11:49:19.423] [Log] 츄르 생성됨: (5.49, 1.27, 0.00), 총 1개
+[11:49:19.997] [Log] 고양이 목표 설정: (6.03, 0.34, 0.00)
+[11:49:20.170] [Log] 고양이 목표 설정: (6.21, 1.22, 0.00)
+[11:49:20.257] [Log] 츄르 생산: +2 (총 21개)
 츄르 생산: +2 (총 21개)
-[10:38:47.713] [Log] 고양이 목표 설정: (2.10, -1.66, 0.00)
-[10:38:48.078] [Log] 츄르 생성됨: (4.57, 1.40, 0.00), 총 5개
-[10:38:49.042] [Log] 츄르 +1 (총 22개)
-[10:38:49.043] [Log] 고양이가 츄르를 먹었습니다! 점수: 3
-[10:38:49.242] [Log] 고양이 목표 설정: (5.26, 1.11, 0.00)
-[10:38:49.704] [Log] 고양이 목표 설정: (4.91, 1.51, 0.00)
-[10:38:51.239] [Log] 고양이 목표 설정: (5.13, 1.60, 0.00)
-[10:38:51.855] [Log] 츄르 +1 (총 23개)
-[10:38:51.856] [Log] 고양이가 츄르를 먹었습니다! 점수: 4
-[10:38:52.139] [Log] 고양이 방향 강제 설정: Left
-[10:38:52.140] [Log] 고양이 목표 설정: (2.18, 1.85, 0.00)
-[10:38:53.093] [Log] 고양이 목표 설정: (-3.92, 4.08, 0.00)
-[10:38:53.094] [Log] 츄르 생성됨: (5.60, 1.89, 0.00), 총 4개
-[10:38:54.590] [Log] 고양이 방향 강제 설정: Right
-[10:38:54.592] [Log] 고양이 목표 설정: (5.70, 1.82, 0.00)
-[10:38:55.054] [Log] 고양이 목표 설정: (5.74, 1.86, 0.00)
-[10:38:56.326] [Log] 츄르 +1 (총 24개)
-[10:38:56.327] [Log] 고양이가 츄르를 먹었습니다! 점수: 5
-[10:38:56.562] [Log] 고양이 방향 강제 설정: Left
-[10:38:56.563] [Log] 고양이 목표 설정: (2.86, 1.68, 0.00)
-[10:38:56.629] [Log] 츄르 생산: +2 (총 26개)
-츄르 생산: +2 (총 26개)
-[10:38:57.015] [Log] 고양이 목표 설정: (1.84, 2.51, 0.00)
-[10:38:57.278] [Log] 고양이 목표 설정: (3.70, 3.23, 0.00)
-[10:38:57.478] [Log] 고양이 목표 설정: (3.72, 3.15, 0.00)
-[10:38:57.829] [Log] 고양이가 목표 지점에 도달했습니다.
-[10:38:57.964] [Log] 고양이 목표 설정: (0.73, 3.33, 0.00)
-[10:38:58.497] [Log] 고양이 목표 설정: (-0.89, 4.08, 0.00)
-[10:38:58.546] [Log] 츄르 생성됨: (-0.61, -2.87, 0.00), 총 4개
-[10:38:58.981] [Log] 고양이 목표 설정: (-3.51, 4.29, 0.00)
-[10:38:59.447] [Log] 고양이 목표 설정: (-3.72, 3.98, 0.00)
-[10:39:02.672] [Log] 츄르 +1 (총 27개)
-[10:39:02.672] [Log] 고양이가 츄르를 먹었습니다! 점수: 6
-[10:39:03.427] [Log] 고양이 방향 강제 설정: Right
-[10:39:03.428] [Log] 고양이 목표 설정: (1.07, -0.73, 0.00)
-[10:39:03.558] [Log] 츄르 생성됨: (7.53, -3.09, 0.00), 총 4개
-[10:39:04.206] [Log] 고양이 목표 설정: (0.10, -0.63, 0.00)
-[10:39:04.562] [Log] 고양이 방향 강제 설정: Left
-[10:39:04.563] [Log] 고양이 목표 설정: (-3.20, -1.30, 0.00)
-[10:39:04.894] [Log] 고양이 목표 설정: (-4.91, -1.73, 0.00)
-[10:39:05.252] [Log] 고양이 목표 설정: (-6.39, 0.80, 0.00)
-[10:39:05.583] [Log] 고양이 목표 설정: (-6.91, 0.92, 0.00)
-[10:39:06.168] [Log] 고양이 목표 설정: (-8.02, 1.25, 0.00)
-[10:39:06.639] [Log] 츄르 생산: +2 (총 29개)
+[11:49:20.402] [Log] 고양이 목표 설정: (6.22, 1.24, 0.00)
+[11:49:20.653] [Log] 고양이 목표 설정: (6.24, 0.92, 0.00)
+[11:49:20.881] [Log] 고양이 목표 설정: (6.24, 0.92, 0.00)
+[11:49:21.264] [Log] 츄르 +1 (총 22개)
+[11:49:21.549] [Log] 고양이 방향 강제 설정: Left
+[11:49:21.550] [Log] 고양이 목표 설정: (4.27, -0.27, 0.00)
+[11:49:21.787] [Log] 고양이 목표 설정: (3.21, -0.35, 0.00)
+[11:49:22.375] [Log] 고양이 목표 설정: (2.88, -0.11, 0.00)
+[11:49:22.961] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:23.012] [Log] 고양이 목표 설정: (3.11, 0.83, 0.00)
+[11:49:23.229] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:23.344] [Log] 고양이 목표 설정: (3.12, 1.44, 0.00)
+[11:49:23.733] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:23.797] [Log] 고양이 목표 설정: (2.34, 1.07, 0.00)
+[11:49:24.033] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:24.300] [Log] 고양이 목표 설정: (2.27, 1.03, 0.00)
+[11:49:24.316] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:24.430] [Log] 츄르 생성됨: (-3.24, 3.44, 0.00), 총 1개
+[11:49:24.731] [Log] 고양이 목표 설정: (1.75, 0.95, 0.00)
+[11:49:24.916] [Log] 고양이 목표 설정: (-1.44, 2.15, 0.00)
+[11:49:25.135] [Log] 고양이 목표 설정: (-5.27, 3.38, 0.00)
+[11:49:25.352] [Log] 고양이 목표 설정: (-5.03, 3.80, 0.00)
+[11:49:25.535] [Log] 고양이 목표 설정: (-4.96, 3.97, 0.00)
+[11:49:25.765] [Log] 고양이 목표 설정: (-4.76, 4.01, 0.00)
+[11:49:26.020] [Log] 고양이 목표 설정: (-4.69, 3.99, 0.00)
+[11:49:26.285] [Log] 고양이 목표 설정: (-4.43, 3.98, 0.00)
+[11:49:26.568] [Log] 고양이 목표 설정: (-4.17, 3.95, 0.00)
+[11:49:26.816] [Log] 고양이 목표 설정: (-3.71, 3.95, 0.00)
+[11:49:27.018] [Log] 고양이 목표 설정: (-3.64, 3.93, 0.00)
+[11:49:27.213] [Log] 고양이 목표 설정: (-3.64, 3.93, 0.00)
+[11:49:27.446] [Log] 고양이 목표 설정: (-3.70, 3.87, 0.00)
+[11:49:27.663] [Log] 고양이 목표 설정: (-3.74, 3.68, 0.00)
+[11:49:27.865] [Log] 고양이 목표 설정: (-3.78, 3.63, 0.00)
+[11:49:28.085] [Log] 고양이 목표 설정: (-3.79, 3.60, 0.00)
+[11:49:28.337] [Log] 고양이 목표 설정: (-3.78, 3.67, 0.00)
+[11:49:28.519] [Log] 츄르 +1 (총 23개)
+[11:49:29.123] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:29.324] [Log] 고양이 방향 강제 설정: Right
+[11:49:29.324] [Log] 고양이 목표 설정: (-1.07, 1.86, 0.00)
+[11:49:29.447] [Log] 츄르 생성됨: (-4.23, 2.11, 0.00), 총 1개
+[11:49:29.778] [Log] 고양이 목표 설정: (-0.52, 1.30, 0.00)
+[11:49:29.945] [Log] 고양이 방향 강제 설정: Left
+[11:49:29.945] [Log] 고양이 목표 설정: (-5.04, 1.82, 0.00)
+[11:49:30.258] [Log] 고양이 목표 설정: (-6.18, 2.07, 0.00)
+[11:49:30.258] [Log] 츄르 생산: +2 (총 25개)
+츄르 생산: +2 (총 25개)
+[11:49:30.390] [Log] 고양이 목표 설정: (-5.92, 1.92, 0.00)
+[11:49:30.657] [Log] 고양이 목표 설정: (-5.27, 1.74, 0.00)
+[11:49:30.657] [Log] 츄르 +1 (총 26개)
+[11:49:30.806] [Log] 고양이 목표 설정: (-4.81, 1.60, 0.00)
+[11:49:31.128] [Log] 고양이 방향 강제 설정: Right
+[11:49:31.129] [Log] 고양이 목표 설정: (-3.70, 1.10, 0.00)
+[11:49:31.328] [Log] 고양이 목표 설정: (-1.51, 0.99, 0.00)
+[11:49:31.526] [Log] 고양이 목표 설정: (-0.68, 0.72, 0.00)
+[11:49:31.747] [Log] 고양이 목표 설정: (-0.56, 0.22, 0.00)
+[11:49:31.964] [Log] 고양이 목표 설정: (-0.82, -0.03, 0.00)
+[11:49:32.163] [Log] 고양이 목표 설정: (-1.28, -0.20, 0.00)
+[11:49:32.374] [Log] 고양이 목표 설정: (-2.19, -0.26, 0.00)
+[11:49:32.558] [Log] 고양이 목표 설정: (-2.39, -0.29, 0.00)
+[11:49:32.776] [Log] 고양이 목표 설정: (-2.23, -0.31, 0.00)
+[11:49:33.078] [Log] 고양이 목표 설정: (-1.28, -0.03, 0.00)
+[11:49:33.330] [Log] 고양이 목표 설정: (-0.23, 0.05, 0.00)
+[11:49:33.596] [Log] 고양이 목표 설정: (0.48, 0.24, 0.00)
+[11:49:33.859] [Log] 고양이 목표 설정: (0.99, 0.43, 0.00)
+[11:49:34.442] [Log] 고양이 목표 설정: (1.11, 1.02, 0.00)
+[11:49:34.459] [Log] 츄르 생성됨: (-3.39, 1.46, 0.00), 총 1개
+[11:49:34.861] [Log] 고양이 방향 강제 설정: Left
+[11:49:34.863] [Log] 고양이 목표 설정: (-2.88, 0.77, 0.00)
+[11:49:35.028] [Log] 고양이 목표 설정: (-3.45, 1.29, 0.00)
+[11:49:35.207] [Log] 고양이 목표 설정: (-3.61, 1.54, 0.00)
+[11:49:35.408] [Log] 고양이 목표 설정: (-3.65, 1.77, 0.00)
+[11:49:35.607] [Log] 고양이 목표 설정: (-3.72, 1.77, 0.00)
+[11:49:35.791] [Log] 고양이 목표 설정: (-3.74, 1.74, 0.00)
+[11:49:35.971] [Log] 고양이 목표 설정: (-3.74, 1.70, 0.00)
+[11:49:36.421] [Log] 고양이 목표 설정: (-3.74, 1.67, 0.00)
+[11:49:36.689] [Log] 고양이 목표 설정: (-3.74, 1.67, 0.00)
+[11:49:36.789] [Log] 츄르 +1 (총 27개)
+[11:49:36.973] [Log] 고양이 목표 설정: (-3.94, 1.60, 0.00)
+[11:49:37.188] [Log] 고양이 목표 설정: (-4.29, 0.95, 0.00)
+[11:49:37.411] [Log] 고양이 방향 강제 설정: Right
+[11:49:37.413] [Log] 고양이 목표 설정: (-2.84, 0.15, 0.00)
+[11:49:37.645] [Log] 고양이 목표 설정: (-0.67, 0.27, 0.00)
+[11:49:37.876] [Log] 고양이 목표 설정: (-0.12, 0.53, 0.00)
+[11:49:38.074] [Log] 고양이 목표 설정: (-0.01, 0.58, 0.00)
+[11:49:38.806] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 27개
+캣타워 데이터 저장: 레벨 1, 츄르 27개
+[11:49:38.810] [Log] 게임 데이터 저장: 행복도 98.1%
+게임 데이터 저장: 행복도 98.1%
+[11:49:38.819] [Log] 고양이 위치 저장: (-1.61, 0.76)
+고양이 위치 저장: (-1.61, 0.76)
+[11:49:38.823] [Log] 게임 데이터 저장 완료!
+게임 데이터 저장 완료!
+[11:49:39.146] [Log] 고양이 목표 설정: (2.84, 2.51, 0.00)
+[11:49:39.478] [Log] 츄르 생성됨: (-0.12, 3.19, 0.00), 총 1개
+[11:49:39.894] [Log] 고양이 방향 강제 설정: Left
+[11:49:39.895] [Log] 고양이 목표 설정: (-1.05, 1.36, 0.00)
+[11:49:40.097] [Log] 고양이 목표 설정: (-1.29, 2.50, 0.00)
+[11:49:40.266] [Log] 고양이 목표 설정: (-0.76, 3.22, 0.00)
+[11:49:40.268] [Log] 츄르 생산: +2 (총 29개)
 츄르 생산: +2 (총 29개)
-[10:39:06.657] [Log] 고양이 목표 설정: (-8.34, 1.58, 0.00)
-[10:39:07.307] [Log] 고양이 목표 설정: (-8.34, 1.58, 0.00)
-[10:39:07.857] [Log] 고양이 목표 설정: (-8.34, 1.58, 0.00)
-[10:39:08.562] [Log] 츄르 생성됨: (7.15, -0.03, 0.00), 총 5개
-[10:39:08.896] [Log] 고양이 방향 강제 설정: Right
-[10:39:08.897] [Log] 고양이 목표 설정: (-6.72, -0.86, 0.00)
-[10:39:09.303] [Log] 고양이 방향 강제 설정: Left
-[10:39:09.304] [Log] 고양이 목표 설정: (-7.93, 0.79, 0.00)
-[10:39:09.470] [Log] 고양이가 목표 지점에 도달했습니다.
-[10:39:09.507] [Log] 고양이 목표 설정: (-8.19, 1.54, 0.00)
-[10:39:09.706] [Log] 고양이 목표 설정: (-8.19, 1.56, 0.00)
-[10:39:09.925] [Log] 고양이가 목표 지점에 도달했습니다.
-[10:39:10.476] [Log] 고양이 목표 설정: (-8.17, 2.11, 0.00)
-[10:39:10.477] [Log] 츄르 +1 (총 30개)
-[10:39:10.477] [Log] 고양이가 츄르를 먹었습니다! 점수: 7
-[10:39:11.082] [Log] 고양이 방향 강제 설정: Right
-[10:39:11.083] [Log] 고양이 목표 설정: (-5.78, -0.72, 0.00)
-[10:39:11.549] [Log] 고양이 목표 설정: (-5.97, -1.96, 0.00)
-[10:39:11.832] [Log] 고양이 목표 설정: (-6.27, -2.27, 0.00)
-[10:39:12.407] [Log] 고양이 목표 설정: (-6.15, -2.57, 0.00)
-[10:39:12.888] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 30개
-캣타워 데이터 저장: 레벨 1, 츄르 30개
-[10:39:12.894] [Log] 게임 데이터 저장: 행복도 99.8%
-게임 데이터 저장: 행복도 99.8%
-[10:39:12.903] [Log] 고양이 위치 저장: (-6.67, -1.10)
-고양이 위치 저장: (-6.67, -1.10)
-[10:39:12.909] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:39:12.922] [Log] 츄르 +1 (총 31개)
-[10:39:12.923] [Log] 고양이가 츄르를 먹었습니다! 점수: 8
-[10:39:13.089] [Log] 고양이 목표 설정: (-3.91, -3.00, 0.00)
-[10:39:13.341] [Log] 고양이 목표 설정: (-1.96, -3.06, 0.00)
-[10:39:13.491] [Log] EyesTracking 미니게임 종료! 최종 점수: 8
-EyesTracking 미니게임 종료! 최종 점수: 8
-[10:39:13.492] [Log] 고양이 자동 움직임 복원 완료
-[10:39:13.493] [Log] 모든 츄르 정리 완료
-[10:39:13.560] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:14.564] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:15.563] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:16.565] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:16.653] [Log] 츄르 생산: +2 (총 33개)
+[11:49:40.433] [Log] 고양이 목표 설정: (-0.57, 3.32, 0.00)
+[11:49:40.598] [Log] 고양이 방향 강제 설정: Right
+[11:49:40.599] [Log] 고양이 목표 설정: (0.05, 3.45, 0.00)
+[11:49:40.766] [Log] 고양이 목표 설정: (0.07, 3.46, 0.00)
+[11:49:40.936] [Log] 츄르 +1 (총 30개)
+[11:49:40.953] [Log] 고양이 목표 설정: (0.07, 3.46, 0.00)
+[11:49:41.320] [Log] 고양이 목표 설정: (1.09, 1.94, 0.00)
+[11:49:41.538] [Log] 고양이 목표 설정: (1.35, 1.60, 0.00)
+[11:49:41.801] [Log] 고양이 목표 설정: (1.70, 1.21, 0.00)
+[11:49:42.052] [Log] 고양이 목표 설정: (2.81, 0.45, 0.00)
+[11:49:42.315] [Log] 고양이 목표 설정: (2.80, 0.24, 0.00)
+[11:49:42.547] [Log] 고양이 목표 설정: (2.28, -0.11, 0.00)
+[11:49:42.745] [Log] 고양이 목표 설정: (2.19, -0.15, 0.00)
+[11:49:42.946] [Log] 고양이 목표 설정: (2.02, -0.23, 0.00)
+[11:49:43.171] [Log] 고양이 방향 강제 설정: Left
+[11:49:43.171] [Log] 고양이 목표 설정: (1.55, -0.33, 0.00)
+[11:49:43.385] [Log] 고양이 목표 설정: (0.83, -0.48, 0.00)
+[11:49:43.585] [Log] 고양이 목표 설정: (0.39, -0.56, 0.00)
+[11:49:43.814] [Log] 고양이 목표 설정: (0.24, -0.57, 0.00)
+[11:49:44.029] [Log] 고양이 목표 설정: (0.07, -0.12, 0.00)
+[11:49:44.245] [Log] 고양이 목표 설정: (-0.03, 0.41, 0.00)
+[11:49:44.683] [Log] 고양이 목표 설정: (-0.39, 1.14, 0.00)
+[11:49:44.683] [Log] 츄르 생성됨: (-4.73, -1.81, 0.00), 총 1개
+[11:49:44.749] [Log] 고양이 목표 설정: (-0.38, 1.39, 0.00)
+[11:49:45.116] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:45.134] [Log] 고양이 목표 설정: (-3.83, -1.13, 0.00)
+[11:49:45.265] [Log] 고양이 목표 설정: (-5.42, -2.31, 0.00)
+[11:49:45.462] [Log] 고양이 목표 설정: (-5.53, -2.69, 0.00)
+[11:49:45.632] [Log] 고양이 목표 설정: (-5.54, -2.77, 0.00)
+[11:49:45.864] [Log] 고양이 목표 설정: (-5.53, -2.81, 0.00)
+[11:49:46.093] [Log] 고양이 목표 설정: (-5.52, -2.83, 0.00)
+[11:49:46.300] [Log] 고양이 목표 설정: (-5.50, -2.84, 0.00)
+[11:49:46.466] [Log] 고양이 목표 설정: (-5.50, -2.85, 0.00)
+[11:49:46.749] [Log] 고양이 목표 설정: (-5.31, -2.58, 0.00)
+[11:49:46.992] [Log] 고양이 목표 설정: (-5.18, -2.24, 0.00)
+[11:49:47.178] [Log] 고양이 목표 설정: (-5.10, -2.09, 0.00)
+[11:49:47.376] [Log] 고양이 목표 설정: (-4.88, -2.04, 0.00)
+[11:49:47.540] [Log] 고양이 목표 설정: (-4.86, -2.02, 0.00)
+[11:49:47.727] [Log] 고양이 목표 설정: (-5.07, -2.11, 0.00)
+[11:49:47.926] [Log] 고양이 목표 설정: (-5.10, -2.13, 0.00)
+[11:49:48.129] [Log] 고양이 목표 설정: (-5.15, -2.15, 0.00)
+[11:49:48.161] [Log] 츄르 +1 (총 31개)
+[11:49:48.306] [Log] 고양이 목표 설정: (-5.19, -2.17, 0.00)
+[11:49:48.759] [Log] 고양이 방향 강제 설정: Right
+[11:49:48.759] [Log] 고양이 목표 설정: (-3.46, -1.96, 0.00)
+[11:49:48.961] [Log] 고양이 목표 설정: (-1.81, -1.49, 0.00)
+[11:49:49.144] [Log] 고양이 목표 설정: (-1.63, -1.36, 0.00)
+[11:49:49.328] [Log] 고양이 목표 설정: (-1.56, -1.30, 0.00)
+[11:49:49.626] [Log] 고양이 목표 설정: (-1.10, -0.94, 0.00)
+[11:49:49.690] [Log] 츄르 생성됨: (0.80, -1.03, 0.00), 총 1개
+[11:49:49.989] [Log] 고양이 목표 설정: (-0.87, -0.77, 0.00)
+[11:49:50.258] [Log] 고양이 목표 설정: (0.26, -1.35, 0.00)
+[11:49:50.273] [Log] 츄르 생산: +2 (총 33개)
 츄르 생산: +2 (총 33개)
-[10:39:17.568] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:17.881] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[10:39:18.567] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:39:19.422] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 33개
-캣타워 데이터 저장: 레벨 1, 츄르 33개
-[10:39:19.429] [Log] 게임 데이터 저장: 행복도 99.8%
-게임 데이터 저장: 행복도 99.8%
-[10:39:19.441] [Log] 고양이 위치 저장: (-3.97, -3.19)
-고양이 위치 저장: (-3.97, -3.19)
-[10:39:19.445] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:39:19.605] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:39:20.122] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[10:39:20.612] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:21.641] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:22.642] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:23.865] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:24.866] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:25.864] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:26.416] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[10:39:26.664] [Log] 츄르 생산: +2 (총 35개)
-츄르 생산: +2 (총 35개)
-[10:39:26.865] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:39:27.864] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:39:28.867] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:39:29.866] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:39:30.396] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[10:39:30.866] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:31.866] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:32.864] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:33.866] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:34.867] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:35.831] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
-[10:39:35.871] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:36.669] [Log] 츄르 생산: +2 (총 37개)
+[11:49:50.448] [Log] 고양이 목표 설정: (1.49, -1.18, 0.00)
+[11:49:50.630] [Log] 고양이 목표 설정: (1.52, -1.17, 0.00)
+[11:49:50.815] [Log] 고양이 목표 설정: (1.52, -1.17, 0.00)
+[11:49:51.016] [Log] 고양이 목표 설정: (1.55, -1.17, 0.00)
+[11:49:51.265] [Log] 고양이 목표 설정: (1.56, -1.17, 0.00)
+[11:49:51.513] [Log] 고양이 목표 설정: (1.56, -1.15, 0.00)
+[11:49:51.698] [Log] 고양이 목표 설정: (1.56, -1.14, 0.00)
+[11:49:51.909] [Log] 고양이 목표 설정: (1.52, -1.10, 0.00)
+[11:49:51.993] [Log] 츄르 +1 (총 34개)
+[11:49:52.109] [Log] 고양이 목표 설정: (1.60, -0.50, 0.00)
+[11:49:52.330] [Log] 고양이 목표 설정: (1.29, -0.29, 0.00)
+[11:49:52.540] [Log] 고양이 목표 설정: (1.21, 0.14, 0.00)
+[11:49:52.923] [Log] 고양이 방향 강제 설정: Left
+[11:49:52.924] [Log] 고양이 목표 설정: (-0.07, 0.67, 0.00)
+[11:49:53.140] [Log] 고양이 목표 설정: (-0.69, 0.88, 0.00)
+[11:49:53.553] [Log] 고양이 목표 설정: (-1.36, 0.98, 0.00)
+[11:49:53.770] [Log] 고양이 목표 설정: (-1.66, 1.09, 0.00)
+[11:49:54.035] [Log] 고양이 목표 설정: (-1.90, 1.26, 0.00)
+[11:49:54.673] [Log] 고양이 목표 설정: (-2.57, 1.37, 0.00)
+[11:49:54.706] [Log] 츄르 생성됨: (2.07, 0.79, 0.00), 총 1개
+[11:49:55.240] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:55.435] [Log] 고양이 방향 강제 설정: Right
+[11:49:55.435] [Log] 고양이 목표 설정: (2.13, 1.47, 0.00)
+[11:49:55.700] [Log] 고양이 목표 설정: (2.79, 0.99, 0.00)
+[11:49:55.885] [Log] 고양이 목표 설정: (2.98, 0.38, 0.00)
+[11:49:56.110] [Log] 고양이 목표 설정: (2.83, 0.01, 0.00)
+[11:49:56.329] [Log] 고양이 목표 설정: (2.92, 0.10, 0.00)
+[11:49:56.528] [Log] 고양이 목표 설정: (3.08, 0.29, 0.00)
+[11:49:56.757] [Log] 고양이 목표 설정: (3.08, 0.29, 0.00)
+[11:49:56.957] [Log] 고양이 목표 설정: (3.08, 0.29, 0.00)
+[11:49:57.158] [Log] 고양이 목표 설정: (3.23, 0.31, 0.00)
+[11:49:57.339] [Log] 고양이 목표 설정: (3.53, 0.71, 0.00)
+[11:49:57.529] [Log] 고양이 목표 설정: (3.60, 0.86, 0.00)
+[11:49:57.729] [Log] 고양이 목표 설정: (3.65, 0.90, 0.00)
+[11:49:57.729] [Log] 츄르 +1 (총 35개)
+[11:49:57.945] [Log] 고양이 목표 설정: (3.72, 0.95, 0.00)
+[11:49:58.192] [Log] 고양이 목표 설정: (3.65, 1.10, 0.00)
+[11:49:58.411] [Log] 고양이 목표 설정: (3.12, 1.75, 0.00)
+[11:49:58.626] [Log] 고양이 방향 강제 설정: Left
+[11:49:58.627] [Log] 고양이 목표 설정: (1.71, 1.29, 0.00)
+[11:49:58.842] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:59.119] [Log] 고양이 목표 설정: (1.48, 0.86, 0.00)
+[11:49:59.129] [Log] 고양이가 목표 지점에 도달했습니다.
+[11:49:59.716] [Log] 츄르 생성됨: (5.65, -1.16, 0.00), 총 1개
+[11:50:00.278] [Log] 츄르 생산: +2 (총 37개)
 츄르 생산: +2 (총 37개)
-[10:39:36.868] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:38.091] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:39.091] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:40.091] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:41.090] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:42.091] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:42.887] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 37개
+[11:50:00.571] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 37개
 캣타워 데이터 저장: 레벨 1, 츄르 37개
-[10:39:42.891] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:39:42.899] [Log] 고양이 위치 저장: (3.06, -3.46)
-고양이 위치 저장: (3.06, -3.46)
-[10:39:42.904] [Log] 게임 데이터 저장 완료!
+[11:50:00.576] [Log] 게임 데이터 저장: 행복도 98.0%
+게임 데이터 저장: 행복도 98.0%
+[11:50:00.584] [Log] 고양이 위치 저장: (1.78, 1.00)
+고양이 위치 저장: (1.78, 1.00)
+[11:50:00.588] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
-[10:39:43.113] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:44.115] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:45.116] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:46.114] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:46.669] [Log] 츄르 생산: +2 (총 39개)
-츄르 생산: +2 (총 39개)
-[10:39:47.120] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:48.123] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:49.125] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:39:50.106] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Idle
-[10:39:50.129] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:51.126] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:52.354] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:53.357] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:54.359] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:55.368] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:56.367] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:39:56.696] [Log] 츄르 생산: +2 (총 41개)
-츄르 생산: +2 (총 41개)
-[10:39:57.098] [Log] 🐱 고양이 움직임 상태 변경: Idle → Walking
-[10:39:57.132] [Log] 🐱 고양이 방향 변경: X=-0.025 → Left
-고양이 방향 변경: X=-0.025 → Left
-[10:39:57.371] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.50
-[10:39:58.371] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.50
-[10:39:59.370] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.50
-[10:39:59.690] [Log] 🐱 고양이 방향 변경: X=0.024 → Right
-고양이 방향 변경: X=0.024 → Right
-[10:40:00.378] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:40:01.380] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: True, Speed: 1.50
-[10:40:01.980] [Log] 🐱 고양이 움직임 상태 변경: Walking → Idle
-[10:40:02.380] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:03.380] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:04.391] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:05.395] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:06.606] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:06.709] [Log] 츄르 생산: +2 (총 43개)
-츄르 생산: +2 (총 43개)
-[10:40:07.607] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:08.187] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
-[10:40:08.605] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:09.606] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:10.606] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:11.610] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:12.608] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:12.902] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 43개
-캣타워 데이터 저장: 레벨 1, 츄르 43개
-[10:40:12.907] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:40:12.914] [Log] 고양이 위치 저장: (2.71, -3.47)
-고양이 위치 저장: (2.71, -3.47)
-[10:40:12.918] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:40:13.626] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:14.625] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:15.627] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:16.626] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:16.707] [Log] 츄르 생산: +2 (총 45개)
-츄르 생산: +2 (총 45개)
-[10:40:17.626] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:18.626] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:19.634] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:20.855] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:21.857] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:22.855] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:23.855] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:24.855] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:25.319] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Idle
-[10:40:25.855] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:26.719] [Log] 츄르 생산: +2 (총 47개)
-츄르 생산: +2 (총 47개)
-[10:40:26.854] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:27.855] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:28.855] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:29.853] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:30.857] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:31.856] [Log] Animator Parameters - Walking: False, Sleeping: False, FacingRight: True, Speed: 0.00
-[10:40:32.037] [Log] 🐱 고양이 움직임 상태 변경: Idle → Sleeping
-[10:40:32.857] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:33.855] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:35.089] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:36.088] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:36.719] [Log] 츄르 생산: +2 (총 49개)
-츄르 생산: +2 (총 49개)
-[10:40:37.088] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:38.088] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:38.934] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 49개
-캣타워 데이터 저장: 레벨 1, 츄르 49개
-[10:40:38.942] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:40:38.951] [Log] 고양이 위치 저장: (2.71, -3.47)
-고양이 위치 저장: (2.71, -3.47)
-[10:40:38.956] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:40:39.124] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:40.123] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:41.124] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:42.124] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:42.921] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 49개
-캣타워 데이터 저장: 레벨 1, 츄르 49개
-[10:40:42.924] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:40:42.934] [Log] 고양이 위치 저장: (2.71, -3.47)
-고양이 위치 저장: (2.71, -3.47)
-[10:40:42.940] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:40:43.150] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:44.151] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:45.152] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:46.153] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:46.720] [Log] 츄르 생산: +2 (총 51개)
-츄르 생산: +2 (총 51개)
-[10:40:47.155] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:48.161] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:49.383] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:50.386] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:51.387] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:52.388] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:53.386] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:54.388] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:55.388] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:56.392] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:56.722] [Log] 츄르 생산: +2 (총 53개)
-츄르 생산: +2 (총 53개)
-[10:40:57.394] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:58.395] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: True, Speed: 0.00
-[10:40:58.509] [Log] 🐱 고양이 움직임 상태 변경: Sleeping → Walking
-[10:40:58.547] [Log] 🐱 고양이 방향 변경: X=-0.026 → Left
-고양이 방향 변경: X=-0.026 → Left
-[10:40:59.399] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.50
-[10:41:00.403] [Log] Animator Parameters - Walking: True, Sleeping: False, FacingRight: False, Speed: 1.50
-[10:41:00.433] [Log] 🐱 고양이 움직임 상태 변경: Walking → Sleeping
-[10:41:01.409] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:02.411] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:03.633] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:04.638] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:05.638] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:06.638] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:06.738] [Log] 츄르 생산: +2 (총 55개)
-츄르 생산: +2 (총 55개)
-[10:41:07.640] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:08.641] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:09.647] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:10.652] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:11.656] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:12.659] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:12.920] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 55개
-캣타워 데이터 저장: 레벨 1, 츄르 55개
-[10:41:12.925] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:41:12.935] [Log] 고양이 위치 저장: (-0.18, -3.50)
-고양이 위치 저장: (-0.18, -3.50)
-[10:41:12.941] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:41:13.695] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:14.701] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:15.448] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 55개
-캣타워 데이터 저장: 레벨 1, 츄르 55개
-[10:41:15.455] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:41:15.465] [Log] 고양이 위치 저장: (-0.18, -3.50)
-고양이 위치 저장: (-0.18, -3.50)
-[10:41:15.471] [Log] 게임 데이터 저장 완료!
-게임 데이터 저장 완료!
-[10:41:15.766] [Log] Animator Parameters - Walking: False, Sleeping: True, FacingRight: False, Speed: 0.00
-[10:41:16.166] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 55개
-캣타워 데이터 저장: 레벨 1, 츄르 55개
-[10:41:16.171] [Log] 게임 데이터 저장: 행복도 100.0%
-게임 데이터 저장: 행복도 100.0%
-[10:41:16.178] [Log] 고양이 위치 저장: (-0.18, -3.50)
-고양이 위치 저장: (-0.18, -3.50)
-[10:41:16.182] [Log] 게임 데이터 저장 완료!
+[11:50:00.656] [Log] 캣타워 데이터 저장: 레벨 1, 츄르 37개
+캣타워 데이터 저장: 레벨 1, 츄르 37개
+[11:50:00.660] [Log] 게임 데이터 저장: 행복도 98.0%
+게임 데이터 저장: 행복도 98.0%
+[11:50:00.669] [Log] 고양이 위치 저장: (1.78, 1.00)
+고양이 위치 저장: (1.78, 1.00)
+[11:50:00.673] [Log] 게임 데이터 저장 완료!
 게임 데이터 저장 완료!
 === Debug Logger 종료 ===

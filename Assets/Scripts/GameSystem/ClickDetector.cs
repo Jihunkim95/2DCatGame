@@ -67,6 +67,13 @@ public class ClickDetector : MonoBehaviour
     {
         if (CompatibilityWindowManager.Instance == null) return;
 
+        // 미니게임 중이면 윈도우 상호작용 비활성화, Canvas만 활성화
+        if (EyesTrackingManager.Instance != null && EyesTrackingManager.Instance.IsGameActive)
+        {
+            CompatibilityWindowManager.Instance.DisableClickThrough();
+            return;
+        }
+
         // 컨텍스트 메뉴가 표시 중이면 click-through 상태 변경하지 않음
         if (ContextMenuManager.Instance != null && ContextMenuManager.Instance.IsMenuVisible)
         {
@@ -75,24 +82,16 @@ public class ClickDetector : MonoBehaviour
             return;
         }
 
-        // 윈도우 내 마우스 위치 가져오기
+
         Vector2 mousePos = CompatibilityWindowManager.Instance.GetMousePositionInWindow();
-
-        // 스크린 좌표를 월드 좌표로 변환
         Vector3 worldPos = mainCamera.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, mainCamera.nearClipPlane));
-
-        // 상호작용 가능한 오브젝트 확인
         bool currentFrameHitSomething = CheckInteractableObjects(worldPos, mousePos);
 
-        // 상태가 변경되었을 때만 윈도우 속성 변경
         if (currentFrameHitSomething != lastFrameHitSomething)
         {
             if (currentFrameHitSomething)
             {
-                // 상호작용 가능한 오브젝트 위에 마우스가 있음 - 클릭 통과 비활성화
                 CompatibilityWindowManager.Instance.DisableClickThrough();
-
-                // 마우스 커서 변경 (선택사항)
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
 
                 if (debugUIDetection)
@@ -100,7 +99,6 @@ public class ClickDetector : MonoBehaviour
             }
             else
             {
-                // 상호작용 오브젝트 밖에 마우스가 있음 - 클릭 통과 활성화
                 CompatibilityWindowManager.Instance.EnableClickThrough();
 
                 if (debugUIDetection)

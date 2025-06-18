@@ -13,6 +13,11 @@ public class EyesTrackingManager : MonoBehaviour
     public float pointFollowSpeed = 5f;         // point 스프라이트 따라가는 속도
     public float footEffectDuration = 0.5f;    // cat_foot 효과 지속 시간
 
+    [Header("오디오 설정")]
+    public AudioClip minigameBGM;           // 미니게임 BGM
+    public AudioClip churuEatSound;         // 츄르 먹는 효과음
+    public AudioSource audioSource;        // 오디오 소스
+
     [Header("UI 요소")]
     public Button minigameBtn;                  // 미니게임 시작 버튼
     public Text timerText;                      // 타이머 텍스트 (선택사항)
@@ -22,7 +27,7 @@ public class EyesTrackingManager : MonoBehaviour
     public Font dungGeunMoFont;                 // DungGeunMo 폰트
 
     [Header("스프라이트 요소")]
-    public Sprite catFootSprite;                // cat_foot 스프라이트
+    public Sprite[] catFootSprites = new Sprite[3];                // cat_foot 스프라이트
     public Sprite pointSprite;                  // point 스프라이트
     public Sprite churuSprite;                  // churu 스프라이트
 
@@ -53,6 +58,10 @@ public class EyesTrackingManager : MonoBehaviour
     private bool isGameActive = false;
     private float gameTimer = 0f;
     private int currentScore = 0;
+
+    // 기존 BGM 저장용
+    private AudioClip originalBGM;
+    private bool wasPlaying;
 
     // 게임 오브젝트들
     private GameObject pointObject;             // point 스프라이트 오브젝트
@@ -169,6 +178,13 @@ public class EyesTrackingManager : MonoBehaviour
         if (targetCat == null)
             targetCat = FindObjectOfType<TestCat>();
 
+        // 오디오 소스 설정
+        if (audioSource == null)
+            audioSource = GetComponent<AudioSource>();
+
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+
         // 스프라이트 로드 (Resources에서)
         LoadSprites();
 
@@ -185,11 +201,17 @@ public class EyesTrackingManager : MonoBehaviour
 
     void LoadSprites()
     {
-        if (catFootSprite == null)
+        if (catFootSprites == null)
         {
-            catFootSprite = Resources.Load<Sprite>("Image/Minigame/cat_foot");
-            if (catFootSprite == null)
-                Debug.LogWarning("cat_foot 스프라이트를 찾을 수 없습니다!");
+            for (int i = 0; i < catFootSprites.Length; i++)
+            {
+                if (catFootSprites[i] == null)
+                {
+                    catFootSprites[i] = Resources.Load<Sprite>($"Image/Minigame/cat_foot_{i + 1}");
+                    if (catFootSprites[i] == null)
+                        Debug.LogWarning($"cat_foot_{i + 1} 스프라이트를 찾을 수 없습니다!");
+                }
+            }
         }
 
         if (pointSprite == null)
@@ -474,6 +496,10 @@ public class EyesTrackingManager : MonoBehaviour
             Debug.Log("이미 게임이 진행 중입니다!");
             return;
         }
+
+        // 기존 BGM 저장 및 미니게임 BGM 재생
+        SaveOriginalBGM();
+        PlayMinigameBGM();
 
         Debug.Log($"EyesTracking 미니게임 시작! 모드: {activeTrackingMode}");
         DebugLogger.LogToFile($"EyesTracking 미니게임 시작! 모드: {activeTrackingMode}");
@@ -782,19 +808,73 @@ public class EyesTrackingManager : MonoBehaviour
     {
         if (targetCat == null || churuObjects.Count == 0) return;
 
-        Vector3 catPosition = targetCat.transform.position;
-
         for (int i = churuObjects.Count - 1; i >= 0; i--)
         {
             if (churuObjects[i] == null) continue;
 
-            Vector3 churuPosition = churuObjects[i].transform.position;
-            float distance = Vector3.Distance(catPosition, churuPosition);
+            float distance = Vector3.Distance(targetCat.transform.position, churuObjects[i].transform.position);
 
-            if (distance < 0.4f)
+            if (distance < 0.8f)
             {
-                OnCatEatChuru(churuObjects[i], i);
+                Vector3 churuPosition = churuObjects[i].transform.position;
+
+                // 효과음 재생
+                PlayChuruEatSound();
+                // Cat Foot 효과 생성 (츄르 위치에서)
+                StartCoroutine(ShowCatFootEffectAtPosition(churuPosition));
+                currentScore++;
+                AddChur(1);
+
+                Destroy(churuObjects[i]);
+                churuObjects.RemoveAt(i);
+
+                UpdateScoreText();
             }
+        }
+    }
+
+    void SaveOriginalBGM()
+    {
+        BGMManager bgmManager = FindObjectOfType<BGMManager>();
+        if (bgmManager != null && bgmManager.bgmAudioSource != null)
+        {
+            originalBGM = bgmManager.bgmAudioSource.clip;
+            wasPlaying = bgmManager.bgmAudioSource.isPlaying;
+        }
+    }
+
+    void PlayMinigameBGM()
+    {
+        if (minigameBGM != null)
+        {
+            BGMManager bgmManager = FindObjectOfType<BGMManager>();
+            if (bgmManager != null && bgmManager.bgmAudioSource != null)
+            {
+                bgmManager.bgmAudioSource.clip = minigameBGM;
+                bgmManager.bgmAudioSource.Play();
+            }
+        }
+    }
+
+    void RestoreOriginalBGM()
+    {
+        BGMManager bgmManager = FindObjectOfType<BGMManager>();
+        if (bgmManager != null && bgmManager.bgmAudioSource != null)
+        {
+            if (originalBGM != null)
+            {
+                bgmManager.bgmAudioSource.clip = originalBGM;
+                if (wasPlaying)
+                    bgmManager.bgmAudioSource.Play();
+            }
+        }
+    }
+
+    void PlayChuruEatSound()
+    {
+        if (churuEatSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(churuEatSound);
         }
     }
 
@@ -831,7 +911,11 @@ public class EyesTrackingManager : MonoBehaviour
         footEffect.transform.position = position;
 
         SpriteRenderer renderer = footEffect.AddComponent<SpriteRenderer>();
-        renderer.sprite = catFootSprite;
+
+        // 랜덤 스프라이트 선택
+        Sprite randomSprite = catFootSprites[Random.Range(0, catFootSprites.Length)];
+        renderer.sprite = randomSprite;
+
         renderer.sortingOrder = 9;
         renderer.color = Color.white;
 
@@ -931,6 +1015,8 @@ public class EyesTrackingManager : MonoBehaviour
         DebugLogger.LogToFile($"EyesTracking 미니게임 종료! 최종 점수: {currentScore}");
 
         isGameActive = false;
+        // BgM 복원
+        RestoreOriginalBGM();
         catIsMovingToTarget = false;
 
         EnableCatAutoMovement();
@@ -944,6 +1030,8 @@ public class EyesTrackingManager : MonoBehaviour
             Destroy(pointObject);
             pointObject = null;
         }
+
+
 
         RestoreClickThroughState();
         ShowGameResult();
